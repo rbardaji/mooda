@@ -1,2 +1,2 @@
 # oceanobs
-Python library to analyze ocean observatories data.
+Python package to analyze ocean observatories data.
