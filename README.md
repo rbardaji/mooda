@@ -1,4 +1,10 @@
-# Welcome to GitHub Pages
+## oceanobs: Analyze ocean observatories data with Python
+
+# Installing oceanobs
+
+Installation is easy, with pip::
+
+    $ pip install oceanobs
 
 You can use the [editor on GitHub](https://github.com/rbardaji/oceanobs/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
