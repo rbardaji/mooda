@@ -1,7 +1,7 @@
 # oceanobs
 
 Python package for analyzing data from marine observatories.
-At the moment, you can analyze data coming from [OBSEA] (http://www.obsea.es) and [EMODnet-Jerico] (http://www.jerico-ri.eu/data-access/).
+At the moment, you can analyze data coming from [OBSEA](http://www.obsea.es) and [EMODnet-Jerico](http://www.jerico-ri.eu/data-access/).
 You can create your script using the oceanobs libraries or use the graphical user interface that comes with the package.
 
 ## Getting Started
