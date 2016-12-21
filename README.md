@@ -62,11 +62,11 @@ import matplotlib.pyplot as plt
 import oceanobs.emodnet as obs
 import sys
 
-# Write here your path with OBSEA data  
+# Write here your path with EMODnet data  
 path_data = ""
 
 # Opening data file
-ob = obs.OBSEA(path_data)
+ob = obs.EMODnet(path_data)
 # If there is any problem opening the file, the instance variable 
 # "dialog" will tell you what is happening
 if ob.dialog:
