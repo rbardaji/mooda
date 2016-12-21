@@ -10,14 +10,14 @@ These instructions will get you the Python package on your local machine for dev
 
 ### Prerequisites
 
-You need [Python 3](https://www.python.org/downloads/) and the following libreries:
+You need [Python 3](https://www.python.org/downloads/) and the following libraries:
 
 - [matplotlib](http://matplotlib.org/)
 - [numpy](http://www.numpy.org/)
 - [pandas](http://pandas.pydata.org/)
 - [netCDF4](http://unidata.github.io/netcdf4-python/)
 
-The installation of the libreries is easy, with pip::
+The installation of the libraries is easy, with pip::
 
 	$ pip install matplotlib
 	$ pip install numpy
