@@ -108,6 +108,7 @@ ob.plt_all()
 plt.show()
 	
 ```
+
 ## Versioning
 
 Our last realese is [oceanobs v0.1.1](https://github.com/rbardaji/oceanobs/tarball/0.1.1).
