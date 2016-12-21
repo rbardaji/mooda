@@ -17,7 +17,7 @@ You need [Python 3](https://www.python.org/downloads/) and the following librari
 - [pandas](http://pandas.pydata.org/)
 - [netCDF4](http://unidata.github.io/netcdf4-python/)
 
-The installation of the libraries is easy, with pip::
+The installation of the libraries is easy, with pip:
 
 	$ pip install matplotlib
 	$ pip install numpy
@@ -26,7 +26,7 @@ The installation of the libraries is easy, with pip::
 
 ### Installing
 
-Easy, with pip::
+Easy, with pip:
 
 	$ pip install oceanobs
 
