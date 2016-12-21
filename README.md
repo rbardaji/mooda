@@ -53,7 +53,11 @@ ob = obs.OBSEA(path_data)
 if ob.dialog:
     print(ob.dialog)
 	sys.exit()
+```
 
+### Common part independent of the data procedence
+
+```
 # Show some data information
 print("Platform code: {}".format(ob.metadata['platform_code'][0]))
 print("WMO platform code: {}".format(ob.metadata['wmo_platform_code'][0]))
