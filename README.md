@@ -85,3 +85,14 @@ ob.plt_all()
 plt.show()
 	
 ```
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning.
+
+## Authors
+
+* **Raul Bardaji** - *Initial work* - [rbardaji](https://github.com/rbardaji)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
