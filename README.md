@@ -55,6 +55,25 @@ if ob.dialog:
 	sys.exit()
 ```
 
+### With EMODnet data
+
+```
+import matplotlib.pyplot as plt
+import oceanobs.emodnet as obs
+import sys
+
+# Write here your path with OBSEA data  
+path_data = ""
+
+# Opening data file
+ob = obs.OBSEA(path_data)
+# If there is any problem opening the file, the instance variable 
+# "dialog" will tell you what is happening
+if ob.dialog:
+    print(ob.dialog)
+	sys.exit()
+```
+
 ### Common part independent of the data procedence
 
 ```
