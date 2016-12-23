@@ -208,7 +208,7 @@ class EMODnet(observatory.Observatory):
         def open_list(path_list):
             big_data = pd.DataFrame()
             for one_path in path_list:
-                if os.path.isfile(path):
+                if os.path.isfile(one_path):
                     _one_filename, one_file_extension = os.path.splitext(one_path)
                     if one_file_extension == ".csv":
                         self.open_csv(one_path)
