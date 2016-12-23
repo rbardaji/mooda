@@ -6,7 +6,12 @@ from matplotlib.backends.backend_qt4agg import (FigureCanvasQTAgg as FigureCanva
 import matplotlib.pyplot as plt
 
 from mainwindow_ui import *
-import obsea
+try:
+    import oceanobs.obsea as obsea
+    import oceanobs.emodnet as emodnet
+except ImportError:
+    import obsea
+    import emodnet
 
 
 class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
@@ -250,7 +255,13 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         if len(path) > 0:
             # Open observatory object
             self.statusbar.showMessage("Opening data. Please wait.")
-            self.ob = obsea.OBSEA(path)
+            # Know if it is an OBSEA file or an EMODnet file
+            if path[0][-1] == 't' or path[0][-1] == 'T':
+                # It is a txt file so let's open OBSEA
+                self.ob = obsea.OBSEA(path)
+            else:
+                # It is an EMODnet file, so let's open a EMODnet
+                self.ob = emodnet.EMODnet(path)
             if self.ob.dialog:
                 # Error message
                 self.statusbar.showMessage(self.ob.dialog)
