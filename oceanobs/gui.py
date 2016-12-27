@@ -21,7 +21,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         # Define the style of plots
-        style.use('fivethirtyeight')
+        style.use('ggplot')
 
         # Class variables
         self.canvas = None
@@ -86,15 +86,6 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         # Hide all inforamtion
         self.hide_all()
         self.hide_slicing()
-
-    def resample_month(self):
-        """
-        Resample data monthly
-        """
-        self.ob.resample_data('M')
-        self.make_plots()
-        # Remove the figure that is shown in the screen
-        self.remove_fig()
 
     def resample_month(self):
         """
@@ -250,8 +241,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         """
         Open data file
         """
-        path = QtGui.QFileDialog.getOpenFileNames(None, 'Open CSV or netCDF', "",
-                                                  "TXT (*.txt);;CSV (*.csv);;netCDF (*.nc)")
+        path = QtGui.QFileDialog.getOpenFileNames(None, 'Open TXT or netCDF', "", "TXT (*.txt);;netCDF (*.nc)")
         if len(path) > 0:
             # Open observatory object
             self.statusbar.showMessage("Opening data. Please wait.")
@@ -340,6 +330,26 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
             above_show('Wind direction')
         if 'Air temperature' in plot_keys:
             above_show('Air temperature')
+        if 'Wave height' in plot_keys:
+            under_show('Wave height')
+        if 'Wave direction' in plot_keys:
+            under_show('Wave direction')
+        if 'Wave period' in plot_keys:
+            under_show('Wave period')
+        if 'Pressure sea level' in plot_keys:
+            above_show('Pressure sea level')
+        if 'Sea level' in plot_keys:
+            under_show('Sea level')
+        if 'Rain acumulation' in plot_keys:
+            above_show('Rain acumulation')
+        if 'Relative humidity' in plot_keys:
+            above_show('Relative humidity')
+        if 'Gust wind speed' in plot_keys:
+            above_show('Gust wind speed')
+        if 'Current speed' in plot_keys:
+            under_show('Current speed')
+        if 'Current direction' in plot_keys:
+            under_show('Current direction')
 
     def remove_fig(self):
         """
@@ -450,7 +460,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         start_time = formating_time(start_time)
         stop_time = self.slicing_end_time.text()
         stop_time = formating_time(stop_time)
-        self.ob.slicing(start_time,stop_time)
+        self.ob.slicing(start_time, stop_time)
         self.make_plots()
         self.remove_fig()
         self.hide_slicing()

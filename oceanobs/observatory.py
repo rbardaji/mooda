@@ -1,7 +1,5 @@
-import datetime
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pandas as pd
 
 
@@ -240,9 +238,9 @@ class Observatory:
         fig_pres, axes = plt.subplots(nrows=1, ncols=1)
         try:
             if qc_flag is None:
-                (self.data['atm']*1000).plot(ax=axes)
+                (self.data['atm']).plot(ax=axes)
             else:
-                (self.data['atm'][self.data['atm_qc'] == qc_flag]*1000).plot(ax=axes)
+                (self.data['atm'][self.data['atm_qc'] == qc_flag]).plot(ax=axes)
         except KeyError:
             self.dialog = "Error: No atmospheric pressure data."
         except TypeError:
@@ -418,7 +416,7 @@ class Observatory:
         fig_wape, axes = plt.subplots(nrows=1, ncols=1)
         try:
             if qc_flag is None:
-                (self.data['wape'] * 1000).plot(ax=axes)
+                (self.data['wape']).plot(ax=axes)
             else:
                 (self.data['wape'][self.data['wape_qc'] == qc_flag]).plot(ax=axes)
         except KeyError:
@@ -452,6 +450,160 @@ class Observatory:
         axes.set_ylabel('meters')
         axes.set_xlabel('Time UTC')
         return fig_atemp
+
+    def plt_atmpres(self, qc_flag=None):
+        """
+        Atmospheric pressure at sea level
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_atmpres, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['atmpres'].plot(ax=axes)
+            else:
+                self.data['atmpres'][self.data['atmpres_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No atmospheric pressure data."
+        except TypeError:
+            self.dialog = "Error: No atmospheric pressure data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Pressure at sea level')
+        axes.set_ylabel('dB')
+        axes.set_xlabel('Time UTC')
+        return fig_atmpres
+
+    def plt_sele(self, qc_flag=None):
+        """
+        Observed dea level
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_sele, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['sele'].plot(ax=axes)
+            else:
+                self.data['sele'][self.data['sele_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No sea level data."
+        except TypeError:
+            self.dialog = "Error: No sea level data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Observed sea level')
+        axes.set_ylabel('m')
+        axes.set_xlabel('Time UTC')
+        return fig_sele
+
+    def plt_prec(self, qc_flag=None):
+        """
+        Rain acumulation
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_prec, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['prec'].plot(ax=axes)
+            else:
+                self.data['prec'][self.data['prec_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No rain acumulation data."
+        except TypeError:
+            self.dialog = "Error: No rain acumulation data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Precipitation rate')
+        axes.set_ylabel('mm')
+        axes.set_xlabel('Time UTC')
+        return fig_prec
+
+    def plt_relhu(self, qc_flag=None):
+        """
+        Relative humidity
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_relhu, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['relhu'].plot(ax=axes)
+            else:
+                self.data['relhu'][self.data['relhu_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No relative humidity data."
+        except TypeError:
+            self.dialog = "Error: No relative humidity data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Relative humidity')
+        axes.set_ylabel('%')
+        axes.set_xlabel('Time UTC')
+        return fig_relhu
+
+    def plt_gusp(self, qc_flag=None):
+        """
+        Gust wind speed
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_gusp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['gusp'].plot(ax=axes)
+            else:
+                self.data['gusp'][self.data['gusp_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No gust wind speed data."
+        except TypeError:
+            self.dialog = "Error: No gust wind speed data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Gust wind speed')
+        axes.set_ylabel('m/s')
+        axes.set_xlabel('Time UTC')
+        return fig_gusp
+
+    def plt_cusp(self, qc_flag=None):
+        """
+        Gust wind speed
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_cusp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['cusp'].plot(ax=axes)
+            else:
+                self.data['cusp'][self.data['cusp_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No currrent speed data."
+        except TypeError:
+            self.dialog = "Error: No currrent speed data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Horitzontal current speed')
+        axes.set_ylabel('m/s')
+        axes.set_xlabel('Time UTC')
+        return fig_cusp
+
+    def plt_cudi(self, qc_flag=None):
+        """
+        Gust wind speed
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_cudi, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            if qc_flag is None:
+                self.data['cudi'].plot(ax=axes)
+            else:
+                self.data['cudi'][self.data['cudi_qc'] == qc_flag].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No currrent direction data."
+        except TypeError:
+            self.dialog = "Error: No currrent direction data with quality control flag = {}.".format(qc_flag)
+        axes.set_title('Current to direction relative true north')
+        axes.set_ylabel('degrees')
+        axes.set_xlabel('Time UTC')
+        return fig_cudi
 
     def plt_all(self, qc_flag=None):
         """
@@ -497,4 +649,26 @@ class Observatory:
         if 'wape' in data_keys:
             fig_wape = self.plt_wape(qc_flag)
             fig_dict['Wave period'] = fig_wape
+        if 'atmpres' in data_keys:
+            fig_atmpres = self.plt_atmpres(qc_flag)
+            fig_dict['Pressure sea level'] = fig_atmpres
+        if 'sele' in data_keys:
+            fig_sele = self.plt_sele(qc_flag)
+            fig_dict['Sea level'] = fig_sele
+        if 'prec' in data_keys:
+            fig_prec = self.plt_prec(qc_flag)
+            fig_dict['Rain acumulation'] = fig_prec
+        if 'relhu' in data_keys:
+            fig_relhu = self.plt_relhu(qc_flag)
+            fig_dict['Relative humidity'] = fig_relhu
+        if 'gusp' in data_keys:
+            fig_gusp = self.plt_gusp(qc_flag)
+            fig_dict['Gust wind speed'] = fig_gusp
+        if 'cusp' in data_keys:
+            fig_cusp = self.plt_cusp(qc_flag)
+            fig_dict['Current speed'] = fig_cusp
+        if 'cudi' in data_keys:
+            fig_cudi = self.plt_cudi(qc_flag)
+            fig_dict['Current direction'] = fig_cudi
+
         return fig_dict
