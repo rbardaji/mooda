@@ -1,0 +1,84 @@
+First release
+- Libraries:
+            - emodnet.py: Library to open data in netcdf or csv from the EMODnet portal [http://www.jerico-ri.eu/data-access/]
+            - obsea.py: Library to open data in txt (csv format) from the OBSEA portal[http://www.upc.edu/cdsarti/OBSEA/]
+            - observatory.py: Main library to analyze data.
+            - mainwindow_ui.py: Library that creates the GUI layout. Created by PyQt4 UI code generator 4.11.4.
+            - gui.py: Library with all the functions and classes related to the GUI. 
+- Functions and classes:
+            - In emodnet.py:
+                        - class EMODnet(): Manage the opening of the EMODnet files.
+                                    - __init__(): Class constructor.
+                                    - open(): Open the netcdf or csv file.
+                                    - how_to_download_data(): Explanation of how to download data.
+            - In obsea.py:
+                        - class OBSEA(): Manage the opening of the OBSEA files.
+                                    - __init__(): Class constructor.
+                                    - open(): Open the csv file.
+                                    - how_to_download_data(): Explanation of how to download data.
+            - In observatory.py:
+                        - class Observatory: Data analysis class.
+                                    - __init__(): Class constructor.
+                                    - reset_data(): Reload the original data.
+                                    - slicing(): Slicing by date conditions.
+                                    - resample data(): Resample data estimating the average of the values.
+                                    - info_data(): Get some information of the dada that we are using.
+                                    - plt_cond(): Conductivity vs time plot.
+                                    - plt_temp(): Sea temperature vs time plot.
+                                    - plt_atemp(): Air temperature vs time plot.
+                                    - plt_pres(): Pressure vs time plot.
+                                    - plt_atm(): Atmospheric pressure vs time plot.
+                                    - plt_sal(): Salinity vs time plot.
+                                    - plt_ts(): T-S plot.
+                                    - plt_sovel(): Sound velocity vs time plot.
+                                    - plt_co2(): CO2 vs time plot.
+                                    - plt_wisp(): Wind speed vs time plot.
+                                    - plt_widi(): Wind direction vs time plot.
+                                    - plt_qc(): QC plot.
+                                    - plt_wadi(): Wave direction vs time plot.
+                                    - plt_wape(): Wave period vs time plot.
+                                    - plt_wahe(): Wave height plot.
+                                    - plt_all(): Create all the possible plots.
+            - In gui.py:
+                        - class MyApplication(): Class with all the functions of the GUI. Major functions are used when a button is clicked. It just works with the OBSEA data.
+                                    - __init__(): Class constructor.
+                                    - resample_month(): Resample data monthly.
+                                    - resample_week(): Resample data weekly.
+                                    - resample_day(): Resample data daily.
+                                    - resample_hour(): Resample data hourly.
+                                    - refresh_fig(): Reload the actual plot.
+                                    - style_xkcd(): Use plot style xkcd. 
+                                    - style_bmh(): Use plot style bmh. 
+                                    - style_classic(): Use plot style classic.
+                                    - style_dark_background(): Use plot style dark background.
+                                    - style_fivethirtyeight(): Use plot style fivethirtyeight.
+                                    - style_ggplot(): Use plot style ggplot.
+                                    - style_grayscale(): Use plot style grayscale.
+                                    - style_seaborn_bright(): Use plot style seaborn bright.
+                                    - style_seaborn_colorblind(): Use plot style seaborn colorblind.
+                                    - style_seaborn_dark(): Use plot style seaborn dark.
+                                    - style_seaborn_dark_palette(): Use plot style seaborn dark palette.
+                                    - style_seaborn_darkgrid(): Use plot style seaborn darkgrid.
+                                    - style_seaborn_deep(): Use plot style seaborn deep.
+                                    - style_seaborn_muted(): Use plot style seaborn muted.
+                                    - style_seaborn_notebook(): Use plot style seaborn notebook.
+                                    - style_seaborn_paper(): Use plot style seaborn paper.
+                                    - style_seaborn_pastel(): Use plot style seaborn pastel.
+                                    - style_seaborn_seaborn_poster(): Use plot style seaborn seaborn poster.
+                                    - style_seaborn_talk(): Use plot style seaborn talk.
+                                    - style_seaborn_ticks(): Use plot style seaborn ticks.
+                                    - style_seaborn_white(): Use plot style seaborn white.
+                                    - style_seaborn_whitegrid(): Use plot style seaborn whitegrid.
+                                    - hide_all(): Hide the metadata information.
+                                    - open(): Open data file.
+                                    - show_metadata(): Show metadata.
+                                    - make_plots(): Make all possible plots.
+                                    - remove_fig(): Delete the figure that is shown.
+                                    - add_fig(): Add a figure in the figure container and the toolbar.
+                                    - view_fig():  Show the selected figure.
+                                    - report_save_as(): Create a docx file with some data info.
+                                    - report_save(): Save a docx file with some data info
+                                    - hide_slicing(): Hide the slicing option.
+                                    - show_slicing(): Show slicing options.
+                                    - accept_slicing(): Data slicing process.
+            - open_gui(): Open the GUI.
