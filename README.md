@@ -1,10 +1,8 @@
 # oceanobs
 
-Python package for analyzing data from marine observatories.
-At the moment, you can analyze data coming from [OBSEA](http://www.obsea.es) and [EMODnet-Jerico](http://www.jerico-ri.eu/data-access/).
-You can create your script using the oceanobs libraries or use the graphical user interface that comes with the package.
+Python package for analyzing data from marine observatories. This work is performed in the framework of the European Multisiciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
 
-This work is performed in the [EMSOdev](http://www.emsodev.eu/) framework.
+At the moment, you can analyze data coming from the EMSO test site [OBSEA](http://www.obsea.es). Additionally the package accepts alternative formats from data provided by other  marine observation platforms (now [EMODnet and Jerico](http://www.jerico-ri.eu/data-access/)). You can create your script using the oceanobs libraries or use the graphical user interface that comes with the package.
 
 ## Getting Started
 
