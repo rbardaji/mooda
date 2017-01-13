@@ -102,10 +102,10 @@ import oceanobs.emodnet as obs
 import sys
 ```
 
-Creating an "observatory" object by passing the path of the data from OBSEA that you want to analyze:
+Creating an "observatory" object by passing the path of the data from EMODnet that you want to analyze:
 
 ```python
-# Write here your path with OBSEA data  
+# Write here your path with EMODnet data  
 path_data = ""
 
 # Opening data file
