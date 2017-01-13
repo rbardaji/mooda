@@ -4,6 +4,8 @@ Python package for analyzing data from marine observatories. This work is perfor
 
 At the moment, you can analyze data coming from the EMSO test site [OBSEA](http://www.obsea.es). Additionally the package accepts alternative formats from data provided by other  marine observation platforms (now [EMODnet and Jerico](http://www.jerico-ri.eu/data-access/)). You can create your script using the oceanobs libraries or use the graphical user interface that comes with the package.
 
+Check the documentation on [oceanobs.readthedocs.io](http://oceanobs.readthedocs.io/).
+
 ## Getting Started
 
 These instructions will get you the Python package on your local machine for development and testing purposes.
