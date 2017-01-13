@@ -1,5 +1,1 @@
-site_name: oceanobs
-pages:
-    - Home: index.md
-    - About: about.md
 theme: jekyll-theme-cayman
