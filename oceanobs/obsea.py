@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
+import time
+import sys
 try:
     import oceanobs.observatory as observatory
 except ImportError:
@@ -12,7 +14,7 @@ except ImportError:
 
 class OBSEA(observatory.Observatory):
     """
-    Clase para analizar los datos de OBSEA (www.obsea.edu)
+    Class to open OBSEA data (www.obsea.edu)
     """
     def __init__(self, path=None):
         """
@@ -20,6 +22,11 @@ class OBSEA(observatory.Observatory):
         :param path: Path where data is
         :type path: str
         """
+
+        # Instance variables
+        self.data = None
+        self.dialog = None
+
         if path is not None:
             self.open(path)
 
@@ -151,11 +158,11 @@ class OBSEA(observatory.Observatory):
             def qc_spyke_test():
                 """
                 Third level of qc. Find the data that appears inconsistent with other values. Writing "2" to the flag.
-                A large difference between sequential measurements, where one measurement is quite different from adjacent
-                ones, is a spike in both size and gradient. The test does not consider the differences in depth, but assumes
-                a sampling that adequately reproduces the temperature and salinity changes with depth. The algorithm is
-                used on both the temperature and salinity instruments:
-                    Test value = |V2 ? (V3 + V1)/2| ? |(V3 ? V1) / 2|
+                A large difference between sequential measurements, where one measurement is quite different from
+                adjacent ones, is a spike in both size and gradient. The test does not consider the differences in
+                depth, but assumes a sampling that adequately reproduces the temperature and salinity changes with
+                depth. The algorithm is used on both the temperature and salinity instruments:
+                    Test value = |V2 - (V3 + V1)/2| - |(V3 ? V1) / 2|
                 where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
                 """
                 def spyke_formula(v1, v2, v3):
@@ -166,20 +173,35 @@ class OBSEA(observatory.Observatory):
                     :param v3: Next measurement
                     :return: Test value
                     """
-                    test_val = np.abs(v2 - (v2 + v1) / 2) - np.abs((v3 - v1) / 2)
+                    test_val = np.abs(v2 - (v3 + v1) / 2) - np.abs((v3 - v1) / 2)
                     return test_val
 
                 data_keys = self.data.keys()
+                print("parameters: {} {}".format(len(data_keys), data_keys))
+                time1 = datetime.datetime.now()
                 if 'temp_qc' in data_keys:
+                    print("IN TEMP:")
+                    print("Bucle: {}".format(len(self.data.index)))
                     for i in range(len(self.data.index)):
+                        # print("Processing {} from {}".format(i, len(self.data.index)))
                         if i == 0 or i == len(self.data.index) - 1 or self.data['temp_qc'][i] == 4:
                             continue
                         # Value appears inconsistent when the test value exceeds 0.1øC for sampling interval of less
                         # than 1 minute
                         test_value = spyke_formula(self.data['temp'][i - 1], self.data['temp'][i],
                                                    self.data['temp'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.1:
+                        # The value of the spike formula cannot be > 0.1*minute. Let's calculate the minutes between
+                        # the measurements
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.1*minutes:
+                            print("FLAG")
                             self.data.set_value(self.data.index[i], 'temp_qc', 2)
+                        if i % 1000 == 0:
+                            time2 = datetime.datetime.now()
+                            time_dif = time2 - time1
+                            print("{} - we are in: {}  -  dif: {}".format(time1, i, time_dif))
+                            time1 = datetime.datetime.now()
+
                 if 'cond_qc' in data_keys:
                     for i in range(len(self.data.index)):
                         if i == 0 or i == len(self.data.index) - 1 or self.data['cond_qc'][i] == 4:
@@ -188,7 +210,8 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = spyke_formula(self.data['cond'][i - 1], self.data['cond'][i],
                                                    self.data['cond'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.1:
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.1*minutes:
                             self.data.set_value(self.data.index[i], 'cond_qc', 2)
                 if 'sal_qc' in data_keys:
                     for i in range(len(self.data.index)):
@@ -198,7 +221,8 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = spyke_formula(self.data['sal'][i - 1], self.data['sal'][i],
                                                    self.data['sal'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.5:
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.5*minutes:
                             self.data.set_value(self.data.index[i], 'sal_qc', 2)
                 if 'pres_qc' in data_keys:
                     for i in range(len(self.data.index)):
@@ -208,7 +232,8 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = spyke_formula(self.data['pres'][i - 1], self.data['pres'][i],
                                                    self.data['pres'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 1.0:
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 1.0*minutes:
                             self.data.set_value(self.data.index[i], 'pres_qc', 2)
                 if 'atm_qc' in data_keys:
                     for i in range(len(self.data.index)):
@@ -218,7 +243,8 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = spyke_formula(self.data['atm'][i - 1], self.data['atm'][i],
                                                    self.data['atm'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 5.0:
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 5.0*minutes:
                             self.data.set_value(self.data.index[i], 'atm_qc', 2)
                 if 'atemp_qc' in data_keys:
                     for i in range(len(self.data.index)):
@@ -228,7 +254,8 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = spyke_formula(self.data['atemp'][i - 1], self.data['atemp'][i],
                                                    self.data['atemp'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.2:
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.2*minutes:
                             self.data.set_value(self.data.index[i], 'atemp_qc', 2)
 
             def qc_gradient_test():
@@ -237,7 +264,7 @@ class OBSEA(observatory.Observatory):
                 This test is failed when the difference between vertically adjacent measurements is too steep.
                 The test does not consider the differences in depth, but assumes a sampling that adequately reproduces the
                 temperature and salinity changes with depth:
-                    Test value = | V2 ? (V3 + V1)/2 |
+                    Test value = | V2 - (V3 + V1)/2 |
                 where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
                 """
                 def gradient_formula(v1, v2, v3):
@@ -260,8 +287,23 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = gradient_formula(self.data['temp'][i - 1], self.data['temp'][i],
                                                       self.data['temp'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.2:
-                            self.data.set_value(self.data.index[i], 'temp_qc', 2)
+                        # Calculation of the minutes
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.2*minutes:
+                            # Check the next value
+                            if (i + 2) <= len(self.data.index):
+                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
+                                test_value = gradient_formula(self.data['temp'][i], self.data['temp'][i + 1],
+                                                              self.data['temp'][i + 2])
+                                if test_value > 0.2*minutes:
+                                    # If it has an other time an error it means that it is a spyke detected with the
+                                    # gradient
+                                    self.data.set_value(self.data.index[i], 'temp_qc', 2)
+                                else:
+                                    # If now it is ok, it means that the spyke was the previous value
+                                    self.data.set_value(self.data.index[i-1], 'temp_qc', 2)
+                            else:
+                                self.data.set_value(self.data.index[i], 'temp_qc', 2)
                 if 'cond_qc' in data_keys:
                     for i in range(len(self.data.index)):
                         if i == 0 or i == len(self.data.index) - 1 or self.data['cond_qc'][i] == 4:
@@ -270,8 +312,22 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = gradient_formula(self.data['cond'][i - 1], self.data['cond'][i],
                                                       self.data['cond'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.2:
-                            self.data.set_value(self.data.index[i], 'cond_qc', 2)
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.2*minutes:
+                            # Check the next value
+                            if (i + 2) <= len(self.data.index):
+                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
+                                test_value = gradient_formula(self.data['cond'][i], self.data['cond'][i + 1],
+                                                              self.data['cond'][i + 2])
+                                if test_value > 0.2*minutes:
+                                    # If it has an other time an error it means that it is a spyke detected with the
+                                    # gradient
+                                    self.data.set_value(self.data.index[i], 'cond_qc', 2)
+                                else:
+                                    # If now it is ok, it means that the spyke was the previous value
+                                    self.data.set_value(self.data.index[i-1], 'cond_qc', 2)
+                            else:
+                                self.data.set_value(self.data.index[i], 'cond_qc', 2)
                 if 'sal_qc' in data_keys:
                     for i in range(len(self.data.index)):
                         if i == 0 or i == len(self.data.index) - 1 or self.data['sal_qc'][i] == 4:
@@ -280,8 +336,22 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = gradient_formula(self.data['sal'][i - 1], self.data['sal'][i],
                                                       self.data['sal'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 1:
-                            self.data.set_value(self.data.index[i], 'sal_qc', 2)
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 1.0*minutes:
+                            # Check the next value
+                            if (i + 2) <= len(self.data.index):
+                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
+                                test_value = gradient_formula(self.data['sal'][i], self.data['sal'][i + 1],
+                                                              self.data['sal'][i + 2])
+                                if test_value > 1.0*minutes:
+                                    # If it has an other time an error it means that it is a spyke detected with the
+                                    # gradient
+                                    self.data.set_value(self.data.index[i], 'sal_qc', 2)
+                                else:
+                                    # If now it is ok, it means that the spyke was the previous value
+                                    self.data.set_value(self.data.index[i-1], 'sal_qc', 2)
+                            else:
+                                self.data.set_value(self.data.index[i], 'sal_qc', 2)
                 if 'pres_qc' in data_keys:
                     for i in range(len(self.data.index)):
                         if i == 0 or i == len(self.data.index) - 1 or self.data['pres_qc'][i] == 4:
@@ -290,8 +360,22 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = gradient_formula(self.data['pres'][i - 1], self.data['pres'][i],
                                                       self.data['pres'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 2.0:
-                            self.data.set_value(self.data.index[i], 'pres_qc', 2)
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 2.0*minutes:
+                            # Check the next value
+                            if (i + 2) <= len(self.data.index):
+                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
+                                test_value = gradient_formula(self.data['pres'][i], self.data['pres'][i + 1],
+                                                              self.data['pres'][i + 2])
+                                if test_value > 2.0*minutes:
+                                    # If it has an other time an error it means that it is a spyke detected with the
+                                    # gradient
+                                    self.data.set_value(self.data.index[i], 'pres_qc', 2)
+                                else:
+                                    # If now it is ok, it means that the spyke was the previous value
+                                    self.data.set_value(self.data.index[i-1], 'pres_qc', 2)
+                            else:
+                                self.data.set_value(self.data.index[i], 'pres_qc', 2)
                 if 'atm_qc' in data_keys:
                     for i in range(len(self.data.index)):
                         if i == 0 or i == len(self.data.index) - 1 or self.data['atm_qc'][i] == 4:
@@ -300,8 +384,22 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = gradient_formula(self.data['atm'][i - 1], self.data['atm'][i],
                                                       self.data['atm'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 10.0:
-                            self.data.set_value(self.data.index[i], 'atm_qc', 2)
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 10.0*minutes:
+                            # Check the next value
+                            if (i + 2) <= len(self.data.index):
+                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
+                                test_value = gradient_formula(self.data['atm'][i], self.data['atm'][i + 1],
+                                                              self.data['atm'][i + 2])
+                                if test_value > 10.0*minutes:
+                                    # If it has an other time an error it means that it is a spyke detected with the
+                                    # gradient
+                                    self.data.set_value(self.data.index[i], 'atm_qc', 2)
+                                else:
+                                    # If now it is ok, it means that the spyke was the previous value
+                                    self.data.set_value(self.data.index[i-1], 'atm_qc', 2)
+                            else:
+                                self.data.set_value(self.data.index[i], 'atm_qc', 2)
                 if 'atemp_qc' in data_keys:
                     for i in range(len(self.data.index)):
                         if i == 0 or i == len(self.data.index) - 1 or self.data['atemp_qc'][i] == 4:
@@ -310,8 +408,22 @@ class OBSEA(observatory.Observatory):
                         # than 1 minute
                         test_value = gradient_formula(self.data['atemp'][i - 1], self.data['atemp'][i],
                                                       self.data['atemp'][i + 1])
-                        if (self.data.index[i + 1] - self.data.index[i - 1]).total_seconds() < 60 and test_value > 0.4:
-                            self.data.set_value(self.data.index[i], 'atemp_qc', 2)
+                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
+                        if test_value > 0.4*minutes:
+                            # Check the next value
+                            if (i + 2) <= len(self.data.index):
+                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
+                                test_value = gradient_formula(self.data['atemp'][i], self.data['atemp'][i + 1],
+                                                              self.data['atemp'][i + 2])
+                                if test_value > 0.4*minutes:
+                                    # If it has an other time an error it means that it is a spyke detected with the
+                                    # gradient
+                                    self.data.set_value(self.data.index[i], 'atemp_qc', 2)
+                                else:
+                                    # If now it is ok, it means that the spyke was the previous value
+                                    self.data.set_value(self.data.index[i-1], 'atemp_qc', 2)
+                            else:
+                                self.data.set_value(self.data.index[i], 'atemp_qc', 2)
 
             def qc_good_data():
                 """
@@ -344,11 +456,17 @@ class OBSEA(observatory.Observatory):
                 if 'ph_qc' in data_keys:
                     self.data.ix[self.data['ph_qc'] == 0, 'ph_qc'] = 1
 
+            print("init: {}".format(datetime.datetime.now()))
             qc_init()
+            print("missing values: {}".format(datetime.datetime.now()))
             qc_missing_values()
+            print("impossible values: {}".format(datetime.datetime.now()))
             qc_impossible_values()
+            print("spyke test: {}".format(datetime.datetime.now()))
             qc_spyke_test()
+            print("gradient test: {}".format(datetime.datetime.now()))
             qc_gradient_test()
+            print("good data: {}".format(datetime.datetime.now()))
             qc_good_data()
 
         def open_csv(path_csv):
@@ -462,17 +580,86 @@ class OBSEA(observatory.Observatory):
         # Create metadata
         create_metadata()
 
-    @staticmethod
-    def how_to_download_data(lenguage='CAT'):
+    def estimation_time_to_open(self, path, time_value=0.019):
         """
-        Explicacion de como descargar datos.
+        Calculation of how many time takes to open the data.
+        :param path: Path where the data is.
+        :param time_value: Estimation of time that takes the open processo of one value, in seconds.
+        :return estimation: str with info about how many time takes to open the data.
+        """
+
+        def open_csv(path_csv):
+            """
+            Extract data from csv file
+            :param path_csv: Path from the csv file
+            :type path_csv: str
+            """
+
+            self.dialog = False
+            # Extract data from csv file
+            try:
+                self.data = pd.read_csv(path_csv, sep='\t', parse_dates=['date_sistema'], index_col=0)
+            except ValueError:
+                self.data = pd.read_csv(path_csv, sep='\t', parse_dates=['date_time'], index_col=0)
+            except FileNotFoundError as error:
+                self.dialog = error
+            except OSError:
+                self.dialog = "Error: File = '{}' does not exist.".format(path)
+            # Look for any error
+            if self.dialog:
+                return
+
+        def open_list(path_list):
+            """
+            Read all the data of the list of paths
+            :param path_list: List of paths
+            :return:
+            """
+            big_data = pd.DataFrame()
+            for one_path in path_list:
+                _filename, file_extension = os.path.splitext(one_path)
+                if file_extension == ".txt":
+                    open_csv(one_path)
+                    # Add to big data
+                    big_data = big_data.append(self.data)
+            self.data = big_data
+
+        def listdir_fullpath(d):
+            return [os.path.join(d, f) for f in os.listdir(d)]
+
+        self.dialog = False
+        # Know if it is a string or a list
+        if isinstance(path, str):
+            # It is a string
+            # Know if path is a file or a directory
+            if os.path.isfile(path):
+                # Path is a file
+                open_csv(path)
+            elif os.path.isdir(path):
+                # Path is a directory
+                path_lst = listdir_fullpath(path)
+                open_list(path_lst)
+            else:
+                self.dialog = "Error: {} does not exist.".format(path)
+        elif isinstance(path, list):
+            # It is a list
+            open_list(path)
+
+        # Calculation of the estimation
+        estimation = time.strftime('%H:%M:%S', time.gmtime(self.data.size*time_value*2*len(self.data.columns)/2))
+        return estimation
+
+    @staticmethod
+    def how_to_download_data(language='CAT'):
+        """
+        Returns a string text explaining how to download OBSEA data with the selected language. Now, we just have Catalan.
         :param lenguage: Idioma con el que quieres la explicacion
-        :type lenguage: str
+        :type language: str
         :return: Explicacion
         :rtype: str
         """
         tutorial = ""
-        if lenguage == 'CAT':
+        if language == 'CAT':
             tutorial = ("1. Abans de tot s'ha de seleccionar el per¡ode de temps (From-to).\n"
                         "2. DesprŠs es prem el boto Update Plot perquŠ s'actualitzi la grfica.\n"
                         "3. I per exportar les dades s'ha de pr‚mer el boto Generate Data.\n"
@@ -487,61 +674,84 @@ class OBSEA(observatory.Observatory):
         return tutorial
 
 if __name__ == '__main__':
-    import sys
     from matplotlib import style
     style.use('ggplot')
 
     print("Example of class OBSEA")
 
-    # Path de los datos
-    # path_data = r"C:\Users\rbard\OneDrive\Data\obsea\buoy\buoy.txt"
-    path_data = r"C:\Users\rbard\OneDrive\Data\obsea\obsea\ctd1_short.txt"
-    # path_data = r"C:\Users\rbard\OneDrive\Data\obsea\obsea\ctd2.txt"
-    # path_data = r"C:\Users\rbard\OneDrive\Data\obsea\obsea"
+    # Data path
+    path_data = r""
     print("Data path: {}".format(path_data))
 
-    print("Loading data, please wait.")
-    ob = OBSEA(path_data)
-    if ob.dialog:
-        print(ob.dialog)
-        sys.exit()
-    else:
-        print("Done.")
+    ''' KNOW HOW MANY TIME TAKES TO OPEN DATA '''
+    # ob = OBSEA()
+    # estimation = ob.estimation_time_to_open(path_data)
+    # print("Estimation of time to open the file: {}".format(estimation))
+    # print("Size: {} Bytes".format(sys.getsizeof(ob.data)))
 
-    print("DATA INFO:")
-    print("Platform code: {}".format(ob.metadata['platform_code'][0]))
-    print("WMO platform code: {}".format(ob.metadata['wmo_platform_code'][0]))
-    print("Institution: {}".format(ob.metadata['institution'][0]))
-    print("Type: {}".format(ob.metadata['type'][0]))
-
-    print(ob.data)
-
-    # print("Resampling weekly frequency.")
-    # ob.resample_data('W')
+    ''' LOADING DATA FROM PATH'''
+    # print("Loading data, please wait.")
+    # ob = OBSEA(path_data)
     # if ob.dialog:
     #     print(ob.dialog)
     #     sys.exit()
-    # else:
-    #     print("Done.")
+    # # Saving the data in a pkl file
+    # ob.data.to_pickle("data.pkl")
+    # ob.metadata.to_pickle("metadata.pkl")
 
-    # Plots
+    ''' LOADING DATA FROM PKL FILE '''
+    ob = OBSEA()
+    ob.data = pd.read_pickle(r"C:\Users\Raul\Google Drive\Work\Data\obsea\data_obsea.pkl")
+    ob.metadata = pd.read_pickle(r"C:\Users\Raul\Google Drive\Work\Data\obsea\metadata_obsea.pkl")
+
+    ''' INFO '''
+    print("METADATA INFORMATION")
+    print(ob.info_metadata())
+    print("DATA INFORMATION")
+    print(ob.info_data())
+    print("DATA MEANING")
+    print(ob.info_parameters())
+
+    ''' DELETING COLUMNS NOT NEEDED '''
+    print("Deleting data that we do not need.")
+    ob.data.drop('sal', axis=1, inplace=True)
+    ob.data.drop('sal_qc', axis=1, inplace=True)
+
+    ''' RESAMPLING '''
+    print("Resampling to calendar day frequency.")
+    ob.resample_data('D')
+    if ob.dialog:
+        print(ob.dialog)
+        sys.exit()
+
+    ''' Clear '''
+    ob.clear_bad_data()
+
+    ''' Butterworth Filter'''
+    print("Applying Butterworth filter.")
+    ob.butterworth_filter('temp')
+    if ob.dialog:
+        print(ob.dialog)
+        sys.exit()
+    ob.butterworth_filter('atemp')
+    if ob.dialog:
+        print(ob.dialog)
+        sys.exit()
+
+    ''' SLICING '''
+    '''print("Slicing.")
+    start = ""
+    stop = ""
+    print("Start: {}/{}/{} {}:{}:{}, Stop: {}/{}/{} {}:{}:{}".format(start[:4], start[4:6], start[6:8], start[8:10],
+                                                                     start[10:12],  start[12:], stop[:4], stop[4:6],
+                                                                     stop[6:8], stop[8:10], stop[10:12],  stop[12:]))
+    ob.slicing(start, stop)
+    print("Done.")'''
+
+    ''' PLOTS '''
     print("Making plots.")
     ob.plt_all()
-    ob.plt_qc()
     print("Done.")
-
-    # Slicing
-    # print("Slicing.")
-    # start = '20160117000000'
-    # stop = '20160131000000'
-    # print("Start: {}/{}/{} {}:{}:{}, Stop: {}/{}/{} {}:{}:{}".format(start[:4], start[4:6], start[6:8], start[8:10],
-    #                                                                  start[10:12],  start[12:], stop[:4], stop[4:6],
-    #                                                                  stop[6:8], stop[8:10], stop[10:12],  stop[12:]))
-    # ob.slicing(start, stop)
-    # print("Done.")
-
-    # print(ob.data)
-    # print(ob.how_to_download_data())
-    # print(ob.info_data())
-
     plt.show()
+
+    print("END")

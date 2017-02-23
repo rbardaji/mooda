@@ -1,6 +1,9 @@
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy.signal as signal
 
 
 class Observatory:
@@ -11,8 +14,6 @@ class Observatory:
     def __init__(self):
         """
         Constructor of class
-        :param path: Path where data is
-        :type path: str
         """
         # Object instance variables
         self.data = None
@@ -31,16 +32,16 @@ class Observatory:
     def slicing(self, start_time, end_time):
         """
         Slicing by date conditions.
-        :param start_time: start time of the slice with format 'YYYYMMDDHHmmss'
+        :param start_time: start time of the slice with format 'YYYYMMDDHHmmss'.
         :type start_time: str
-        :param end_time: end time of the slice with format 'YYYYMMDDHHmmss'
+        :param end_time: end time of the slice with format 'YYYYMMDDHHmmss'.
         """
         self.data = self.data[start_time:end_time]
 
     def resample_data(self, how_often):
         """
-        Delmamos los datos calculando la media
-        :param how_often: Cuanto queremos delmar (Mirar la info de abajo)
+        Resample data. This function calculate an average of the values if it is necessary.
+        :param how_often: Frequency to that we want the data.
         :type how_often: str
         """
         """
@@ -94,19 +95,24 @@ class Observatory:
             if 'wadi_qc' in data_keys:
                 self.data.ix[self.data['wadi_qc'] != 1, 'wadi'] = np.nan
                 self.data.ix[self.data['wadi_qc'] != 1, 'wadi_qc'] = 1
+            if 'temp_qc' in data_keys:
+                self.data.ix[self.data['temp_qc'] != 1, 'temp'] = np.nan
+                self.data.ix[self.data['temp_qc'] != 1, 'temp_qc'] = 1
 
         def resample_qc():
             data_keys = self.data.keys()
             if 'atm_qc' in data_keys:
-                self.data.ix[pd.isnull(self.data['atm']), 'atm_qc'] = 8
+                self.data.ix[pd.isnull(self.data['atm']), 'atm_qc'] = 9
             if 'wisp_qc' in data_keys:
-                self.data.ix[pd.isnull(self.data['wisp']), 'wisp_qc'] = 8
+                self.data.ix[pd.isnull(self.data['wisp']), 'wisp_qc'] = 9
             if 'widi_qc' in data_keys:
-                self.data.ix[pd.isnull(self.data['widi']), 'widi_qc'] = 8
+                self.data.ix[pd.isnull(self.data['widi']), 'widi_qc'] = 9
             if 'atemp_qc' in data_keys:
-                self.data.ix[pd.isnull(self.data['atemp']), 'atemp_qc'] = 8
+                self.data.ix[pd.isnull(self.data['atemp']), 'atemp_qc'] = 9
             if 'wape_qc' in data_keys:
-                self.data.ix[pd.isnull(self.data['wape']), 'wape_qc'] = 8
+                self.data.ix[pd.isnull(self.data['wape']), 'wape_qc'] = 9
+            if 'temp_qc' in data_keys:
+                self.data.ix[pd.isnull(self.data['temp']), 'temp_qc'] = 9
 
         # Change the bad values
         change_bad_values()
@@ -120,29 +126,237 @@ class Observatory:
         # Interpolarization
         self.data.interpolate(inplace=True)
 
+    def butterworth_filter(self, component, order=2, cutoff_frequency=0.01):
+        """
+        Apply the Butterworth Filter to the data.
+        :param component: Name of the parameter that you want to filter.
+        :type component: str
+        :param order: Filter order
+        :type order: int
+        :param cutoff_frequency: Cutoff frequency
+        :type  cutoff_frequency: float
+        :return:
+        """
+        self.dialog = None
+        try:
+            # First, design the Buterworth filter
+            b, a = signal.butter(order, cutoff_frequency, output='ba')
+            # Second, apply the filter
+            filtered_data = signal.filtfilt(b, a, self.data[component])
+            # Changing the QC flac to say that the value was modified.
+            self.data.ix[self.data[component] != filtered_data, component+'_qc'] = 5
+            # Adding the values
+            self.data[component] = filtered_data
+        except KeyError:
+            self.dialog = "Error: {}".format(KeyError)
+
+    def clear_bad_data(self):
+        """
+        Delete all the data with QC flags 2, 3, 4, 6 and 9
+        """
+        for key in self.data.keys():
+            if "_qc" in key:
+                self.data = self.data[self.data[key] != 2]
+                self.data = self.data[self.data[key] != 3]
+                self.data = self.data[self.data[key] != 4]
+                self.data = self.data[self.data[key] != 6]
+                self.data = self.data[self.data[key] != 9]
+
     """ Data information"""
 
     def info_data(self):
         """
-        Obte alguna informacio de les dades que s'estan utilitzant.
+        Return when your data start and stop in terms of time.
         :return: info de data
         :rtype: str
         """
         # Search for initial and final dates
         try:
+            # Look for start and stop time
             start_time = self.data.first_valid_index()
             stop_time = self.data.last_valid_index()
-            message = "start time: {}\nstop time: {}".format(start_time, stop_time)
+            message = "start time: {}\nstop time: {}\n".format(start_time, stop_time)
+            # Look for the parameters
+            message += "Parameters: "
+            for key in self.data.keys():
+                if "_qc" in key:
+                    continue
+                message += "{}, ".format(key)
         except IndexError:
             message = "Error: No good data."
-        return message
+        return message[:-2]
+
+    def info_metadata(self):
+        """
+        Return all the metadata information in a string format.
+        :return: str, metadata information.
+        """
+        keys = self.metadata.keys()
+        message = ""
+        for key in keys:
+            if self.metadata[key][0] != " ":
+                message += "{}: {}\n".format(key, str(self.metadata[key][0]))
+        return message[:-1]  # Delete the last "\n"
+
+    @staticmethod
+    def info_qc_flags():
+        """
+        Plot information
+        :return: string with the information
+        """
+        info = "We are using the GLOBAL QCFF flags.\n" \
+               "Flag - Meaning\n" \
+               "0 - no quality control\n" \
+               "1 - value seems correct\n" \
+               "2 - value appears inconsistent with other values\n" \
+               "3 - value seems doubtful\n" \
+               "4 - value seems erroneous\n" \
+               "5 - value was modified\n" \
+               "6 - flagged land test\n" \
+               "7 - nominal_value\n" \
+               "8 - interpolated value\n" \
+               "9 - value missing"
+        return info
+
+    def info_parameters(self):
+        """
+        Gives information about what parameters are you using in the variable self.data
+        :return: string with the information
+        """
+        message = ""
+        for key in self.data.keys():
+            if "time_qc" == key:
+                message += "time_qc: Quality control flag related to the time of the measurement (the time is" + \
+                          " the index of the data frame).\n"
+            if "temp" == key:
+                message += "temp: Temperature of the water in Celsius degrees.\n"
+            if "temp_qc" == key:
+                message += "temp_qc: Quality control flag related to the temperature of the water.\n"
+            if "atemp" == key:
+                message += "atemp: Air temperatre in Celsius degree.\n"
+            if "atemp_qc" == key:
+                message += "atemp_qc: Quality control flag related to the air temperature.\n"
+            if "cond" == key:
+                message += "cond: Conductivity of the water in S/m.\n"
+            if "cond_qc" == key:
+                message += "Quality control flag related to the conductivity.\n"
+            if "sal" == key:
+                message += "sal: Salinity of the water in PSU.\n"
+            if "sal_qc" == key:
+                message += "sal_qc: Quality control flag related to the salinity of the water.\n"
+            if "pres" == key:
+                message += "pres: Pressure of the sensor in water in dBars.\n"
+            if "atm" == key:
+                message += "atm: Atmospheric pressure in dBars.\n"
+            if "atm_qc" == key:
+                message += "atm_qc: Quality control flag related to the atmospheric pressure.\n"
+            if "wis" == key:
+                message += "wis: Wind speed in m/s.\n"
+            if "wis_qc" == key:
+                message += "wis_qc: Quality control flag related to the wind speed.\n"
+            if "ph" == key:
+                message += "ph: Power of hydrogen (pH, no units of measurement).\n"
+            if "ph_qc" == key:
+                message += "ph_qc: Quality control flag related to the pH.\n"
+            if "wad" == key:
+                message += "wad: Wave direction relative to true north in degrees.\n"
+            if "wad_qc" == key:
+                message += "wap_qc: Quality control flag related to the zero-crossing wave period.\n"
+            if "sovel" == key:
+                message += "sovel: Sound velocity in m/s.\n"
+            if "sovel_qc" == key:
+                message += "sovel_qc: Quality control flag related to the sound velocity.\n"
+            if "depth" == key:
+                message += "depth: Depth of the sensor in m.\n"
+            if "depth_qc" == key:
+                message += "depth_qc: Quality control flag related to the depth.\n"
+            if "tur" in key:
+                message += "tur: Turbidity in NTU.\n"
+            if "tur_qc" == key:
+                message += "tur_qc:  Quality control flag related to the turbidity.\n"
+            if "oxy" in key:
+                message += "oxy: Oxygen concentration in ?????.\n"
+            if "oxy_qc" == key:
+                message += "oxy_qc: Quality control flag related to the oxygen concentration.\n"
+            if "asa" == key:
+                message += "asa: Air saturation in %.\n"
+            if "asa_qc" == key:
+                message += "asa_qc: Quality control flag related to the air saturation.\n"
+            if "sele" == key:
+                message += "sele: Observed sea level in meters.\n"
+            if "sele_qc" == key:
+                message += "Quality control flag related to the observed sea level.\n"
+
+        return message[:-1]
+
+    @staticmethod
+    def translator(parameter):
+        """
+        It helps to understand the data names.
+        :param parameter: Name of the variable that you want to understand
+        :return: tuple (2x1) with the real name and the values of the variable
+        """
+
+        translation = (None, None)
+        if "temp" == parameter:
+            translation = ("Sea temperature", "degrees Celsius")
+        if "atemp" == parameter:
+            translation = ("Air temperatre", "degrees Celsius")
+        if "cond" == parameter:
+            translation = ("Conductivity", "S/m")
+        if "sal" == parameter:
+            translation = ("Salinity", "PSU")
+        if "pres" == parameter:
+            translation = ("Pressure", "dBars")
+        if "atm" == parameter:
+            translation = ("Atmospheric pressure", "dBars")
+        if "wis" == parameter:
+            translation = ("Wind speed", "m/s")
+        if "ph" == parameter:
+            translation = ("pH", "(no units)")
+        if "wad" == parameter:
+            translation = ("Wave direction relative to true north", "degrees")
+        if "sovel" == parameter:
+            translation = ("Sound velocity", "m/s")
+        if "depth" == parameter:
+            translation = ("Depth", "m")
+        if "tur" == parameter:
+            translation = ("Turbidity", "NTU")
+        if "oxy" == parameter:
+            translation = ("Oxygen", "???")
+        if "asa" == parameter:
+            translation = ("Air saturation", "%")
+        if "sele" == parameter:
+            translation = ("Sea level", "m")
+
+        return translation
 
     """ Plot functions """
 
+    """def plt_hist_wind_speed(self):
+        # Wave height
+        fig_air, axes = plt.subplots(nrows=1, ncols=1)
+        self.data['WSPD'].plot.hist(ax=axes,)
+        axes.set_title('Wind speed histogram')
+        axes.set_ylabel('hours')
+        axes.set_xlabel('meter/second')
+
+        return fig_air
+
+    def plt_maximun_windspeed(self):
+        # Wave height
+
+        fig_maw_wind, axes = plt.subplots(nrows=1, ncols=1)
+        self.data.groupby(pd.TimeGrouper('D')).WSPD.max().plot(ax=axes,)
+        axes.set_title('Maximun windspeed')
+        axes.set_ylabel('meter/second')
+        axes.set_xlabel('Days')
+        return fig_maw_wind"""
+
     def plt_cond(self, qc_flag=None):
         """
-        Conductivity vs time plot
-        :param qc_flag: It indicates the flag number of the data, you want to plot
+        Graph of conductivity vs time.
+        :param qc_flag: It indicates the QC flag number of the data you want to plot
         :return: Figure
         """
         self.dialog = False
@@ -164,7 +378,7 @@ class Observatory:
 
     def plt_temp(self, qc_flag=None):
         """
-        Sea temperature vs time plot
+        Graph of Sea temperature vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -186,7 +400,7 @@ class Observatory:
 
     def plt_atemp(self, qc_flag=None):
         """
-        Air temperature plot
+        Graph of Air temperature vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -208,7 +422,7 @@ class Observatory:
 
     def plt_pres(self, qc_flag=None):
         """
-        Pressure vs time plot
+        Graph of pressure vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -230,7 +444,7 @@ class Observatory:
 
     def plt_atm(self, qc_flag=None):
         """
-        Atmospheric pressure vs time plot
+        Graph of atmospheric pressure vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -252,7 +466,7 @@ class Observatory:
 
     def plt_sal(self, qc_flag=None):
         """
-        Salinity vs time plot
+        Graph of salinity vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -274,7 +488,7 @@ class Observatory:
 
     def plt_ts(self):
         """
-        Grafica T-S
+        Graph of T-S.
         :return: figura
         """
         fig_ts, axes = plt.subplots(nrows=1, ncols=1)
@@ -286,7 +500,7 @@ class Observatory:
 
     def plt_sovel(self, qc_flag=None):
         """
-        Sound velocity vs time plot
+        Graph of sound velocity vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -308,7 +522,7 @@ class Observatory:
 
     def plt_co2(self):
         """
-        Grafica de CO2 i temps
+        Graph of CO2 vs time.
         :return: figura
         """
         fig_co2, axes = plt.subplots(nrows=1, ncols=1)
@@ -320,7 +534,7 @@ class Observatory:
 
     def plt_wisp(self, qc_flag=None):
         """
-        Wind speed vs time plot
+        Graph of wind speed vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -342,7 +556,7 @@ class Observatory:
 
     def plt_widi(self, qc_flag=None):
         """
-        Wind direction vs time plot
+        Graph of wind direction vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -364,29 +578,85 @@ class Observatory:
 
     def plt_qc(self):
         """
-        QC plot
+        Graph of QC.
         :return: Figure
         """
-        # Creation of the matrix
-        index_names = []
-        matrix = []
-        data_keys = self.data.keys()
-        for key in data_keys:
-            if 'qc' in key:
-                index_names.append(key)
-                matrix.append(self.data[key])
-        # Creation of the figure
-        fig_qc, axes = plt.subplots(nrows=1, ncols=1)
-        cax = axes.matshow(matrix)
-        # fig_qc.colorbar(cax)
-        axes.set_yticklabels(['']+index_names)
-        axes.grid('off')
+        def select_qc_data():
+            """
+            Selection of qc data.
+            :return: pandas Dataframe with the QC data.
+            """
+            # init pandas DataFrame
+            data_qc_ = pd.DataFrame()
+            # Look for QC data
+            data_keys = self.data.keys()
+            for key in data_keys:
+                if '_qc' in key:
+                    data_qc_ = data_qc_.append(self.data[key])
+            return data_qc_
+
+        def cmap_discretize(cmap_input, ncolors):
+            """
+            Return a discrete colormap from the continuous colormap cmap.
+            :param cmap_input: colormap instance, eg. cm.jet.
+            :param ncolors: number of colors.
+            :return ncolors.LinearSegmentedColormap
+            """
+
+            if type(cmap_input) == str:
+                plt.get_cmap(cmap_input)
+            colors_i = np.concatenate((np.linspace(0, 1., ncolors), (0., 0., 0., 0.)))
+            colors_rgba = cmap_input(colors_i)
+            indices = np.linspace(0, 1., ncolors+1)
+            cdict = {}
+            for ki, key in enumerate(('red', 'green', 'blue')):
+                cdict[key] = [(indices[i], colors_rgba[i-1, ki], colors_rgba[i, ki]) for i in range(ncolors+1)]
+            # Return colormap object.
+            return mcolors.LinearSegmentedColormap(cmap_input.name + "_%d" % ncolors, cdict, 1024)
+
+        def colorbar_index(ncolors, cmap_input):
+            """
+            Return a discrete colormap from the continuous colormap cmap.
+            :param ncolors: number of colors.
+            :param cmap_input: colormap instance, eg. cm.jet.
+            """
+            yticklabels = ['0, no QC', '1, correct', '2, inconsistent', '3, doubtful', '4, erroneous', '5, modified',
+                           '6, land test', '7, nominal value', '8, interpolated', '9, value missing']
+
+            mappable = cm.ScalarMappable(cmap=cmap_input)
+            mappable.set_array([])
+            mappable.set_clim(-0.5, ncolors+0.5)
+            colorbar = plt.colorbar(mappable)
+            colorbar.set_ticks(np.linspace(0, ncolors, ncolors))
+            colorbar.set_ticklabels(yticklabels)
+            # colorbar.set_ticklabels(range(ncolors))
+
+        data_qc = select_qc_data()
+
+        fig_qc, ax = plt.subplots()
+
+        # Creation of a discret cmap
+        cmap = plt.get_cmap('jet')
+        cmap_disc = cmap_discretize(cmap_input=cmap, ncolors=10)
+        # Creation of the colorbar
+        colorbar_index(ncolors=10, cmap_input=cmap_disc)
+        # Creation of the graph
+        ax.pcolor(data_qc, cmap=cmap_disc, edgecolor='w', vmin=0, vmax=9)
+        ax.set_xlim(0, len(data_qc.keys()))
+        # Adding text to the headmap
+        for y in range(data_qc.shape[0]):
+            for x in range(data_qc.shape[1]):
+                plt.text(x + 0.5, y + 0.5, "{}".format(int(data_qc.iloc[y, x])), horizontalalignment='center',
+                         verticalalignment='center', color='w')
+        plt.yticks(np.arange(0.5, len(data_qc.index), 1), data_qc.index)
+        plt.xticks(np.arange(0.5, len(data_qc.columns), 1), data_qc.columns)
+        fig_qc.autofmt_xdate()
 
         return fig_qc
 
     def plt_wadi(self, qc_flag=None):
         """
-        Wave direction vs time plot
+        Graph of wave direction vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -408,7 +678,7 @@ class Observatory:
 
     def plt_wape(self, qc_flag=None):
         """
-        Wave period vs time plot
+        Graph of wave period vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -416,7 +686,7 @@ class Observatory:
         fig_wape, axes = plt.subplots(nrows=1, ncols=1)
         try:
             if qc_flag is None:
-                (self.data['wape']).plot(ax=axes)
+                self.data['wape'].plot(ax=axes)
             else:
                 (self.data['wape'][self.data['wape_qc'] == qc_flag]).plot(ax=axes)
         except KeyError:
@@ -431,7 +701,7 @@ class Observatory:
 
     def plt_wahe(self, qc_flag=None):
         """
-        Wave height plot
+        Graph of wave height vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -453,7 +723,7 @@ class Observatory:
 
     def plt_atmpres(self, qc_flag=None):
         """
-        Atmospheric pressure at sea level
+        Graph of atmospheric pressure at sea level vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -475,7 +745,7 @@ class Observatory:
 
     def plt_sele(self, qc_flag=None):
         """
-        Observed dea level
+        Graph of sea level vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -497,7 +767,7 @@ class Observatory:
 
     def plt_prec(self, qc_flag=None):
         """
-        Rain acumulation
+        Graph of rain accumulation vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -509,9 +779,9 @@ class Observatory:
             else:
                 self.data['prec'][self.data['prec_qc'] == qc_flag].plot(ax=axes)
         except KeyError:
-            self.dialog = "Error: No rain acumulation data."
+            self.dialog = "Error: No rain accumulation data."
         except TypeError:
-            self.dialog = "Error: No rain acumulation data with quality control flag = {}.".format(qc_flag)
+            self.dialog = "Error: No rain accumulation data with quality control flag = {}.".format(qc_flag)
         axes.set_title('Precipitation rate')
         axes.set_ylabel('mm')
         axes.set_xlabel('Time UTC')
@@ -519,7 +789,7 @@ class Observatory:
 
     def plt_relhu(self, qc_flag=None):
         """
-        Relative humidity
+        Graph of relative humidity vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -541,7 +811,7 @@ class Observatory:
 
     def plt_gusp(self, qc_flag=None):
         """
-        Gust wind speed
+        Graph of gust wind speed vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -563,7 +833,7 @@ class Observatory:
 
     def plt_cusp(self, qc_flag=None):
         """
-        Gust wind speed
+        Graph of current speed vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -585,7 +855,7 @@ class Observatory:
 
     def plt_cudi(self, qc_flag=None):
         """
-        Gust wind speed
+        Graph of current direction vs time.
         :param qc_flag: It indicates the flag number of the data, you want to plot
         :return: Figure
         """
@@ -607,9 +877,9 @@ class Observatory:
 
     def plt_all(self, qc_flag=None):
         """
-        Create all the possible plots
+        Create all the possible grapths
         :param qc_flag: It indicates the flag number of the data, you want to plot
-        :return: Figure dict
+        :return: Dictionary where the ‘keys’ are the name of the figures and the ‘values’ are matplotlib-figure objects.
         """
         fig_dict = {}
         data_keys = self.data.keys()
@@ -670,5 +940,75 @@ class Observatory:
         if 'cudi' in data_keys:
             fig_cudi = self.plt_cudi(qc_flag)
             fig_dict['Current direction'] = fig_cudi
+        if len(self.data.index) < 25:
+            fig_qc = self.plt_qc()
+            fig_dict['QC flags'] = fig_qc
 
         return fig_dict
+
+    def plt_multiparam_one_plot(self, *parameter, qc_flag=None):
+        """
+        Plot multiple parametes.
+        :param parameter: List of parameters to plot
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+        self.dialog = False
+        fig_multiple, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            title = ""
+            if qc_flag is None:
+                for param in parameter:
+                    meaning, units = self.translator(param)
+                    title += "{} and ".format(meaning)
+                    self.data[param].plot(ax=axes, label="{} in {}".format(meaning, units))
+            else:
+                for param in parameter:
+                    param_qc = param + '_qc'
+                    meaning, units = self.translator(param)
+                    title += "{} and ".format(meaning)
+                    self.data[param][self.data[param_qc] == qc_flag].plot(ax=axes, label="{} in {}".format(meaning,
+                                                                                                           units))
+            title = title[:-5]
+            axes.set_title(title)
+            axes.set_xlabel('Time UTC')
+            axes.legend()
+        except KeyError:
+            self.dialog = "Error"
+        except TypeError:
+            self.dialog = "Error".format(qc_flag)
+        return fig_multiple
+
+    def plt_multiparam_multiplot(self, *parameter, qc_flag=None):
+        """
+        Plot multiple parametes.
+        :param parameter: List of parameters to plot
+        :param qc_flag: It indicates the flag number of the data, you want to plot
+        :return: Figure
+        """
+
+        self.dialog = False
+        fig_multiplot, axes = plt.subplots(nrows=len(parameter), ncols=1, sharex=True)
+        try:
+            if qc_flag is None:
+                i = 0
+                for param in parameter:
+                    self.data[param].plot(ax=axes[i])
+                    title, units = self.translator(param)
+                    axes[i].set_title(title)
+                    axes[i].set_ylabel(units)
+                    i += 1
+            else:
+                for param in parameter:
+                    param_qc = param + '_qc'
+                    self.data[param][self.data[param_qc] == qc_flag].plot(ax=axes)
+                    title, units = self.translator(param)
+                    axes[i].set_title(title)
+                    axes[i].set_ylabel(units)
+        except KeyError:
+            self.dialog = "Error"
+        except TypeError:
+            self.dialog = "Error".format(qc_flag)
+        axes[i-1].set_xlabel('Time UTC')
+
+        return fig_multiplot
