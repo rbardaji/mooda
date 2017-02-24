@@ -451,7 +451,7 @@ class EMSO(observatory.Observatory):
 if __name__ == '__main__':
 
     ''' TUI TO DOWNLOAD DATA '''
-    tui(login='emsodev', password='Emsodev2017')
+    tui()
 
     ''' EXEMPLE OF CLASS EMSO '''
 
