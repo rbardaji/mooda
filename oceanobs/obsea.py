@@ -177,11 +177,8 @@ class OBSEA(observatory.Observatory):
                     return test_val
 
                 data_keys = self.data.keys()
-                print("parameters: {} {}".format(len(data_keys), data_keys))
                 time1 = datetime.datetime.now()
                 if 'temp_qc' in data_keys:
-                    print("IN TEMP:")
-                    print("Bucle: {}".format(len(self.data.index)))
                     for i in range(len(self.data.index)):
                         # print("Processing {} from {}".format(i, len(self.data.index)))
                         if i == 0 or i == len(self.data.index) - 1 or self.data['temp_qc'][i] == 4:
@@ -194,12 +191,10 @@ class OBSEA(observatory.Observatory):
                         # the measurements
                         minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
                         if test_value > 0.1*minutes:
-                            print("FLAG")
                             self.data.set_value(self.data.index[i], 'temp_qc', 2)
                         if i % 1000 == 0:
                             time2 = datetime.datetime.now()
                             time_dif = time2 - time1
-                            print("{} - we are in: {}  -  dif: {}".format(time1, i, time_dif))
                             time1 = datetime.datetime.now()
 
                 if 'cond_qc' in data_keys:
@@ -262,8 +257,8 @@ class OBSEA(observatory.Observatory):
                 """
                 Fourth level of qc. Find the data that appears inconsistent with other values. Writing "2" to the flag.
                 This test is failed when the difference between vertically adjacent measurements is too steep.
-                The test does not consider the differences in depth, but assumes a sampling that adequately reproduces the
-                temperature and salinity changes with depth:
+                The test does not consider the differences in depth, but assumes a sampling that adequately reproduces
+                the temperature and salinity changes with depth:
                     Test value = | V2 - (V3 + V1)/2 |
                 where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
                 """
@@ -456,17 +451,11 @@ class OBSEA(observatory.Observatory):
                 if 'ph_qc' in data_keys:
                     self.data.ix[self.data['ph_qc'] == 0, 'ph_qc'] = 1
 
-            print("init: {}".format(datetime.datetime.now()))
             qc_init()
-            print("missing values: {}".format(datetime.datetime.now()))
             qc_missing_values()
-            print("impossible values: {}".format(datetime.datetime.now()))
             qc_impossible_values()
-            print("spyke test: {}".format(datetime.datetime.now()))
             qc_spyke_test()
-            print("gradient test: {}".format(datetime.datetime.now()))
             qc_gradient_test()
-            print("good data: {}".format(datetime.datetime.now()))
             qc_good_data()
 
         def open_csv(path_csv):

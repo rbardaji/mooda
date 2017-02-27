@@ -6,9 +6,9 @@ import requests
 import sys
 import time
 try:
-    import oceanobs.observatory_dev as observatory
+    import oceanobs.observatory as observatory
 except ImportError:
-    import observatory_dev as observatory
+    import observatory as observatory
 
 
 class EMSOdevAPI:
@@ -51,7 +51,7 @@ class EMSOdevAPI:
 
     def read_instruments(self):
         """
-        Look for instruments of an observatory and save them into a list in self.observatories.
+        Look for instruments of an observatory and save them into a list in self.instruments.
         :return r.status_code: int with the status code of the answer (200 means that everything is ok).
         """
         self.parameters = []
@@ -69,7 +69,7 @@ class EMSOdevAPI:
 
     def read_parameters(self):
         """
-        Look for the parameters that the instrument can measure.
+        Look for the parameters that the instrument can measure and save them into a list in self.parameters.
         :return: int with the status code of the answer (200 means that everything is ok).
         """
         r = requests.get('http://api.emsodev.eu/observatories/{}/instruments/{}/parameters'.format(
@@ -84,8 +84,10 @@ class EMSOdevAPI:
 
     def read_data(self, start_date='1d-ago', end_date=""):
         """
-        Download data from the paramer/instrument/observatory.
+        Download data from the parameter/instrument/observatory. It saves the downloaded data into self.data with the
+        oceanobs format. It creates the metadata variable and save it into self.metadata.
         :param start_date: Time that you want to start to have data.
+        :param end_date: Time that you want to end to have data.
         :return: int with the status code of the answer (200 means that everything is ok).
         """
         def format_data():
@@ -182,7 +184,6 @@ class EMSOdevAPI:
         Save data in the oceanobs standard (two pandas dataframes).
         The metadata will be saved as metadata_[date].pkl and data will be saved as data_[date].pkl.
         :param directory: Directory where the data is saved
-        :return:
         """
         def create_metadata_dataframe():
             """
@@ -451,7 +452,7 @@ class EMSO(observatory.Observatory):
 if __name__ == '__main__':
 
     ''' TUI TO DOWNLOAD DATA '''
-    tui()
+    tui(login='emsodev', password='Emsodev2017')
 
     ''' EXEMPLE OF CLASS EMSO '''
 
