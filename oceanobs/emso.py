@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 import sys
 import time
+import pickle
 try:
     import oceanobs.observatory as observatory
 except ImportError:
@@ -25,6 +26,7 @@ class EMSOdevAPI:
         self.instrument_name = None
         self.parameter_name = None
         self.data = pd.DataFrame()
+        self.egim = pd.DataFrame()
 
         if login is not None:
             self.login = login
@@ -82,7 +84,7 @@ class EMSOdevAPI:
             self.parameters.append(parameter['name'])
         return r.status_code
 
-    def read_data(self, start_date='1d-ago', end_date=""):
+    def read_data(self, start_date='01/04/2017', end_date=""):
         """
         Download data from the parameter/instrument/observatory. It saves the downloaded data into self.data with the
         oceanobs format. It creates the metadata variable and save it into self.metadata.
@@ -98,68 +100,110 @@ class EMSOdevAPI:
             if self.parameter_name == "sea_water_temperature":
                 data_param = pd.DataFrame({'temp': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['temp_qc'] = 0
             elif self.parameter_name == "sea_water_pressure":
                 data_param = pd.DataFrame({'pres': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['pres_qc'] = 0
             elif self.parameter_name == "turbidity":
                 data_param = pd.DataFrame({'tur': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['tur_qc'] = 0
             elif self.parameter_name == "oxygen_saturation":
                 data_param = pd.DataFrame({'oxy': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['oxy_qc'] = 0
             elif self.parameter_name == "dissolved_oxygen":
                 data_param = pd.DataFrame({'oxy': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['oxy_qc'] = 0
             elif self.parameter_name == "salinity":
                 data_param = pd.DataFrame({'sal': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['sal_qc'] = 0
             elif self.parameter_name == "depth":
                 data_param = pd.DataFrame({'depth': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                 self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['depth_qc'] = 0
             elif self.parameter_name == "conductivity":
                 data_param = pd.DataFrame({'cond': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['cond_qc'] = 0
             elif self.parameter_name == "sound_velocity":
                 data_param = pd.DataFrame({'sovel': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                 self.observations]})
-                data_param.set_index('time', inplace=True)
-                data_param.index = pd.to_datetime(data_param.index, unit='s')
-                data_param['time_qc'] = 0
-                data_param['sovel_qc'] = 0
+            elif self.parameter_name == "voltage":
+                data_param = pd.DataFrame({'egim_voltage': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "waterInstrusion":
+                data_param = pd.DataFrame({'egim_water_intrusion': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "energy":
+                data_param = pd.DataFrame({'egim_energy': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot1_current":
+                data_param = pd.DataFrame({'egim_slot1_current': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot2_current":
+                data_param = pd.DataFrame({'egim_slot2_current': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot3_current":
+                data_param = pd.DataFrame({'egim_slot3_current': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot4_current":
+                data_param = pd.DataFrame({'egim_slot4_current': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot5_current":
+                data_param = pd.DataFrame({'egim_slot5_current': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot1_SD_capacity":
+                data_param = pd.DataFrame({'egim_slot1_sd_capacity': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot2_SD_capacity":
+                data_param = pd.DataFrame({'egim_slot2_sd_capacity': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot3_SD_capacity":
+                data_param = pd.DataFrame({'egim_slot3_sd_capacity': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot4_SD_capacity":
+                data_param = pd.DataFrame({'egim_slot4_sd_capacity': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot5_SD_capacity":
+                data_param = pd.DataFrame({'egim_slot5_sd_capacity': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot1_temperature":
+                data_param = pd.DataFrame({'egim_slot1_temperature': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot2_temperature":
+                data_param = pd.DataFrame({'egim_slot2_temperature': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot3_temperature":
+                data_param = pd.DataFrame({'egim_slot3_temperature': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot4_temperature":
+                data_param = pd.DataFrame({'egim_slot4_temperature': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot5_temperature":
+                data_param = pd.DataFrame({'egim_slot5_temperature': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot1_pressure":
+                data_param = pd.DataFrame({'egim_slot1_pressure': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot2_pressure":
+                data_param = pd.DataFrame({'egim_slot2_pressure': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot3_pressure":
+                data_param = pd.DataFrame({'egim_slot3_pressure': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot4_pressure":
+                data_param = pd.DataFrame({'egim_slot4_pressure': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
+            elif self.parameter_name == "EGIM_slot5_pressure":
+                data_param = pd.DataFrame({'egim_slot5_pressure': [x[1] for x in self.observations],
+                                           'time': [x[0] for x in self.observations]})
 
-            self.data = self.data.append(data_param)
+            data_param.set_index('time', inplace=True)
+            data_param.index = pd.to_datetime(data_param.index, unit='s')
+            if any("egim" in s for s in data_param.keys()):
+                # We have read egim parameters
+                self.egim = pd.concat([self.egim, data_param], axis=1)
+            else:
+                # Adding time_qc
+                data_param['time_qc'] = 0
+                # TODO: aqui ponemos append y arriba concat... no lo entiendo.
+                self.data = self.data.append(data_param)
 
         if end_date == "":
             r = requests.get('http://api.emsodev.eu/observatories/{}/instruments/{}/parameters/{}?startDate={}'.format(
@@ -177,6 +221,7 @@ class EMSOdevAPI:
         for observation in answer['observations']:
             self.observations.append((observation['phenomenonTime'], observation['value']))
         format_data()
+        self.data = observatory.qc(self.data)
         return r.status_code
 
     def save_as_pickle(self, directory=""):
@@ -202,12 +247,9 @@ class EMSOdevAPI:
         if len(directory) > 0 and directory[-1] != "\\":
             directory += "\\"
         save_time = time.strftime("%Y%m%d%H%M%S", time.gmtime())
-        # Save metadata
-        path_metadata = directory + "metadata_emsodev_{}.pkl".format(save_time)
-        metadata.to_pickle(path_metadata)
-        # Save data
-        path_data = directory + "data_emsodev_{}.pkl".format(save_time)
-        self.data.to_pickle(path_data)
+        # Saving the objects
+        with open(directory + "emsodev_{}.pkl".format(save_time), 'wb') as fi:
+            pickle.dump([metadata, self.data, self.egim], fi)
 
 
 def tui(login=None, password=None):
@@ -272,31 +314,21 @@ def tui(login=None, password=None):
         # Print the list of parameters, back and exit
         for num_param, parameter in enumerate(api.parameters):
             print("{}. {}".format(num_param, parameter))
+        print("a. All")
         print("b. Back")
         print("z. Exit")
         # Ask for the parameter
         choise_param = input("Enter the number of the parameter: ")
         # Cast to int if the choise is a number
-        if choise_param != "z" and choise_param != "b":
+        if choise_param != "z" and choise_param != "b" and choise_param != "a":
             choise_param = int(choise_param)
         return choise_param
 
     def input_dates():
-        start_date = input("Enter the start date (dd/MM/yyyy hh:mm:ss): ")
+        start_date = input("Enter the start date (dd/MM/yyyy): ")
         if start_date == "":
-            start_date = "13/02/2017 15:00:00"
-        try:
-            start_date = str(int(time.mktime(datetime.datetime.strptime(start_date, "%d/%m/%Y %H:%M:%S").timetuple())))
-        except ValueError:
-            print("Error: {}".format(ValueError))
-            input_dates()
-        stop_date = input("Enter the stop date (dd/MM/yyyy hh:mm:ss): ")
-        if stop_date != "":
-            try:
-                stop_date = str(time.mktime(datetime.datetime.strptime(stop_date, "%d/%m/%Y %H:%M:%S").timetuple()))
-            except ValueError:
-                print("Error: {}".format(ValueError))
-                input_dates()
+            start_date = "09/04/2017"
+        stop_date = input("Enter the stop date (dd/MM/yyyy): ")
         download_data(start_date, stop_date)
 
     def search_observatories():
@@ -376,13 +408,14 @@ def tui(login=None, password=None):
         choise = input_parameters()
         # Process the choise
         if choise == "z":
-            # Saveand exit
+            # Save and exit
             if api.data.size > 0:
                 api.save_as_pickle()
             sys.exit()
         # Go back, the search isntruments
         elif choise == "b":
             search_instruments()
+        # else:
         # Save the parameter name
         api.parameter_name = api.parameters[choise]
         # Ask for the interval of dates
@@ -396,7 +429,7 @@ def tui(login=None, password=None):
             print("Error: Impossible to connect. Status code: {}".format(code))
             return
         print("Done.")
-        print("Result:")
+        print("Result (5 first values):")
         print(api.data.head())
         search_parameters()
 
@@ -420,6 +453,7 @@ class EMSO(observatory.Observatory):
         self.data = None
         self.metadata = None
         self.dialog = None
+        self.egim = None
 
     def open(self, path_data, path_metadata):
         """
@@ -433,6 +467,8 @@ class EMSO(observatory.Observatory):
             self.metadata = pd.read_pickle(path_metadata)
         except e:
             self.dialog = "Error: {}".format(e)
+
+    """ Information """
 
     @staticmethod
     def how_to_download_data(language='ENG'):
@@ -449,36 +485,514 @@ class EMSO(observatory.Observatory):
             tutorial = "Usa directamente la API de EMSOdev o la GUI de oceanobs."
         return tutorial
 
+    def info_egim(self):
+        """
+        Return when your data start and stop in terms of time.
+        :return: info of the egim
+        :rtype: str
+        """
+        # Search for initial and final dates
+        try:
+            # Look for start and stop time
+            start_time = self.egim.index.min()
+            stop_time = self.egim.index.max()
+            message = "- Start date: {}\n- End date: {}\n".format(start_time, stop_time)
+            # Look for the parameters
+            message += "- Parameters: \n"
+            for key in self.egim.keys():
+                # QC stadistics
+                message += "\t- {}\n".format(key)
+        except IndexError:
+            message = "Error: No good data."
+        return message[:-1]
+
+    """ Plot functions """
+
+    def plt_egim_all(self):
+        """
+        Make all the graphs related to the engineering parameters of the EGIM.
+        :return:
+        """
+        fig_dict = {}
+        data_keys = self.egim.keys()
+        if 'egim_voltage' in data_keys:
+            fig_volt = self.plt_egim_voltage()
+            fig_dict['Voltage'] = fig_volt
+        if 'egim_slot1_sd_capacity' in data_keys:
+            fig_sd = self.plt_egim_slot1_sd_capacity()
+            fig_dict['Slot 1: SD capacity'] = fig_sd
+        if 'egim_slot2_sd_capacity' in data_keys:
+            fig_sd = self.plt_egim_slot2_sd_capacity()
+            fig_dict['Slot 2: SD capacity'] = fig_sd
+        if 'egim_slot3_sd_capacity' in data_keys:
+            fig_sd = self.plt_egim_slot3_sd_capacity()
+            fig_dict['Slot 3: SD capacity'] = fig_sd
+        if 'egim_slot4_sd_capacity' in data_keys:
+            fig_sd = self.plt_egim_slot4_sd_capacity()
+            fig_dict['Slot 4: SD capacity'] = fig_sd
+        if 'egim_slot5_sd_capacity' in data_keys:
+            fig_sd = self.plt_egim_slot5_sd_capacity()
+            fig_dict['Slot 5: SD capacity'] = fig_sd
+        if 'egim_slot1_current' in data_keys:
+            fig_amp = self.plt_egim_slot1_current()
+            fig_dict['Slot 1: Current'] = fig_amp
+        if 'egim_slot2_current' in data_keys:
+            fig_amp = self.plt_egim_slot2_current()
+            fig_dict['Slot 2: Current'] = fig_amp
+        if 'egim_slot3_current' in data_keys:
+            fig_amp = self.plt_egim_slot3_current()
+            fig_dict['Slot 3: Current'] = fig_amp
+        if 'egim_slot4_current' in data_keys:
+            fig_amp = self.plt_egim_slot4_current()
+            fig_dict['Slot 4: Current'] = fig_amp
+        if 'egim_slot5_current' in data_keys:
+            fig_amp = self.plt_egim_slot5_current()
+            fig_dict['Slot 5: Current'] = fig_amp
+        if 'egim_water_intrusion' in data_keys:
+            fig_water = self.plt_egim_water_intrusion()
+            fig_dict['Water intrusion'] = fig_water
+        if 'egim_slot1_temperature' in data_keys:
+            fig_tempe = self.plt_egim_slot1_temperature()
+            fig_dict['Slot 1: Temperature'] = fig_tempe
+        if 'egim_slot2_temperature' in data_keys:
+            fig_tempe = self.plt_egim_slot2_temperature()
+            fig_dict['Slot 2: Temperature'] = fig_tempe
+        if 'egim_slot3_temperature' in data_keys:
+            fig_tempe = self.plt_egim_slot3_temperature()
+            fig_dict['Slot 3: Temperature'] = fig_tempe
+        if 'egim_slot4_temperature' in data_keys:
+            fig_tempe = self.plt_egim_slot4_temperature()
+            fig_dict['Slot 4: Temperature'] = fig_tempe
+        if 'egim_slot5_temperature' in data_keys:
+            fig_tempe = self.plt_egim_slot5_temperature()
+            fig_dict['Slot 5: Temperature'] = fig_tempe
+        if 'egim_slot1_pressure' in data_keys:
+            fig_pres = self.plt_egim_slot1_pressure()
+            fig_dict['Slot 1: Pressure'] = fig_pres
+        if 'egim_slot2_pressure' in data_keys:
+            fig_pres = self.plt_egim_slot2_pressure()
+            fig_dict['Slot 2: Pressure'] = fig_pres
+        if 'egim_slot3_pressure' in data_keys:
+            fig_pres = self.plt_egim_slot3_pressure()
+            fig_dict['Slot 3: Pressure'] = fig_pres
+        if 'egim_slot4_pressure' in data_keys:
+            fig_pres = self.plt_egim_slot4_pressure()
+            fig_dict['Slot 4: Pressure'] = fig_pres
+        if 'egim_slot5_pressure' in data_keys:
+            fig_pres = self.plt_egim_slot5_pressure()
+            fig_dict['Slot 5: Pressure'] = fig_pres
+        if 'egim_slot5_pressure' in data_keys:
+            fig_energy = self.plt_egim_energy()
+            fig_dict['Energy'] = fig_energy
+
+        return fig_dict
+
+    def plt_egim_voltage(self):
+        """
+        Graph of current egim voltage vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_volt, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_voltage'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No voltage data."
+        axes.set_title('Voltage of EGIM')
+        axes.set_ylabel('mV')
+        axes.set_xlabel('Time UTC')
+        return fig_volt
+
+    def plt_egim_slot4_sd_capacity(self):
+        """
+        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_slot, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot4_sd_capacity'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No capacity data."
+        axes.set_title('Slot 4: SD capacity')
+        axes.set_ylabel('KBytes')
+        axes.set_xlabel('Time UTC')
+        return fig_slot
+
+    def plt_egim_slot1_sd_capacity(self):
+        """
+        Graph of the capacity of SD of the slot 1 of the egim voltage vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_slot, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot1_sd_capacity'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No capacity data."
+        axes.set_title('Slot 1: SD capacity')
+        axes.set_ylabel('KBytes')
+        axes.set_xlabel('Time UTC')
+        return fig_slot
+
+    def plt_egim_slot2_sd_capacity(self):
+        """
+        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_volt, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot2_sd_capacity'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No capacity data."
+        axes.set_title('Slot 2: SD capacity')
+        axes.set_ylabel('KBytes')
+        axes.set_xlabel('Time UTC')
+        return fig_volt
+
+    def plt_egim_slot3_sd_capacity(self):
+        """
+        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_volt, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot3_sd_capacity'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No capacity data."
+        axes.set_title('Slot 3: SD capacity')
+        axes.set_ylabel('KBytes')
+        axes.set_xlabel('Time UTC')
+        return fig_volt
+
+    def plt_egim_slot5_sd_capacity(self):
+        """
+        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_volt, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot5_sd_capacity'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No capacity data."
+        axes.set_title('Slot 5: SD capacity')
+        axes.set_ylabel('KBytes')
+        axes.set_xlabel('Time UTC')
+        return fig_volt
+
+    def plt_egim_slot1_current(self):
+        """
+        Graph of the capacity of SD of the slot 1 of the egim current vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_amp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot1_current'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No slot1 current data."
+        axes.set_title('Slot 1: Current')
+        axes.set_ylabel('mA')
+        axes.set_xlabel('Time UTC')
+        return fig_amp
+
+    def plt_egim_slot2_current(self):
+        """
+        Graph of the capacity of SD of the slot 2 of the egim current vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_amp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot2_current'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No slot 2 current data."
+        axes.set_title('Slot 2: Current')
+        axes.set_ylabel('mA')
+        axes.set_xlabel('Time UTC')
+        return fig_amp
+
+    def plt_egim_slot3_current(self):
+        """
+        Graph of the capacity of SD of the slot 3 of the egim current vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_amp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot3_current'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No slot3 current data."
+        axes.set_title('Slot 3: Current')
+        axes.set_ylabel('mA')
+        axes.set_xlabel('Time UTC')
+        return fig_amp
+
+    def plt_egim_slot4_current(self):
+        """
+        Graph of the capacity of SD of the slot 4 of the egim current vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_amp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot4_current'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No slot4 current data."
+        axes.set_title('Slot 4: Current')
+        axes.set_ylabel('mA')
+        axes.set_xlabel('Time UTC')
+        return fig_amp
+
+    def plt_egim_slot5_current(self):
+        """
+        Graph of the capacity of SD of the slot 5 of the egim current vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_amp, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot5_current'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No slot5 current data."
+        axes.set_title('Slot 5: Current')
+        axes.set_ylabel('mA')
+        axes.set_xlabel('Time UTC')
+        return fig_amp
+
+    def plt_egim_water_intrusion(self):
+        """
+        Create a plot with the water intrusion vs time. The y-axes of the plots are the values (0 means no water
+        instrusion, 1 means water intrusion). The x-axes are the time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_water, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_water_intrusion'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No water intrusion data."
+        axes.set_title('Water intrusion')
+        axes.set_ylabel('1-Yes, 0-No')
+        axes.set_xlabel('Time UTC')
+        return fig_water
+
+    def plt_egim_slot1_temperature(self):
+        """
+        Graph of the water intrusion vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_tempe, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot1_temperature'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 1: Temperature')
+        axes.set_ylabel('Degree Celsius')
+        axes.set_xlabel('Time UTC')
+        return fig_tempe
+
+    def plt_egim_slot2_temperature(self):
+        """
+        Graph of the water intrusion vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_tempe, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot2_temperature'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 2: Temperature')
+        axes.set_ylabel('Degree Celsius')
+        axes.set_xlabel('Time UTC')
+        return fig_tempe
+
+    def plt_egim_slot3_temperature(self):
+        """
+        Graph of the water intrusion vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_tempe, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot3_temperature'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 3: Temperature')
+        axes.set_ylabel('Degree Celsius')
+        axes.set_xlabel('Time UTC')
+        return fig_tempe
+
+    def plt_egim_slot4_temperature(self):
+        """
+        Graph of the water intrusion vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_tempe, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot4_temperature'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 4: Temperature')
+        axes.set_ylabel('Degree Celsius')
+        axes.set_xlabel('Time UTC')
+        return fig_tempe
+
+    def plt_egim_slot5_temperature(self):
+        """
+        Graph of the water intrusion vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_tempe, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot5_temperature'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 5: Temperature')
+        axes.set_ylabel('Degree Celsius')
+        axes.set_xlabel('Time UTC')
+        return fig_tempe
+
+    def plt_egim_slot1_pressure(self):
+        """
+        Graph of the pressure of the slot 1 vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_pres, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot1_pressure'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 1: Pressure')
+        axes.set_ylabel('PSI')
+        axes.set_xlabel('Time UTC')
+        return fig_pres
+
+    def plt_egim_slot2_pressure(self):
+        """
+        Graph of the pressure of the slot 2 vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_pres, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot2_pressure'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 2: Pressure')
+        axes.set_ylabel('PSI')
+        axes.set_xlabel('Time UTC')
+        return fig_pres
+
+    def plt_egim_slot3_pressure(self):
+        """
+        Graph of the pressure of the slot 3 vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_pres, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot3_pressure'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 3: Pressure')
+        axes.set_ylabel('PSI')
+        axes.set_xlabel('Time UTC')
+        return fig_pres
+
+    def plt_egim_slot4_pressure(self):
+        """
+        Graph of the pressure of the slot 4 vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_pres, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot4_pressure'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 4: Pressure')
+        axes.set_ylabel('PSI')
+        axes.set_xlabel('Time UTC')
+        return fig_pres
+
+    def plt_egim_slot5_pressure(self):
+        """
+        Graph of the pressure of the slot 5 vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_pres, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_slot5_pressure'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No temperature data."
+        axes.set_title('Slot 5: Pressure')
+        axes.set_ylabel('PSI')
+        axes.set_xlabel('Time UTC')
+        return fig_pres
+
+    def plt_egim_energy(self):
+        """
+        Graph of the energy consumption since the last reset of the EGIM vs time.
+        :return: Figure
+        """
+        self.dialog = False
+        fig_energy, axes = plt.subplots(nrows=1, ncols=1)
+        try:
+            self.egim['egim_energy'].plot(ax=axes)
+        except KeyError:
+            self.dialog = "Error: No energy data."
+        axes.set_title('EGIM energy')
+        axes.set_ylabel('mW')
+        axes.set_xlabel('Time UTC')
+        return fig_energy
+
+
 if __name__ == '__main__':
+    import matplotlib.style as style
+    style.use('ggplot')
+
+    ''' DOWNLOAS METADATA OF EGIM'''
+    # download_metadata_egim()
 
     ''' TUI TO DOWNLOAD DATA '''
-    tui(login='emsodev', password='Emsodev2017')
+    tui(login='YOUR LOGIN', password='YOUR PASSWORD')
 
     ''' EXEMPLE OF CLASS EMSO '''
-
     ''' LOADING DATA FROM PKL FILE '''
-    path_data = "data_emsodev_20170221100859.pkl"
-    path_metadata = "metadata_emsodev_20170221100859.pkl"
-    ob = EMSO()
-    ob.data = pd.read_pickle(path_data)
-    ob.metadata = pd.read_pickle(path_metadata)
+    # path_file = r"WRITE_THE_PATH"
+    # ob = EMSO()
+    #
+    # with open(path_file, 'rb') as f:
+    #     ob.metadata, ob.data, ob.egim = pickle.load(f)
 
     ''' INFO '''
-    print("METADATA INFORMATION")
-    print(ob.info_metadata())
-    print("DATA INFORMATION")
-    print(ob.info_data())
-    print("DATA MEANING")
-    print(ob.info_parameters())
+    # print("METADATA INFORMATION")
+    # print(ob.info_metadata())
+    # print("DATA INFORMATION")
+    # print(ob.info_data())
+    # print("DATA MEANING")
+    # print(ob.info_parameters())
+    # print("EGIM INFORMATION")
+    # print(ob.info_egim())
 
     ''' BUTTERWORTH FILTER'''
-    ob.butterworth_filter('pres')
-    if ob.dialog:
-        print(ob.dialog)
-        sys.exit()
+    # ob.butterworth_filter('pres')
+    # if ob.dialog:
+    #     print(ob.dialog)
+    #     sys.exit()
 
     ''' PLOTS '''
-    ob.plt_pres()
-    plt.show()
+    # ob.plt_egim_all()
+    # plt.show()
 
     print("END")

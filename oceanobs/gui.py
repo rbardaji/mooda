@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from mainwindow_ui import *
 from emsodev_ui import *
+import pandas as pd
+import time
 try:
     import oceanobs.obsea as obsea
     import oceanobs.emodnet as emodnet
@@ -70,7 +72,7 @@ class EMSOdevApp(QtGui.QMainWindow, Ui_mw_emsodev):
         self.gb_parameters.hide()
         self.pb_download.hide()
         # Call for the EMSOdev API
-        self.ensodev_api = emso.EMSOdevAPI(self.le_login.text(),self.le_password.text())
+        self.ensodev_api = emso.EMSOdevAPI(self.le_login.text(), self.le_password.text())
         # Cleaning the list of instruments and parameters to select. If you are here, the instruments and the parameters
         # should be re-serched.
         self.ensodev_api.instruments = []
@@ -179,16 +181,23 @@ class EMSOdevApp(QtGui.QMainWindow, Ui_mw_emsodev):
         Download data
         """
         start_date = self.l_start.text()
+        # Translate the date to timestamp
+        start_date = str(int(time.mktime(datetime.strptime(start_date, "%d/%m/%Y").timetuple())))
         if self.l_stop.text() == "Now":
             stop_date = ""
         else:
             stop_date = self.l_stop.text()
+            # Translate the date to timestamp
+            stop_date = str(int(time.mktime(datetime.strptime(stop_date, "%d/%m/%Y").timetuple())))
         # Downloading data
         self.statusbar.showMessage("Downloading data...")
         code = self.ensodev_api.read_data(start_date, stop_date)
         if code != 200:
             self.statusbar.showMessage("Error: Impossible to connect. Status code: {}".format(code))
-        self.statusbar.showMessage("Done. ")
+        else:
+            print("Result (5 first values):")
+            print(self.ensodev_api.data.head())
+            self.statusbar.showMessage("Done. ")
 
     def save_data(self):
         """
@@ -219,17 +228,24 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.ob = None
         self.actual_fig = ""
         self.report_path = ""
+        self.emsodevapp = EMSOdevApp()
 
         # Menu "File"
         self.actionOpenData.triggered.connect(self.open)
         self.actionExit.triggered.connect(QtCore.QCoreApplication.instance().quit)
+        self.action_open_emsodev.triggered.connect(self.emsodevapp.show)
 
         # Menu "Report"
         # Hide menu
         self.actionSave_as.triggered.connect(self.report_save_as)
 
         # Menu "Data"
-        self.actionSlicing.triggered.connect(self.show_slicing)
+        self.actionSlicing.triggered.connect(self.w_slicing.show)
+        self.action_clean_bad_data.triggered.connect(self.clean_bad_data)
+        self.action_delete_parameters.triggered.connect(self.delete_parameters)
+        # Delete options
+        self.pb_clear_apply.clicked.connect(self.delete_apply)
+        self.pb_clear_cancel.clicked.connect(self.w_delete.hide)
         # Sub-menu "Resample"
         self.actionMonth_frequency.triggered.connect(self.resample_month)
         self.actionWeekly_frequency.triggered.connect(self.resample_week)
@@ -237,7 +253,12 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.actionHourly_frequency.triggered.connect(self.resample_hour)
         # Slicing option
         self.slicing_accept_button.clicked.connect(self.accept_slicing)
-        self.slicing_cancel_button.clicked.connect(self.hide_slicing)
+        self.slicing_cancel_button.clicked.connect(self.w_slicing.hide)
+        # Sub-menu Filter
+        self.action_butterworth.triggered.connect(self.butterworth_init)
+        # Butterworth option
+        self.pb_butterworth_cancel.clicked.connect(self.w_butterworth.hide)
+        self.pb_butterworth_apply.clicked.connect(self.butterworth_apply)
 
         # Menu "view"
         self.actionMetadata_Plots.triggered.connect(self.view_metadata_plots)
@@ -304,8 +325,11 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.print_text("Opening data from:")
         for text in path:
             self.print_text("\t"+text)
-        self.print_text("METADATA INFORMATION")
-        self.print_text(self.ob.info_metadata())
+        try:
+            self.print_text("METADATA INFORMATION")
+            self.print_text(self.ob.info_metadata())
+        except AttributeError:
+            self.statusbar.showMessage("Metadata is needed.")
         self.print_text("DATA INFORMATION")
         self.print_text(self.ob.info_data())
 
@@ -356,7 +380,8 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         """
         Open data file
         """
-        path = QtGui.QFileDialog.getOpenFileNames(None, 'Open TXT or netCDF', "", "TXT (*.txt);;netCDF (*.nc)")
+        path = QtGui.QFileDialog.getOpenFileNames(None, 'Open TXT or netCDF', "",
+                                                  "TXT (*.txt);;netCDF (*.nc);;pickle (*.pkl)")
         if len(path) > 0:
             # Open observatory object
             self.statusbar.showMessage("Opening data. Please wait.")
@@ -364,6 +389,31 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
             if path[0][-1] == 't' or path[0][-1] == 'T':
                 # It is a txt file so let's open OBSEA
                 self.ob = obsea.OBSEA(path)
+            elif path[0][-1] == 'l' or path[0][-1] == 'L':
+                # If you enter here is becouse you have processed data. Yoy can open this type of data with all the
+                # libraries of the package.
+                self.ob = emso.EMSO()
+                if "metadata" in path[0]:
+                    # Metadata file
+                    self.ob.metadata = pd.read_pickle(path[0])
+                    # Extract metadata information
+                    self.show_metadata(self.ob.metadata)
+                    self.print_text("Opening metadata from: {}".format(path[0]))
+                    self.statusbar.showMessage("Done.")
+                    return
+                else:
+                    # Data file
+                    self.ob.data = pd.read_pickle(path[0])
+                    # Adding figures
+                    self.make_plots()
+                    # Remove the figure that is shown in the screen
+                    self.remove_fig()
+                    # Show menus
+                    self.show_menus()
+                    # Write log info
+                    self.print_opening_info(path)
+                    self.statusbar.showMessage("Done.")
+                    return
             else:
                 # It is an EMODnet file, so let's open a EMODnet
                 self.ob = emodnet.EMODnet(path)
@@ -373,7 +423,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
                 return
             # Extract metadata information
             self.show_metadata(self.ob.metadata)
-            # Añadimos las figuras
+            # Adding figures
             self.make_plots()
             # Remove the figure that is shown in the screen
             self.remove_fig()
@@ -402,8 +452,10 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         """
         self.hide_metadata_plots()
         self.text_area.hide()
-        self.hide_slicing()
+        self.w_slicing.hide()
+        self.w_butterworth.hide()
         self.hide_menus()
+        self.w_delete.hide()
 
     def hide_menus(self):
         """
@@ -595,28 +647,6 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.remove_fig()
         self.add_fig(self.fig_dict[self.actual_fig])
 
-    def hide_slicing(self):
-        """
-        Hide the slicing option
-        """
-        self.slicing_start_label.hide()
-        self.slicing_stop_label.hide()
-        self.slicing_start_time.hide()
-        self.slicing_end_time.hide()
-        self.slicing_accept_button.hide()
-        self.slicing_cancel_button.hide()
-
-    def show_slicing(self):
-        """
-        Show slicing options.
-        """
-        self.slicing_start_label.show()
-        self.slicing_stop_label.show()
-        self.slicing_start_time.show()
-        self.slicing_end_time.show()
-        self.slicing_accept_button.show()
-        self.slicing_cancel_button.show()
-
     """ SLICING DATA, MENU DATA, SLICING """
 
     def accept_slicing(self):
@@ -645,7 +675,74 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.ob.slicing(start_time, stop_time)
         self.make_plots()
         self.remove_fig()
-        self.hide_slicing()
+        self.w_slicing.hide()
+
+    """ CLEAN BAD DATA, MENU DATA, CLEAN BAD DATA"""
+
+    def clean_bad_data(self):
+        """
+        Clean bad data
+        """
+        self.statusbar.showMessage("Cleaning, please wait.")
+        self.ob.clear_bad_data()
+        self.make_plots()
+        # Remove the figure that is shown in the screen
+        self.remove_fig()
+        self.print_text("Cleaned bad data.")
+        self.statusbar.showMessage("Done, cleaned bad data.")
+
+    """ DELETE PARAMETERS """
+
+    def delete_parameters(self):
+        """
+        Delete parameters of ob.data
+        """
+        # Adding the parameters to the comboBox
+        for key in self.ob.data.keys():
+                if "_qc" in key:
+                    continue
+                self.cb_clear_parameters.addItem(key)
+        self.w_delete.show()
+
+    def delete_apply(self):
+        """
+        Action to click apply button
+        """
+        self.print_text("Deleting {} data.".format(self.cb_clear_parameters.currentText()))
+        self.statusbar.showMessage("Deleting {} data.".format(self.cb_clear_parameters.currentText()))
+        self.ob.delete_param(self.cb_clear_parameters.currentText())
+        self.make_plots()
+        self.remove_fig()
+        # Close the option
+        self.w_delete.hide()
+        self.statusbar.showMessage("Done.")
+
+    """ FILTERING """
+    def butterworth_init(self):
+        """
+        Add the parameters in the comboBox and show the options
+        """
+        # Adding the parameters
+        for key in self.ob.data.keys():
+                if "_qc" in key:
+                    continue
+                self.cb_butterworth_parameters.addItem(key)
+        # Show the option
+        self.w_butterworth.show()
+
+    def butterworth_apply(self):
+        """
+        Apply the butterworth filter to the data.
+        """
+        self.print_text("Applying Butterworth filter to {}.".format(self.cb_butterworth_parameters.currentText()))
+        self.statusbar.showMessage("Applying Butterworth filter to {}.".format(
+            self.cb_butterworth_parameters.currentText()))
+        self.ob.butterworth_filter(component=self.cb_butterworth_parameters.currentText())
+        self.make_plots()
+        self.remove_fig()
+        # Close the option
+        self.w_butterworth.hide()
+        self.statusbar.showMessage("Done.")
 
     """ PLOT STYLE OPTIONS, MENU SETTINGS, PLOT STYLE """
 
@@ -791,11 +888,11 @@ def open_gui():
 
 
 def open_emsodev_app():
-    app = QtGui.QApplication(sys.argv)
-    window = EMSOdevApp()
-    window.show()
-    sys.exit(app.exec_())
+    app_emso = QtGui.QApplication(sys.argv)
+    window_emso = EMSOdevApp()
+    window_emso.show()
+    app_emso.exec_()
 
 if __name__ == "__main__":
-    open_gui()
-    # open_emsodev_app()
+    # open_gui()
+    open_emsodev_app()

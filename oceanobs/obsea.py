@@ -37,427 +37,6 @@ class OBSEA(observatory.Observatory):
         :type path: str of list of str
         """
 
-        def qc():
-            """
-            QC flags creation. We are using the GLOBAL QCFF flags.
-            Flags are added to the data frame.
-            Flag - Meaning
-            0 - no quality control
-            1 - value seems correct
-            2 - value appears inconsistent with other values
-            3 - value seems doubtful
-            4 - value seems erroneous
-            5 - value was modified
-            6 - flagged land test
-            7 - nominal_value
-            8 - interpolated value
-            9 - value missing
-            """
-
-            def qc_init():
-                """
-                Start with the QC flags. Writing "0" to all flags.
-                Indicate that, for the moment, no data has qc.
-                """
-                self.data['time_qc'] = 0
-                data_keys = self.data.keys()
-                if 'temp' in data_keys:
-                    self.data['temp_qc'] = 0
-                if 'atemp' in data_keys:
-                    self.data['atemp_qc'] = 0
-                if 'cond' in data_keys:
-                    self.data['cond_qc'] = 0
-                if 'sal' in data_keys:
-                    self.data['sal_qc'] = 0
-                if 'sovel' in data_keys:
-                    self.data['sovel_qc'] = 0
-                if 'pres' in data_keys:
-                    self.data['pres_qc'] = 0
-                if 'atm' in data_keys:
-                    self.data['atm_qc'] = 0
-                if 'wis' in data_keys:
-                    self.data['wis_qc'] = 0
-                if 'wid' in data_keys:
-                    self.data['wid_qc'] = 0
-                if 'ph' in data_keys:
-                    self.data['ph_qc'] = 0
-
-            def qc_missing_values():
-                """
-                First level of qc. Look for missing values. Writing "9" to the flag.
-                """
-                data_keys = self.data.keys()
-                if 'temp_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['temp']), 'temp_qc'] = 9
-                if 'sal_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['sal']), 'sal_qc'] = 9
-                if 'cond_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['cond']), 'cond_qc'] = 9
-                if 'sovel_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['sovel']), 'sovel_qc'] = 9
-                if 'pres_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['pres']), 'pres_qc'] = 9
-                if 'atm_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['atm']), 'atm_qc'] = 9
-                if 'wis_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['wisp']), 'wisp_qc'] = 9
-                if 'wid_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['widi']), 'widi_qc'] = 9
-                if 'atemp_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['atemp']), 'atemp_qc'] = 9
-                if 'ph_qc' in data_keys:
-                    self.data.ix[pd.isnull(self.data['ph']), 'ph_qc'] = 9
-
-            def qc_impossible_values():
-                """
-                Second level of qc. Find the data that seems erroneous. Writing "4" to the flag.
-                This test applies only where conditions can be further qualified. In this case, specific ranges for
-                observations from the Mediterranean (OBSEA) further restrict what are considered sensible values.
-                """
-                data_keys = self.data.keys()
-                if 'time_qc' in data_keys:
-                    # Year greater than 2008
-                    self.data.ix[self.data.index < datetime.datetime(2008, 1, 1), 'time_qc'] = 4
-                if 'temp_qc' in data_keys:
-                    # Sea Water Temperature in range 10øC to 28øC
-                    self.data.ix[self.data['temp'] < 10.0, 'temp_qc'] = 4
-                    self.data.ix[self.data['temp'] > 28.0, 'temp_qc'] = 4
-                if 'sal_qc' in data_keys:
-                    # Salinity in range 35 to 39
-                    self.data.ix[self.data['sal'] < 35.0, 'sal_qc'] = 4
-                    self.data.ix[self.data['sal'] > 39.0, 'sal_qc'] = 4
-                if 'cond_qc' in data_keys:
-                    # Conductivity in range 3.5S/m to 6.5S/m
-                    self.data.ix[self.data['cond'] < 3.5, 'cond_qc'] = 4
-                    self.data.ix[self.data['cond'] > 6.5, 'cond_qc'] = 4
-                if 'sovel_qc' in data_keys:
-                    # Sound velocity in range 1480m/s to 1550m/s
-                    self.data.ix[self.data['sovel'] < 1480.0, 'sovel_qc'] = 4
-                    self.data.ix[self.data['sovel'] > 1550.0, 'sovel_qc'] = 4
-                if 'pres_qc' in data_keys:
-                    # Pressure in range 18 dbar to 21 dbar
-                    self.data.ix[self.data['pres'] < 18.0, 'pres_qc'] = 4
-                    self.data.ix[self.data['pres'] > 21.0, 'pres_qc'] = 4
-                if 'atm_qc' in data_keys:
-                    # Sea level air pressure in range 850hPa to 1060hPa (mbar)
-                    self.data.ix[self.data['atm'] < 0.850, 'atm_qc'] = 4
-                    self.data.ix[self.data['atm'] > 1.060, 'atm_qc'] = 4
-                if 'wis_qc' in data_keys:
-                    # Wind speed in range 0m/s to 60m/s
-                    self.data.ix[self.data['wisp'] < 0.0, 'wisp_qc'] = 4
-                    self.data.ix[self.data['wisp'] > 60.0, 'wisp_qc'] = 4
-                if 'wid_qc' in data_keys:
-                    # Wind Direction in range 0ø to 360ø
-                    self.data.ix[self.data['widi'] < 0.0, 'widi_qc'] = 4
-                    self.data.ix[self.data['widi'] > 360.0, 'widi_qc'] = 4
-                if 'atemp_qc' in data_keys:
-                    # Air Temperature in range -10øC + 40øC
-                    self.data.ix[self.data['atemp'] < -10.0, 'atemp_qc'] = 4
-                    self.data.ix[self.data['atemp'] > 40.0, 'atemp_qc'] = 4
-
-            def qc_spyke_test():
-                """
-                Third level of qc. Find the data that appears inconsistent with other values. Writing "2" to the flag.
-                A large difference between sequential measurements, where one measurement is quite different from
-                adjacent ones, is a spike in both size and gradient. The test does not consider the differences in
-                depth, but assumes a sampling that adequately reproduces the temperature and salinity changes with
-                depth. The algorithm is used on both the temperature and salinity instruments:
-                    Test value = |V2 - (V3 + V1)/2| - |(V3 ? V1) / 2|
-                where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
-                """
-                def spyke_formula(v1, v2, v3):
-                    """
-                    This is the formula we have to use for the spyke test
-                    :param v2: Measurement being tested
-                    :param v1: Before measurement
-                    :param v3: Next measurement
-                    :return: Test value
-                    """
-                    test_val = np.abs(v2 - (v3 + v1) / 2) - np.abs((v3 - v1) / 2)
-                    return test_val
-
-                data_keys = self.data.keys()
-                time1 = datetime.datetime.now()
-                if 'temp_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        # print("Processing {} from {}".format(i, len(self.data.index)))
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['temp_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.1øC for sampling interval of less
-                        # than 1 minute
-                        test_value = spyke_formula(self.data['temp'][i - 1], self.data['temp'][i],
-                                                   self.data['temp'][i + 1])
-                        # The value of the spike formula cannot be > 0.1*minute. Let's calculate the minutes between
-                        # the measurements
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.1*minutes:
-                            self.data.set_value(self.data.index[i], 'temp_qc', 2)
-                        if i % 1000 == 0:
-                            time2 = datetime.datetime.now()
-                            time_dif = time2 - time1
-                            time1 = datetime.datetime.now()
-
-                if 'cond_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['cond_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.1 for sampling interval of less
-                        # than 1 minute
-                        test_value = spyke_formula(self.data['cond'][i - 1], self.data['cond'][i],
-                                                   self.data['cond'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.1*minutes:
-                            self.data.set_value(self.data.index[i], 'cond_qc', 2)
-                if 'sal_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['sal_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.5 for sampling interval of less
-                        # than 1 minute
-                        test_value = spyke_formula(self.data['sal'][i - 1], self.data['sal'][i],
-                                                   self.data['sal'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.5*minutes:
-                            self.data.set_value(self.data.index[i], 'sal_qc', 2)
-                if 'pres_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['pres_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 1.0 for sampling interval of less
-                        # than 1 minute
-                        test_value = spyke_formula(self.data['pres'][i - 1], self.data['pres'][i],
-                                                   self.data['pres'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 1.0*minutes:
-                            self.data.set_value(self.data.index[i], 'pres_qc', 2)
-                if 'atm_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['atm_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 5.0 for sampling interval of less
-                        # than 1 minute
-                        test_value = spyke_formula(self.data['atm'][i - 1], self.data['atm'][i],
-                                                   self.data['atm'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 5.0*minutes:
-                            self.data.set_value(self.data.index[i], 'atm_qc', 2)
-                if 'atemp_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['atemp_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.2 for sampling interval of less
-                        # than 1 minute
-                        test_value = spyke_formula(self.data['atemp'][i - 1], self.data['atemp'][i],
-                                                   self.data['atemp'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.2*minutes:
-                            self.data.set_value(self.data.index[i], 'atemp_qc', 2)
-
-            def qc_gradient_test():
-                """
-                Fourth level of qc. Find the data that appears inconsistent with other values. Writing "2" to the flag.
-                This test is failed when the difference between vertically adjacent measurements is too steep.
-                The test does not consider the differences in depth, but assumes a sampling that adequately reproduces
-                the temperature and salinity changes with depth:
-                    Test value = | V2 - (V3 + V1)/2 |
-                where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
-                """
-                def gradient_formula(v1, v2, v3):
-                    """
-                    This is the formula we have to use for the gradient test
-                    :param v2: Measurement being tested
-                    :param v1: Before measurement
-                    :param v3: Next measurement
-                    :return: Test value
-                    """
-                    test_val = np.abs(v2 - (v3 + v1) / 2)
-                    return test_val
-
-                data_keys = self.data.keys()
-                if 'temp_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['temp_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.2øC for sampling interval of less
-                        # than 1 minute
-                        test_value = gradient_formula(self.data['temp'][i - 1], self.data['temp'][i],
-                                                      self.data['temp'][i + 1])
-                        # Calculation of the minutes
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.2*minutes:
-                            # Check the next value
-                            if (i + 2) <= len(self.data.index):
-                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
-                                test_value = gradient_formula(self.data['temp'][i], self.data['temp'][i + 1],
-                                                              self.data['temp'][i + 2])
-                                if test_value > 0.2*minutes:
-                                    # If it has an other time an error it means that it is a spyke detected with the
-                                    # gradient
-                                    self.data.set_value(self.data.index[i], 'temp_qc', 2)
-                                else:
-                                    # If now it is ok, it means that the spyke was the previous value
-                                    self.data.set_value(self.data.index[i-1], 'temp_qc', 2)
-                            else:
-                                self.data.set_value(self.data.index[i], 'temp_qc', 2)
-                if 'cond_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['cond_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.2 for sampling interval of less
-                        # than 1 minute
-                        test_value = gradient_formula(self.data['cond'][i - 1], self.data['cond'][i],
-                                                      self.data['cond'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.2*minutes:
-                            # Check the next value
-                            if (i + 2) <= len(self.data.index):
-                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
-                                test_value = gradient_formula(self.data['cond'][i], self.data['cond'][i + 1],
-                                                              self.data['cond'][i + 2])
-                                if test_value > 0.2*minutes:
-                                    # If it has an other time an error it means that it is a spyke detected with the
-                                    # gradient
-                                    self.data.set_value(self.data.index[i], 'cond_qc', 2)
-                                else:
-                                    # If now it is ok, it means that the spyke was the previous value
-                                    self.data.set_value(self.data.index[i-1], 'cond_qc', 2)
-                            else:
-                                self.data.set_value(self.data.index[i], 'cond_qc', 2)
-                if 'sal_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['sal_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 1 for sampling interval of less
-                        # than 1 minute
-                        test_value = gradient_formula(self.data['sal'][i - 1], self.data['sal'][i],
-                                                      self.data['sal'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 1.0*minutes:
-                            # Check the next value
-                            if (i + 2) <= len(self.data.index):
-                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
-                                test_value = gradient_formula(self.data['sal'][i], self.data['sal'][i + 1],
-                                                              self.data['sal'][i + 2])
-                                if test_value > 1.0*minutes:
-                                    # If it has an other time an error it means that it is a spyke detected with the
-                                    # gradient
-                                    self.data.set_value(self.data.index[i], 'sal_qc', 2)
-                                else:
-                                    # If now it is ok, it means that the spyke was the previous value
-                                    self.data.set_value(self.data.index[i-1], 'sal_qc', 2)
-                            else:
-                                self.data.set_value(self.data.index[i], 'sal_qc', 2)
-                if 'pres_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['pres_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 2.0 for sampling interval of less
-                        # than 1 minute
-                        test_value = gradient_formula(self.data['pres'][i - 1], self.data['pres'][i],
-                                                      self.data['pres'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 2.0*minutes:
-                            # Check the next value
-                            if (i + 2) <= len(self.data.index):
-                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
-                                test_value = gradient_formula(self.data['pres'][i], self.data['pres'][i + 1],
-                                                              self.data['pres'][i + 2])
-                                if test_value > 2.0*minutes:
-                                    # If it has an other time an error it means that it is a spyke detected with the
-                                    # gradient
-                                    self.data.set_value(self.data.index[i], 'pres_qc', 2)
-                                else:
-                                    # If now it is ok, it means that the spyke was the previous value
-                                    self.data.set_value(self.data.index[i-1], 'pres_qc', 2)
-                            else:
-                                self.data.set_value(self.data.index[i], 'pres_qc', 2)
-                if 'atm_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['atm_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 10.0 for sampling interval of less
-                        # than 1 minute
-                        test_value = gradient_formula(self.data['atm'][i - 1], self.data['atm'][i],
-                                                      self.data['atm'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 10.0*minutes:
-                            # Check the next value
-                            if (i + 2) <= len(self.data.index):
-                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
-                                test_value = gradient_formula(self.data['atm'][i], self.data['atm'][i + 1],
-                                                              self.data['atm'][i + 2])
-                                if test_value > 10.0*minutes:
-                                    # If it has an other time an error it means that it is a spyke detected with the
-                                    # gradient
-                                    self.data.set_value(self.data.index[i], 'atm_qc', 2)
-                                else:
-                                    # If now it is ok, it means that the spyke was the previous value
-                                    self.data.set_value(self.data.index[i-1], 'atm_qc', 2)
-                            else:
-                                self.data.set_value(self.data.index[i], 'atm_qc', 2)
-                if 'atemp_qc' in data_keys:
-                    for i in range(len(self.data.index)):
-                        if i == 0 or i == len(self.data.index) - 1 or self.data['atemp_qc'][i] == 4:
-                            continue
-                        # Value appears inconsistent when the test value exceeds 0.4 for sampling interval of less
-                        # than 1 minute
-                        test_value = gradient_formula(self.data['atemp'][i - 1], self.data['atemp'][i],
-                                                      self.data['atemp'][i + 1])
-                        minutes = (self.data.index[i] - self.data.index[i - 1]).total_seconds()/60
-                        if test_value > 0.4*minutes:
-                            # Check the next value
-                            if (i + 2) <= len(self.data.index):
-                                minutes = (self.data.index[i+1] - self.data.index[i]).total_seconds()/60
-                                test_value = gradient_formula(self.data['atemp'][i], self.data['atemp'][i + 1],
-                                                              self.data['atemp'][i + 2])
-                                if test_value > 0.4*minutes:
-                                    # If it has an other time an error it means that it is a spyke detected with the
-                                    # gradient
-                                    self.data.set_value(self.data.index[i], 'atemp_qc', 2)
-                                else:
-                                    # If now it is ok, it means that the spyke was the previous value
-                                    self.data.set_value(self.data.index[i-1], 'atemp_qc', 2)
-                            else:
-                                self.data.set_value(self.data.index[i], 'atemp_qc', 2)
-
-            def qc_good_data():
-                """
-                Final level of qc. Find data that seems correct. Writing "2" to the flag.
-                Data was not flagged previously in "qc_impossible_values()", "qc_spyke_test()" and "qc_gradient_test()".
-                """
-                data_keys = self.data.keys()
-                if 'time_qc' in data_keys:
-                    self.data.ix[self.data['time_qc'] == 0, 'time_qc'] = 1
-                if 'temp_qc' in data_keys:
-                    self.data.ix[self.data['temp_qc'] == 0, 'temp_qc'] = 1
-                if 'air_temp_qc' in data_keys:
-                    self.data.ix[self.data['air_temp_qc'] == 0, 'air_temp_qc'] = 1
-                if 'cond_qc' in data_keys:
-                    self.data.ix[self.data['cond_qc'] == 0, 'cond_qc'] = 1
-                if 'sal_qc' in data_keys:
-                    self.data.ix[self.data['sal_qc'] == 0, 'sal_qc'] = 1
-                if 'sovel_qc' in data_keys:
-                    self.data.ix[self.data['sovel_qc'] == 0, 'sovel_qc'] = 1
-                if 'pres_qc' in data_keys:
-                    self.data.ix[self.data['pres_qc'] == 0, 'pres_qc'] = 1
-                if 'atm_qc' in data_keys:
-                    self.data.ix[self.data['atm_qc'] == 0, 'atm_qc'] = 1
-                if 'wisp_qc' in data_keys:
-                    self.data.ix[self.data['wisp_qc'] == 0, 'wisp_qc'] = 1
-                if 'widi_qc' in data_keys:
-                    self.data.ix[self.data['widi_qc'] == 0, 'widi_qc'] = 1
-                if 'atemp_qc' in data_keys:
-                    self.data.ix[self.data['atemp_qc'] == 0, 'atemp_qc'] = 1
-                if 'ph_qc' in data_keys:
-                    self.data.ix[self.data['ph_qc'] == 0, 'ph_qc'] = 1
-
-            qc_init()
-            qc_missing_values()
-            qc_impossible_values()
-            qc_spyke_test()
-            qc_gradient_test()
-            qc_good_data()
-
         def open_csv(path_csv):
             """
             Extract data from csv file
@@ -538,7 +117,7 @@ class OBSEA(observatory.Observatory):
                     big_data = big_data.append(self.data)
             self.data = big_data
             # qc creation
-            qc()
+            self.data = observatory.qc(self.data)
             # Copy of the data for future resets
             self.data_original = self.data.copy()
 
@@ -554,7 +133,8 @@ class OBSEA(observatory.Observatory):
                 # Path is a file
                 open_csv(path)
                 # qc creation
-                qc()
+                self.data = observatory.qc(self.data)
+                print(self.data.head())
                 # Copy of the data for future resets
                 self.data_original = self.data.copy()
             elif os.path.isdir(path):
@@ -669,7 +249,7 @@ if __name__ == '__main__':
     print("Example of class OBSEA")
 
     # Data path
-    path_data = r""
+    path_data = r"C:\Users\rbard\Google Drive\Work\Data\obsea\obsea\all 30 min\short.txt"
     print("Data path: {}".format(path_data))
 
     ''' KNOW HOW MANY TIME TAKES TO OPEN DATA '''
@@ -679,19 +259,19 @@ if __name__ == '__main__':
     # print("Size: {} Bytes".format(sys.getsizeof(ob.data)))
 
     ''' LOADING DATA FROM PATH'''
-    # print("Loading data, please wait.")
-    # ob = OBSEA(path_data)
-    # if ob.dialog:
-    #     print(ob.dialog)
-    #     sys.exit()
-    # # Saving the data in a pkl file
-    # ob.data.to_pickle("data.pkl")
-    # ob.metadata.to_pickle("metadata.pkl")
+    print("Loading data, please wait.")
+    ob = OBSEA(path_data)
+    if ob.dialog:
+        print(ob.dialog)
+        sys.exit()
+    # Saving the data in a pkl file
+    ob.data.to_pickle("data.pkl")
+    ob.metadata.to_pickle("metadata.pkl")
 
     ''' LOADING DATA FROM PKL FILE '''
-    ob = OBSEA()
-    ob.data = pd.read_pickle(r"C:\Users\Raul\Google Drive\Work\Data\obsea\data_obsea.pkl")
-    ob.metadata = pd.read_pickle(r"C:\Users\Raul\Google Drive\Work\Data\obsea\metadata_obsea.pkl")
+    # ob = OBSEA()
+    # ob.data = pd.read_pickle(r"C:\Users\rbard\Google Drive\Work\Data\obsea\data_obsea.pkl")
+    # ob.metadata = pd.read_pickle(r"C:\Users\rbard\Google Drive\Work\Data\obsea\metadata_obsea.pkl")
 
     ''' INFO '''
     print("METADATA INFORMATION")
@@ -702,30 +282,29 @@ if __name__ == '__main__':
     print(ob.info_parameters())
 
     ''' DELETING COLUMNS NOT NEEDED '''
-    print("Deleting data that we do not need.")
-    ob.data.drop('sal', axis=1, inplace=True)
-    ob.data.drop('sal_qc', axis=1, inplace=True)
+    # print("Deleting data that we do not need.")
+    # ob.delete_param('sal')
 
     ''' RESAMPLING '''
     print("Resampling to calendar day frequency.")
-    ob.resample_data('D')
+    ob.resample_data('M')
     if ob.dialog:
         print(ob.dialog)
         sys.exit()
 
     ''' Clear '''
-    ob.clear_bad_data()
+    # ob.clear_bad_data()
 
     ''' Butterworth Filter'''
-    print("Applying Butterworth filter.")
-    ob.butterworth_filter('temp')
-    if ob.dialog:
-        print(ob.dialog)
-        sys.exit()
-    ob.butterworth_filter('atemp')
-    if ob.dialog:
-        print(ob.dialog)
-        sys.exit()
+    # print("Applying Butterworth filter.")
+    # ob.butterworth_filter('temp')
+    # if ob.dialog:
+    #     print(ob.dialog)
+    #     sys.exit()
+    # ob.butterworth_filter('atemp')
+    # if ob.dialog:
+    #     print(ob.dialog)
+    #     sys.exit()
 
     ''' SLICING '''
     '''print("Slicing.")
@@ -739,7 +318,9 @@ if __name__ == '__main__':
 
     ''' PLOTS '''
     print("Making plots.")
-    ob.plt_all()
+    # ob.plt_all()
+    # ob.plt_multiparam_one_plot('temp','atemp')
+    ob.plt_qc()
     print("Done.")
     plt.show()
 

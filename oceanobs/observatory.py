@@ -4,6 +4,131 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.signal as signal
+from mpl_toolkits.basemap import Basemap
+import datetime
+
+
+class PlotMap:
+    """Map plot management"""
+    # Constructor
+    def __init__(self, ):
+        # Basemap object
+        self.m = Basemap()
+
+    def new_map_world(self, res='h'):
+        """
+        Creation of a world map.
+        :param res: Map resolution (c,l,h,f). Defauld h - high
+        :type res: char
+        """
+        self.m = Basemap(projection='mill', resolution=res)
+        # Dibuja una linea en los continentes
+        self.m.drawcoastlines()
+        # Dibuja rios y lagos grandes
+        # self.m.drawrivers(linewidth=0.5, linestyle='solid', color='k', antialiased=1, ax=None, zorder=None)
+        # Rellena los continentes
+        self.m.fillcontinents(color='K')
+        # Dibuja paralelos
+        # parallels = np.arange(41., 44, 1.)
+        # self.m.drawparallels(parallels, labels=[1, 0, 0, 0], fontsize=10)
+        # Dibuja meridianos
+        # meridians = np.arange(0., 5., 1.)
+        # self.m.drawmeridians(meridians, labels=[0, 0, 0, 1], fontsize=10)
+
+    def new_map_iberic(self, res='h'):
+        """Creation of a map of the Iberian Peninsula
+        :param res: Map resolution (c,l,h,f). Defauld, h - high
+        :type res: char
+        """
+        self.m = Basemap(projection='mill', llcrnrlat=34, llcrnrlon=-13, urcrnrlat=45, urcrnrlon=4, resolution=res)
+        # Dibuja una linea en los continentes
+        self.m.drawcoastlines()
+        # Dibuja rios y lagos grandes
+        # self.m.drawrivers(linewidth=0.5, linestyle='solid', color='k', antialiased=1, ax=None, zorder=None)
+        # Rellena los continentes
+        self.m.fillcontinents(color='k')
+
+    def new_map_pyrenees(self, res='h'):
+        """Creation of a map of the Pyrenees.
+        :param res: Resolucion del mapa (c,l,h,f). Por defecto h - high
+        :type res: char
+        """
+        self.m = Basemap(projection='mill', llcrnrlat=41.5, llcrnrlon=0, urcrnrlat=43, urcrnrlon=4, resolution=res)
+        # Dibuja una linea en los continentes
+        self.m.drawcoastlines()
+        # Dibuja rios y lagos grandes
+        self.m.drawrivers(linewidth=0.5, linestyle='solid', color='k', antialiased=1, ax=None, zorder=None)
+        # Rellena los continentes
+        self.m.fillcontinents(color='coral')
+        # Dibuja paralelos
+        parallels = np.arange(41., 44, 1.)
+        self.m.drawparallels(parallels, labels=[1, 0, 0, 0], fontsize=10)
+        # Dibuja meridianos
+        meridians = np.arange(0., 5., 1.)
+        self.m.drawmeridians(meridians, labels=[0, 0, 0, 1], fontsize=10)
+
+        # plt.legend(loc=4)
+        # plt.title(title_map)
+
+    def new_map_pyrenees_arcgisapi(self):
+        """
+        Creation of a map of Pyrenees ussing the arcgis API.
+        """
+        self.m = Basemap(llcrnrlat=42.45, llcrnrlon=0.65, urcrnrlat=42.8, urcrnrlon=1.5, epsg=5520)
+        # http://server.arcgisonline.com/arcgis/rest/services
+        self.m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels=4000, verbose=True)
+
+        parallels = np.arange(41., 44, 1.)
+        self.m.drawparallels(parallels, labels=[1, 0, 0, 0], fontsize=10)
+        # Dibuja meridianos
+        meridians = np.arange(0., 5., 1.)
+        self.m.drawmeridians(meridians, labels=[0, 0, 0, 1], fontsize=10)
+
+    def new_map_mediterranean(self, res='h'):
+        """Creation of a map of Spain
+        :param res: Map resolution (c,l,h,f). Defauld, h - high
+        :type res: char
+        """
+        self.m = Basemap(projection='mill', llcrnrlat=30, llcrnrlon=-13, urcrnrlat=47, urcrnrlon=38, resolution=res)
+        # Dibuja una linea en los continentes
+        self.m.drawcoastlines()
+        # Dibuja rios y lagos grandes
+        # self.m.drawrivers(linewidth=0.5, linestyle='solid', color='k', antialiased=1, ax=None, zorder=None)
+        # Rellena los continentes
+        self.m.fillcontinents(color='k')
+
+    def new_map_europe(self, res='h'):
+        """Creation of a map of Spain
+        :param res: Map resolution (c,l,h,f). Defauld, h - high
+        :type res: char
+        """
+        self.m = Basemap(projection='mill', llcrnrlat=30, llcrnrlon=-13, urcrnrlat=70, urcrnrlon=38, resolution=res)
+        # Dibuja una linea en los continentes
+        self.m.drawcoastlines()
+        # Dibuja rios y lagos grandes
+        # self.m.drawrivers(linewidth=0.5, linestyle='solid', color='k', antialiased=1, ax=None, zorder=None)
+        # Rellena los continentes
+        self.m.fillcontinents(color='k')
+
+    def add_point(self, lon, lat, *arg):
+        """Añadimos puntos al mapa
+        :param lon: longitud
+        :type lon: float
+        :param lat: latitud
+        :type lat: float
+        :param arg: valor R,G,B,C
+        :type arg: float
+        """
+        xpt, ypt = self.m(lon, lat)
+        if 1 == len(arg):
+            marker_color = arg[0]
+            self.m.plot(xpt, ypt, marker='o', color=str(marker_color), markersize=7)
+        elif len(arg) == 4:
+            color_red = arg[0]
+            color_green = arg[1]
+            color_blue = arg[2]
+            color_clear = arg[3]
+            self.m.plot(xpt, ypt, marker='o', color=[color_red, color_green, color_blue, color_clear], markersize=7)
 
 
 class Observatory:
@@ -98,6 +223,9 @@ class Observatory:
             if 'temp_qc' in data_keys:
                 self.data.ix[self.data['temp_qc'] != 1, 'temp'] = np.nan
                 self.data.ix[self.data['temp_qc'] != 1, 'temp_qc'] = 1
+            if 'sal_qc' in data_keys:
+                self.data.ix[self.data['sal_qc'] != 1, 'sal'] = np.nan
+                self.data.ix[self.data['sal_qc'] != 1, 'sal_qc'] = 1
 
         def resample_qc():
             data_keys = self.data.keys()
@@ -113,6 +241,8 @@ class Observatory:
                 self.data.ix[pd.isnull(self.data['wape']), 'wape_qc'] = 9
             if 'temp_qc' in data_keys:
                 self.data.ix[pd.isnull(self.data['temp']), 'temp_qc'] = 9
+            if 'sal_qc' in data_keys:
+                self.data.ix[pd.isnull(self.data['sal']), 'sal_qc'] = 9
 
         # Change the bad values
         change_bad_values()
@@ -147,13 +277,16 @@ class Observatory:
             self.data.ix[self.data[component] != filtered_data, component+'_qc'] = 5
             # Adding the values
             self.data[component] = filtered_data
-        except KeyError:
-            self.dialog = "Error: {}".format(KeyError)
+        except KeyError as keyerr:
+            self.dialog = "Error: {}".format(keyerr.args)
+        except ValueError as valerr:
+            self.dialog = "Error: {}".format(valerr.args)
 
     def clear_bad_data(self):
         """
         Delete all the data with QC flags 2, 3, 4, 6 and 9
         """
+        self.data.dropna(axis=0, how='any', inplace=True)
         for key in self.data.keys():
             if "_qc" in key:
                 self.data = self.data[self.data[key] != 2]
@@ -162,29 +295,71 @@ class Observatory:
                 self.data = self.data[self.data[key] != 6]
                 self.data = self.data[self.data[key] != 9]
 
+    def delete_param(self, *parameters):
+        """
+        Delete a parameter or a list of parameters of self.data
+        :param parameters: List of parameters to delete.
+        """
+        for parameter in parameters:
+            try:
+                self.data.drop(parameter, axis=1, inplace=True)
+                self.data.drop(parameter + "_qc", axis=1, inplace=True)
+            except KeyError:
+                self.dialog = "Error: {}".format(KeyError)
+
+    def use_only(self, *parameters):
+        """
+        Delete all the parameters not presented in the *parameters list.
+        :param parameters: List of parameters to save.
+        """
+        self.dialog = False
+        parameters = list(parameters)
+        parameter_list = list()
+        parameter_list.append('time_qc')
+        for parameter in parameters:
+            parameter_list.append(parameter)
+            parameter_list.append(parameter+"_qc")
+        try:
+            self.data = self.data[parameter_list]
+        except KeyError:
+            self.dialog = "Error: {}".format(KeyError)
+
     """ Data information"""
 
     def info_data(self):
         """
-        Return when your data start and stop in terms of time.
-        :return: info de data
+        :return: info of the data
         :rtype: str
         """
         # Search for initial and final dates
         try:
             # Look for start and stop time
-            start_time = self.data.first_valid_index()
-            stop_time = self.data.last_valid_index()
-            message = "start time: {}\nstop time: {}\n".format(start_time, stop_time)
+            start_time = self.data.index.min()
+            stop_time = self.data.index.max()
+            message = "- Start date: {}\n- End date: {}\n".format(start_time, stop_time)
             # Look for the parameters
-            message += "Parameters: "
+            message += "- Parameters and QC flag stadistics: \n"
             for key in self.data.keys():
                 if "_qc" in key:
                     continue
-                message += "{}, ".format(key)
+
+                # Look for start and end date
+                valid_col = self.data[key+"_qc"].dropna()
+                start = valid_col.index[0]
+                end = valid_col.index[-1]
+
+                # Write information
+                message += "\t- {}, from {} to {}\n".format(key, start, end)
+                # QC stadistics
+                df_counts = self.data[key+"_qc"].value_counts().reset_index()
+                df_counts.columns = ['col_name', 'count']
+                for i in range(len(df_counts.index)):
+                    message += "\t\t- {}: {:.2f} %\n".format(int(df_counts['col_name'][i]), df_counts['count'][i] /
+                                                             self.data[key+"_qc"].count()*100)
+
         except IndexError:
             message = "Error: No good data."
-        return message[:-2]
+        return message[:-1]
 
     def info_metadata(self):
         """
@@ -195,7 +370,7 @@ class Observatory:
         message = ""
         for key in keys:
             if self.metadata[key][0] != " ":
-                message += "{}: {}\n".format(key, str(self.metadata[key][0]))
+                message += "- {}: {}\n".format(key, str(self.metadata[key][0]))
         return message[:-1]  # Delete the last "\n"
 
     @staticmethod
@@ -576,7 +751,7 @@ class Observatory:
         axes.set_ylabel("Degrees")
         return fig_wd
 
-    def plt_qc(self):
+    def plt_qc_cmap(self):
         """
         Graph of QC.
         :return: Figure
@@ -652,6 +827,21 @@ class Observatory:
         plt.xticks(np.arange(0.5, len(data_qc.columns), 1), data_qc.columns)
         fig_qc.autofmt_xdate()
 
+        return fig_qc
+
+    def plt_qc(self):
+        """
+        Graph of QC.
+        :return: Figure
+        """
+        # Look for qc data
+        qc_keys = []
+        for key in self.data.keys():
+            if '_qc' in key:
+                qc_keys.append(key)
+        # Plot
+        fig_qc, axes = plt.subplots(nrows=len(qc_keys), ncols=1)
+        ax_list = self.data[qc_keys].plot(ax=axes, subplots=True, drawstyle='steps-pre', ylim=(0, 10))
         return fig_qc
 
     def plt_wadi(self, qc_flag=None):
@@ -940,9 +1130,11 @@ class Observatory:
         if 'cudi' in data_keys:
             fig_cudi = self.plt_cudi(qc_flag)
             fig_dict['Current direction'] = fig_cudi
-        if len(self.data.index) < 25:
-            fig_qc = self.plt_qc()
-            fig_dict['QC flags'] = fig_qc
+        if 'volt' in data_keys:
+            fig_volt = self.plt_cudi(qc_flag)
+            fig_dict['Voltage'] = fig_volt
+        fig_qc = self.plt_qc()
+        fig_dict['QC flags'] = fig_qc
 
         return fig_dict
 
@@ -979,7 +1171,7 @@ class Observatory:
             self.dialog = "Error".format(qc_flag)
         return fig_multiple
 
-    def plt_multiparam_multiplot(self, *parameter, qc_flag=None):
+    def plt_multiparam_multiplot(self, qc_flag=None, *parameter):
         """
         Plot multiple parametes.
         :param parameter: List of parameters to plot
@@ -1012,3 +1204,438 @@ class Observatory:
         axes[i-1].set_xlabel('Time UTC')
 
         return fig_multiplot
+
+
+def qc(data):
+    """
+    QC flags creation. We are using the GLOBAL QCFF flags.
+    Flags are added to the data frame.
+    Flag - Meaning
+    0 - no quality control
+    1 - value seems correct
+    2 - value appears inconsistent with other values
+    3 - value seems doubtful
+    4 - value seems erroneous
+    5 - value was modified
+    6 - flagged land test
+    7 - nominal_value
+    8 - interpolated value
+    9 - value missing
+    :param data: Data variable with the oceanobs standard.
+    :return data: Data varable with the oceanobs standard.
+    """
+
+    def qc_init(data):
+        """
+        Start with the QC flags. Writing "0" to all flags.
+        Indicate that, for the moment, no data has qc.
+        :param data: Data variable with the oceanobs standard.
+        :return data: Data varable with the oceanobs standard.
+        """
+        data['time_qc'] = 0
+        data_keys = data.keys()
+        if 'temp' in data_keys:
+            data['temp_qc'] = 0
+        if 'atemp' in data_keys:
+            data['atemp_qc'] = 0
+        if 'cond' in data_keys:
+            data['cond_qc'] = 0
+        if 'sal' in data_keys:
+            data['sal_qc'] = 0
+        if 'sovel' in data_keys:
+            data['sovel_qc'] = 0
+        if 'pres' in data_keys:
+            data['pres_qc'] = 0
+        if 'atm' in data_keys:
+            data['atm_qc'] = 0
+        if 'wis' in data_keys:
+            data['wis_qc'] = 0
+        if 'wid' in data_keys:
+            data['wid_qc'] = 0
+        if 'ph' in data_keys:
+            data['ph_qc'] = 0
+        if 'tur' in data_keys:
+            data['tur_qc'] = 0
+        if 'oxy' in data_keys:
+            data['oxy_qc'] = 0
+        if 'depth' in data_keys:
+            data['depth_qc'] = 0
+        return data
+
+    def qc_missing_values(data):
+        """
+        First level of qc. Look for missing values. Writing "9" to the flag.
+        :param data: Data variable with the oceanobs standard.
+        :return data: Data varable with the oceanobs standard.
+        """
+        data_keys = data.keys()
+        if 'temp_qc' in data_keys:
+            data.ix[pd.isnull(data['temp']), 'temp_qc'] = 9
+        if 'sal_qc' in data_keys:
+            data.ix[pd.isnull(data['sal']), 'sal_qc'] = 9
+        if 'cond_qc' in data_keys:
+            data.ix[pd.isnull(data['cond']), 'cond_qc'] = 9
+        if 'sovel_qc' in data_keys:
+            data.ix[pd.isnull(data['sovel']), 'sovel_qc'] = 9
+        if 'pres_qc' in data_keys:
+            data.ix[pd.isnull(data['pres']), 'pres_qc'] = 9
+        if 'atm_qc' in data_keys:
+            data.ix[pd.isnull(data['atm']), 'atm_qc'] = 9
+        if 'wis_qc' in data_keys:
+            data.ix[pd.isnull(data['wisp']), 'wisp_qc'] = 9
+        if 'wid_qc' in data_keys:
+            data.ix[pd.isnull(data['widi']), 'widi_qc'] = 9
+        if 'atemp_qc' in data_keys:
+            data.ix[pd.isnull(data['atemp']), 'atemp_qc'] = 9
+        if 'ph_qc' in data_keys:
+            data.ix[pd.isnull(data['ph']), 'ph_qc'] = 9
+
+        return data
+
+    def qc_impossible_values(data):
+        """
+        Second level of qc. Find the data that seems erroneous. Writing "4" to the flag.
+        This test applies only where conditions can be further qualified. In this case, specific ranges for
+        observations from the Mediterranean (OBSEA) further restrict what are considered sensible values.
+        :param data: Data variable with the oceanobs standard.
+        :return data: Data varable with the oceanobs standard.
+        """
+        data_keys = data.keys()
+        if 'time_qc' in data_keys:
+            # Year greater than 2008
+            data.ix[data.index < datetime.datetime(2008, 1, 1), 'time_qc'] = 4
+        if 'temp_qc' in data_keys:
+            # Sea Water Temperature in range 10°C to 28°C
+            data.ix[data['temp'] < 10.0, 'temp_qc'] = 4
+            data.ix[data['temp'] > 28.0, 'temp_qc'] = 4
+        if 'sal_qc' in data_keys:
+            # Salinity in range 35 to 39
+            data.ix[data['sal'] < 35.0, 'sal_qc'] = 4
+            data.ix[data['sal'] > 39.0, 'sal_qc'] = 4
+        if 'cond_qc' in data_keys:
+            # Conductivity in range 3.5S/m to 6.5S/m
+            data.ix[data['cond'] < 3.5, 'cond_qc'] = 4
+            data.ix[data['cond'] > 6.5, 'cond_qc'] = 4
+        if 'sovel_qc' in data_keys:
+            # Sound velocity in range 1480m/s to 1550m/s
+            data.ix[data['sovel'] < 1480.0, 'sovel_qc'] = 4
+            data.ix[data['sovel'] > 1550.0, 'sovel_qc'] = 4
+        if 'pres_qc' in data_keys:
+            # Pressure in range 18 dbar to 21 dbar
+            data.ix[data['pres'] < 18.0, 'pres_qc'] = 4
+            data.ix[data['pres'] > 21.0, 'pres_qc'] = 4
+        if 'atm_qc' in data_keys:
+            # Sea level air pressure in range 850hPa to 1060hPa (mbar)
+            data.ix[data['atm'] < 0.850, 'atm_qc'] = 4
+            data.ix[data['atm'] > 1.060, 'atm_qc'] = 4
+        if 'wis_qc' in data_keys:
+            # Wind speed in range 0m/s to 60m/s
+            data.ix[data['wisp'] < 0.0, 'wisp_qc'] = 4
+            data.ix[data['wisp'] > 60.0, 'wisp_qc'] = 4
+        if 'wid_qc' in data_keys:
+            # Wind Direction in range 0° to 360°
+            data.ix[data['widi'] < 0.0, 'widi_qc'] = 4
+            data.ix[data['widi'] > 360.0, 'widi_qc'] = 4
+        if 'atemp_qc' in data_keys:
+            # Air Temperature in range -10°C + 40°C
+            data.ix[data['atemp'] < -10.0, 'atemp_qc'] = 4
+            data.ix[data['atemp'] > 40.0, 'atemp_qc'] = 4
+
+        return data
+
+    def qc_spyke_test(data):
+        """
+        Third level of qc. Find the data that appears inconsistent with other values. Writing "2" to the flag.
+        A large difference between sequential measurements, where one measurement is quite different from
+        adjacent ones, is a spike in both size and gradient. The test does not consider the differences in
+        depth, but assumes a sampling that adequately reproduces the temperature and salinity changes with
+        depth. The algorithm is used on both the temperature and salinity instruments:
+            Test value = |V2 - (V3 + V1)/2| - |(V3 ? V1) / 2|
+        where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
+        :param data: Data variable with the oceanobs standard.
+        :return data: Data varable with the oceanobs standard.
+        """
+        def spyke_formula(v1, v2, v3):
+            """
+            This is the formula we have to use for the spyke test
+            :param v2: Measurement being tested
+            :param v1: Before measurement
+            :param v3: Next measurement
+            :return: Test value
+            """
+            test_val = np.abs(v2 - (v3 + v1) / 2) - np.abs((v3 - v1) / 2)
+            return test_val
+
+        data_keys = data.keys()
+        time1 = datetime.datetime.now()
+        if 'temp_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['temp_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.1°C for sampling interval of less
+                # than 1 minute
+                test_value = spyke_formula(data['temp'][i - 1], data['temp'][i],data['temp'][i + 1])
+                # The value of the spike formula cannot be > 0.1*minute. Let's calculate the minutes between
+                # the measurements
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.1*minutes:
+                    data.set_value(data.index[i], 'temp_qc', 2)
+
+        if 'cond_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['cond_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.1 for sampling interval of less
+                # than 1 minute
+                test_value = spyke_formula(data['cond'][i - 1], data['cond'][i], data['cond'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.1*minutes:
+                    data.set_value(data.index[i], 'cond_qc', 2)
+        if 'sal_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['sal_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.5 for sampling interval of less
+                # than 1 minute
+                test_value = spyke_formula(data['sal'][i - 1], data['sal'][i], data['sal'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.5*minutes:
+                    data.set_value(data.index[i], 'sal_qc', 2)
+        if 'pres_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['pres_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 1.0 for sampling interval of less
+                # than 1 minute
+                test_value = spyke_formula(data['pres'][i - 1], data['pres'][i], data['pres'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 1.0*minutes:
+                    data.set_value(data.index[i], 'pres_qc', 2)
+        if 'atm_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['atm_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 5.0 for sampling interval of less
+                # than 1 minute
+                test_value = spyke_formula(data['atm'][i - 1], data['atm'][i], data['atm'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 5.0*minutes:
+                    data.set_value(data.index[i], 'atm_qc', 2)
+        if 'atemp_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['atemp_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.2 for sampling interval of less
+                # than 1 minute
+                test_value = spyke_formula(data['atemp'][i - 1], data['atemp'][i], data['atemp'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.2*minutes:
+                    data.set_value(data.index[i], 'atemp_qc', 2)
+        return data
+
+    def qc_gradient_test(data):
+        """
+        Fourth level of qc. Find the data that appears inconsistent with other values. Writing "2" to the flag.
+        This test is failed when the difference between vertically adjacent measurements is too steep.
+        The test does not consider the differences in depth, but assumes a sampling that adequately reproduces
+        the temperature and salinity changes with depth:
+            Test value = | V2 - (V3 + V1)/2 |
+        where V2 is the measurement being tested as a spike, and V1 and V3 are the values above and below.
+        :param data: Data variable with the oceanobs standard.
+        :return data: Data varable with the oceanobs standard.
+        """
+        def gradient_formula(v1, v2, v3):
+            """
+            This is the formula we have to use for the gradient test
+            :param v2: Measurement being tested
+            :param v1: Before measurement
+            :param v3: Next measurement
+            :return: Test value
+            """
+            test_val = np.abs(v2 - (v3 + v1) / 2)
+            return test_val
+
+        data_keys = data.keys()
+        if 'temp_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['temp_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.2°C for sampling interval of less
+                # than 1 minute
+                test_value = gradient_formula(data['temp'][i - 1], data['temp'][i], data['temp'][i + 1])
+                # Calculation of the minutes
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.2*minutes:
+                    # Check the next value
+                    if (i + 2) <= len(data.index):
+                        minutes = (data.index[i+1] - data.index[i]).total_seconds()/60
+                        test_value = gradient_formula(data['temp'][i], data['temp'][i + 1], data['temp'][i + 2])
+                        if test_value > 0.2*minutes:
+                            # If it has an other time an error it means that it is a spyke detected with the
+                            # gradient
+                            data.set_value(data.index[i], 'temp_qc', 2)
+                        else:
+                            # If now it is ok, it means that the spyke was the previous value
+                            data.set_value(data.index[i-1], 'temp_qc', 2)
+                    else:
+                        data.set_value(data.index[i], 'temp_qc', 2)
+        if 'cond_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['cond_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.2 for sampling interval of less
+                # than 1 minute
+                test_value = gradient_formula(data['cond'][i - 1], data['cond'][i], data['cond'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.2*minutes:
+                    # Check the next value
+                    if (i + 2) <= len(data.index):
+                        minutes = (data.index[i+1] - data.index[i]).total_seconds()/60
+                        test_value = gradient_formula(data['cond'][i], data['cond'][i + 1], data['cond'][i + 2])
+                        if test_value > 0.2*minutes:
+                            # If it has an other time an error it means that it is a spyke detected with the
+                            # gradient
+                            data.set_value(data.index[i], 'cond_qc', 2)
+                        else:
+                            # If now it is ok, it means that the spyke was the previous value
+                            data.set_value(data.index[i-1], 'cond_qc', 2)
+                    else:
+                        data.set_value(data.index[i], 'cond_qc', 2)
+        if 'sal_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['sal_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 1 for sampling interval of less
+                # than 1 minute
+                test_value = gradient_formula(data['sal'][i - 1], data['sal'][i], data['sal'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 1.0*minutes:
+                    # Check the next value
+                    if (i + 2) <= len(data.index):
+                        minutes = (data.index[i+1] - data.index[i]).total_seconds()/60
+                        test_value = gradient_formula(data['sal'][i], data['sal'][i + 1], data['sal'][i + 2])
+                        if test_value > 1.0*minutes:
+                            # If it has an other time an error it means that it is a spyke detected with the
+                            # gradient
+                            data.set_value(data.index[i], 'sal_qc', 2)
+                        else:
+                            # If now it is ok, it means that the spyke was the previous value
+                            data.set_value(data.index[i-1], 'sal_qc', 2)
+                    else:
+                        data.set_value(data.index[i], 'sal_qc', 2)
+        if 'pres_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['pres_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 2.0 for sampling interval of less
+                # than 1 minute
+                test_value = gradient_formula(data['pres'][i - 1], data['pres'][i], data['pres'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 2.0*minutes:
+                    # Check the next value
+                    if (i + 2) <= len(data.index):
+                        minutes = (data.index[i+1] - data.index[i]).total_seconds()/60
+                        test_value = gradient_formula(data['pres'][i], data['pres'][i + 1], data['pres'][i + 2])
+                        if test_value > 2.0*minutes:
+                            # If it has an other time an error it means that it is a spyke detected with the
+                            # gradient
+                            data.set_value(data.index[i], 'pres_qc', 2)
+                        else:
+                            # If now it is ok, it means that the spyke was the previous value
+                            data.set_value(data.index[i-1], 'pres_qc', 2)
+                    else:
+                        data.set_value(data.index[i], 'pres_qc', 2)
+        if 'atm_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['atm_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 10.0 for sampling interval of less
+                # than 1 minute
+                test_value = gradient_formula(data['atm'][i - 1], data['atm'][i], data['atm'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 10.0*minutes:
+                    # Check the next value
+                    if (i + 2) <= len(data.index):
+                        minutes = (data.index[i+1] - data.index[i]).total_seconds()/60
+                        test_value = gradient_formula(data['atm'][i], data['atm'][i + 1], data['atm'][i + 2])
+                        if test_value > 10.0*minutes:
+                            # If it has an other time an error it means that it is a spyke detected with the
+                            # gradient
+                            data.set_value(data.index[i], 'atm_qc', 2)
+                        else:
+                            # If now it is ok, it means that the spyke was the previous value
+                            data.set_value(data.index[i-1], 'atm_qc', 2)
+                    else:
+                        data.set_value(data.index[i], 'atm_qc', 2)
+        if 'atemp_qc' in data_keys:
+            for i in range(len(data.index)):
+                if i == 0 or i == len(data.index) - 1 or data['atemp_qc'][i] == 4:
+                    continue
+                # Value appears inconsistent when the test value exceeds 0.4 for sampling interval of less
+                # than 1 minute
+                test_value = gradient_formula(data['atemp'][i - 1], data['atemp'][i], data['atemp'][i + 1])
+                minutes = (data.index[i] - data.index[i - 1]).total_seconds()/60
+                if test_value > 0.4*minutes:
+                    # Check the next value
+                    if (i + 2) <= len(data.index):
+                        minutes = (data.index[i+1] - data.index[i]).total_seconds()/60
+                        test_value = gradient_formula(data['atemp'][i], data['atemp'][i + 1], data['atemp'][i + 2])
+                        if test_value > 0.4*minutes:
+                            # If it has an other time an error it means that it is a spyke detected with the
+                            # gradient
+                            data.set_value(data.index[i], 'atemp_qc', 2)
+                        else:
+                            # If now it is ok, it means that the spyke was the previous value
+                            data.set_value(data.index[i-1], 'atemp_qc', 2)
+                    else:
+                        data.set_value(data.index[i], 'atemp_qc', 2)
+        return data
+
+    def qc_good_data(data):
+        """
+        Final level of qc. Find data that seems correct. Writing "2" to the flag.
+        Data was not flagged previously in "qc_impossible_values()", "qc_spyke_test()" and "qc_gradient_test()".
+        :param data: Data variable with the oceanobs standard.
+        :return data: Data varable with the oceanobs standard.
+        """
+        data_keys = data.keys()
+        if 'time_qc' in data_keys:
+            data.ix[data['time_qc'] == 0, 'time_qc'] = 1
+        if 'temp_qc' in data_keys:
+            data.ix[data['temp_qc'] == 0, 'temp_qc'] = 1
+        if 'air_temp_qc' in data_keys:
+            data.ix[data['air_temp_qc'] == 0, 'air_temp_qc'] = 1
+        if 'cond_qc' in data_keys:
+            data.ix[data['cond_qc'] == 0, 'cond_qc'] = 1
+        if 'sal_qc' in data_keys:
+            data.ix[data['sal_qc'] == 0, 'sal_qc'] = 1
+        if 'sovel_qc' in data_keys:
+            data.ix[data['sovel_qc'] == 0, 'sovel_qc'] = 1
+        if 'pres_qc' in data_keys:
+            data.ix[data['pres_qc'] == 0, 'pres_qc'] = 1
+        if 'atm_qc' in data_keys:
+            data.ix[data['atm_qc'] == 0, 'atm_qc'] = 1
+        if 'wisp_qc' in data_keys:
+            data.ix[data['wisp_qc'] == 0, 'wisp_qc'] = 1
+        if 'widi_qc' in data_keys:
+            data.ix[data['widi_qc'] == 0, 'widi_qc'] = 1
+        if 'atemp_qc' in data_keys:
+            data.ix[data['atemp_qc'] == 0, 'atemp_qc'] = 1
+        if 'ph_qc' in data_keys:
+            data.ix[data['ph_qc'] == 0, 'ph_qc'] = 1
+        if 'tur_qc' in data_keys:
+            data.ix[data['tur_qc'] == 0, 'tur_qc'] = 1
+        if 'oxy_qc' in data_keys:
+            data.ix[data['oxy_qc'] == 0, 'oxy_qc'] = 1
+        if 'depth_qc' in data_keys:
+            data.ix[data['depth_qc'] == 0, 'depth_qc'] = 1
+        return data
+
+    data = qc_init(data)
+    data = qc_missing_values(data)
+    data = qc_impossible_values(data)
+    data = qc_spyke_test(data)
+    data = qc_gradient_test(data)
+    data = qc_good_data(data)
+
+    return data

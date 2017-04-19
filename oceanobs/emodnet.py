@@ -17,11 +17,8 @@ class EMODnet(observatory.Observatory):
         :type path: str
         """
 
-        # Temporal data for the csv files
-        self.path_metadata_csv = r"metadata_temp.csv"
-        self.path_data_csv = r"data_temp.csv"
-        # Start word of data in EMODnet csv files
-        self.start_word_csv = "DATE"
+        self.data = None
+        self.metadata = None
 
         if path is not None:
             self.open(path)
@@ -64,7 +61,9 @@ class EMODnet(observatory.Observatory):
                                           'wmo_platform_code': df_nc.wmo_platform_code,
                                           'institution': df_nc.institution,
                                           'id': df_nc.id,
-                                          'type': [df_nc.data_type]})
+                                          'type': [df_nc.data_type],
+                                          'lat': df_nc.geospatial_lat_min,
+                                          'lon': df_nc.geospatial_lon_min})
             # Creation of the data dataframe
             # The time is the index
             times = df_nc.variables['TIME']
@@ -72,8 +71,6 @@ class EMODnet(observatory.Observatory):
 
             keys_nc = df_nc.variables.keys()
             # print(keys_nc)
-            # print(df_nc['HCDT'])
-            # print(df_nc)
             df_dict = {}
             if 'TIME_QC' in keys_nc:
                 df_dict['time_qc'] = df_nc['TIME_QC'][:]
@@ -149,6 +146,61 @@ class EMODnet(observatory.Observatory):
                 if sensor is not None:
                     df_dict['cudi'] = df_nc['HCDT'][:][:, sensor]
                     df_dict['cudi_qc'] = df_nc['HCDT_QC'][:][:, sensor]
+            if 'DEWT' in keys_nc:
+                sensor = where_is_the_value(df_nc['DEWT_QC'])
+                if sensor is not None:
+                    df_dict['dewt'] = df_nc['DEWT'][:][:, sensor]
+                    df_dict['dewt_qc'] = df_nc['DEWT_QC'][:][:, sensor]
+            if 'EWCT' in keys_nc:
+                sensor = where_is_the_value(df_nc['EWCT_QC'])
+                if sensor is not None:
+                    df_dict['ecus'] = df_nc['EWCT'][:][:, sensor]
+                    df_dict['ecus_qc'] = df_nc['EWCT_QC'][:][:, sensor]
+            if 'NSCT' in keys_nc:
+                sensor = where_is_the_value(df_nc['NSCT_QC'])
+                if sensor is not None:
+                    df_dict['ncus'] = df_nc['NSCT'][:][:, sensor]
+                    df_dict['ncus_qc'] = df_nc['NSCT_QC'][:][:, sensor]
+            if 'VAVH' in keys_nc:
+                sensor = where_is_the_value(df_nc['VAVH_QC'])
+                if sensor is not None:
+                    df_dict['wasi'] = df_nc['VAVH'][:][:, sensor]
+                    df_dict['wasi_qc'] = df_nc['VAVH_QC'][:][:, sensor]
+            if 'VEMH' in keys_nc:
+                sensor = where_is_the_value(df_nc['VEMH_QC'])
+                if sensor is not None:
+                    df_dict['mawa'] = df_nc['VEMH'][:][:, sensor]
+                    df_dict['mawa_qc'] = df_nc['VEMH_QC'][:][:, sensor]
+            if 'VCSP' in keys_nc:
+                sensor = where_is_the_value(df_nc['VCSP_QC'])
+                if sensor is not None:
+                    df_dict['btcus'] = df_nc['VCSP'][:][:, sensor]
+                    df_dict['btcus_qc'] = df_nc['VCSP_QC'][:][:, sensor]
+            if 'VGTA' in keys_nc:
+                sensor = where_is_the_value(df_nc['VGTA_QC'])
+                if sensor is not None:
+                    df_dict['wagape'] = df_nc['VGTA'][:][:, sensor]
+                    df_dict['wagape_qc'] = df_nc['VGTA_QC'][:][:, sensor]
+            if 'VHZA' in keys_nc:
+                sensor = where_is_the_value(df_nc['VGTA_QC'])
+                if sensor is not None:
+                    df_dict['waahe'] = df_nc['VHZA'][:][:, sensor]
+                    df_dict['waahe_qc'] = df_nc['VHZA_QC'][:][:, sensor]
+            if 'VMDR' in keys_nc:
+                sensor = where_is_the_value(df_nc['VGTA_QC'])
+                if sensor is not None:
+                    df_dict['wamdi'] = df_nc['VMDR'][:][:, sensor]
+                    df_dict['wamdi_qc'] = df_nc['VMDR_QC'][:][:, sensor]
+            if 'VTZM' in keys_nc:
+                sensor = where_is_the_value(df_nc['VTZM_QC'])
+                if sensor is not None:
+                    df_dict['wahipe'] = df_nc['VTZM'][:][:, sensor]
+                    df_dict['wahipe_qc'] = df_nc['VTZM_QC'][:][:, sensor]
+            if 'NRAD' in keys_nc:
+                sensor = where_is_the_value(df_nc['NRAD_QC'])
+                if sensor is not None:
+                    df_dict['tur'] = df_nc['NRAD'][:][:, sensor]
+                    df_dict['tur_qc'] = df_nc['NRAD_QC'][:][:, sensor]
 
             self.data = pd.DataFrame(df_dict, index=jd)
 
