@@ -5,7 +5,7 @@ import pandas as pd
 try:
     import oceanobs.observatory as observatory
 except ImportError:
-    import observatory
+    import observatory as observatory
 
 
 class EMODnet(observatory.Observatory):
@@ -17,11 +17,8 @@ class EMODnet(observatory.Observatory):
         :type path: str
         """
 
-        # Temporal data for the csv files
-        self.path_metadata_csv = r"metadata_temp.csv"
-        self.path_data_csv = r"data_temp.csv"
-        # Start word of data in EMODnet csv files
-        self.start_word_csv = "DATE"
+        self.data = None
+        self.metadata = None
 
         if path is not None:
             self.open(path)
@@ -64,7 +61,9 @@ class EMODnet(observatory.Observatory):
                                           'wmo_platform_code': df_nc.wmo_platform_code,
                                           'institution': df_nc.institution,
                                           'id': df_nc.id,
-                                          'type': [df_nc.data_type]})
+                                          'type': [df_nc.data_type],
+                                          'lat': df_nc.geospatial_lat_min,
+                                          'lon': df_nc.geospatial_lon_min})
             # Creation of the data dataframe
             # The time is the index
             times = df_nc.variables['TIME']
@@ -72,8 +71,6 @@ class EMODnet(observatory.Observatory):
 
             keys_nc = df_nc.variables.keys()
             # print(keys_nc)
-            # print(df_nc['HCDT'])
-            # print(df_nc)
             df_dict = {}
             if 'TIME_QC' in keys_nc:
                 df_dict['time_qc'] = df_nc['TIME_QC'][:]
@@ -149,6 +146,61 @@ class EMODnet(observatory.Observatory):
                 if sensor is not None:
                     df_dict['cudi'] = df_nc['HCDT'][:][:, sensor]
                     df_dict['cudi_qc'] = df_nc['HCDT_QC'][:][:, sensor]
+            if 'DEWT' in keys_nc:
+                sensor = where_is_the_value(df_nc['DEWT_QC'])
+                if sensor is not None:
+                    df_dict['dewt'] = df_nc['DEWT'][:][:, sensor]
+                    df_dict['dewt_qc'] = df_nc['DEWT_QC'][:][:, sensor]
+            if 'EWCT' in keys_nc:
+                sensor = where_is_the_value(df_nc['EWCT_QC'])
+                if sensor is not None:
+                    df_dict['ecus'] = df_nc['EWCT'][:][:, sensor]
+                    df_dict['ecus_qc'] = df_nc['EWCT_QC'][:][:, sensor]
+            if 'NSCT' in keys_nc:
+                sensor = where_is_the_value(df_nc['NSCT_QC'])
+                if sensor is not None:
+                    df_dict['ncus'] = df_nc['NSCT'][:][:, sensor]
+                    df_dict['ncus_qc'] = df_nc['NSCT_QC'][:][:, sensor]
+            if 'VAVH' in keys_nc:
+                sensor = where_is_the_value(df_nc['VAVH_QC'])
+                if sensor is not None:
+                    df_dict['wasi'] = df_nc['VAVH'][:][:, sensor]
+                    df_dict['wasi_qc'] = df_nc['VAVH_QC'][:][:, sensor]
+            if 'VEMH' in keys_nc:
+                sensor = where_is_the_value(df_nc['VEMH_QC'])
+                if sensor is not None:
+                    df_dict['mawa'] = df_nc['VEMH'][:][:, sensor]
+                    df_dict['mawa_qc'] = df_nc['VEMH_QC'][:][:, sensor]
+            if 'VCSP' in keys_nc:
+                sensor = where_is_the_value(df_nc['VCSP_QC'])
+                if sensor is not None:
+                    df_dict['btcus'] = df_nc['VCSP'][:][:, sensor]
+                    df_dict['btcus_qc'] = df_nc['VCSP_QC'][:][:, sensor]
+            if 'VGTA' in keys_nc:
+                sensor = where_is_the_value(df_nc['VGTA_QC'])
+                if sensor is not None:
+                    df_dict['wagape'] = df_nc['VGTA'][:][:, sensor]
+                    df_dict['wagape_qc'] = df_nc['VGTA_QC'][:][:, sensor]
+            if 'VHZA' in keys_nc:
+                sensor = where_is_the_value(df_nc['VGTA_QC'])
+                if sensor is not None:
+                    df_dict['waahe'] = df_nc['VHZA'][:][:, sensor]
+                    df_dict['waahe_qc'] = df_nc['VHZA_QC'][:][:, sensor]
+            if 'VMDR' in keys_nc:
+                sensor = where_is_the_value(df_nc['VGTA_QC'])
+                if sensor is not None:
+                    df_dict['wamdi'] = df_nc['VMDR'][:][:, sensor]
+                    df_dict['wamdi_qc'] = df_nc['VMDR_QC'][:][:, sensor]
+            if 'VTZM' in keys_nc:
+                sensor = where_is_the_value(df_nc['VTZM_QC'])
+                if sensor is not None:
+                    df_dict['wahipe'] = df_nc['VTZM'][:][:, sensor]
+                    df_dict['wahipe_qc'] = df_nc['VTZM_QC'][:][:, sensor]
+            if 'NRAD' in keys_nc:
+                sensor = where_is_the_value(df_nc['NRAD_QC'])
+                if sensor is not None:
+                    df_dict['tur'] = df_nc['NRAD'][:][:, sensor]
+                    df_dict['tur_qc'] = df_nc['NRAD_QC'][:][:, sensor]
 
             self.data = pd.DataFrame(df_dict, index=jd)
 
@@ -188,30 +240,10 @@ class EMODnet(observatory.Observatory):
         elif isinstance(path, list):
             open_list(path)
 
-    """def plt_hist_wind_speed(self):
-        # Wave height
-        fig_air, axes = plt.subplots(nrows=1, ncols=1)
-        self.data['WSPD'].plot.hist(ax=axes,)
-        axes.set_title('Wind speed histogram')
-        axes.set_ylabel('hours')
-        axes.set_xlabel('meter/second')
-
-        return fig_air
-
-    def plt_maximun_windspeed(self):
-        # Wave height
-
-        fig_maw_wind, axes = plt.subplots(nrows=1, ncols=1)
-        self.data.groupby(pd.TimeGrouper('D')).WSPD.max().plot(ax=axes,)
-        axes.set_title('Maximun windspeed')
-        axes.set_ylabel('meter/second')
-        axes.set_xlabel('Days')
-        return fig_maw_wind"""
-
     @staticmethod
     def how_to_download_data(lenguage='CAT'):
         """
-        Explicacion de como descargar datos.
+        Returns a string text explaining how to download EMODnet data with the selected language.
         :param lenguage: Idioma con el que quieres la explicacion
         :type lenguage: str
         :return: Explicacion
@@ -219,7 +251,7 @@ class EMODnet(observatory.Observatory):
         """
         tutorial = ""
         if lenguage == 'CAT':
-            tutorial = "Descarrega les dades de "
+            tutorial = "Descarrega les dades de ..."
         return tutorial
 
 if __name__ == '__main__':
@@ -227,11 +259,11 @@ if __name__ == '__main__':
     from matplotlib import style
     style.use('ggplot')
 
-    print("Ejemplo clase EMODnet")
+    print("Example of class EMODnet")
 
     # Path de datos
-    path_data = r"C:\Users\Raul\SkyDrive\Data\EMODnet\61284\GL_LATEST_TS_MO_61284_20161028.nc"
-    print("Path de datos: {}".format(path_data))
+    path_data = r""
+    print("Data path: {}".format(path_data))
 
     print("Loading data, please wait.")
     ob = EMODnet(path_data)
@@ -241,39 +273,33 @@ if __name__ == '__main__':
     else:
         print("Done.")
 
-    '''print("DATA INFO:")
-    print("Platform code: {}".format(ob.metadata['platform_code'][0]))
-    print("WMO platform code: {}".format(ob.metadata['wmo_platform_code'][0]))
-    print("id: {}".format(ob.metadata['id'][0]))
-    print("Institution: {}".format(ob.metadata['institution'][0]))
-    print("Type: {}".format(ob.metadata['type'][0]))'''
+    print("METADATA INFORMATION")
+    print(ob.info_metadata())
+    print("DATA INFORMATION")
+    print(ob.info_data())
+    print("DATA MEANING")
+    print(ob.info_parameters())
 
     # print("Resampling weekly frequency.")
-    # ob.resample_data('W')
-    # if ob.dialog:
-    #     print(ob.dialog)
-    #     sys.exit()
-    # else:
-    #     print("Done.")
-
-    # Plots
-    # print("Making plots.")
-    # ob.plt_all()
-    # ob.plt_qc()
-    # print("Done.")
+    ob.resample_data('W')
+    if ob.dialog:
+        print(ob.dialog)
+        sys.exit()
+    else:
+        print("Done.")
 
     # Slicing
-    # print("Slicing.")
-    # start = '20160729010000'
-    # stop = '20160729090000'
-    # print("Start: {}/{}/{} {}:{}:{}, Stop: {}/{}/{} {}:{}:{}".format(start[:4], start[4:6], start[6:8], start[8:10],
-    #                                                                  start[10:12],  start[12:], stop[:4], stop[4:6],
-    #                                                                  stop[6:8], stop[8:10], stop[10:12],  stop[12:]))
-    # ob.slicing(start, stop)
-    # print("Done.")
+    print("Slicing.")
+    start = ""
+    stop = ""
+    print("Start: {}/{}/{} {}:{}:{}, Stop: {}/{}/{} {}:{}:{}".format(start[:4], start[4:6], start[6:8], start[8:10],
+                                                                     start[10:12],  start[12:], stop[:4], stop[4:6],
+                                                                     stop[6:8], stop[8:10], stop[10:12],  stop[12:]))
+    ob.slicing(start, stop)
+    print("Done.")
 
-    # print(ob.data)
-    # print(ob.info_data())
-    # print(ob.how_to_download_data())
-
+    # Plots
+    print("Making plots.")
+    ob.plt_all()
     plt.show()
+    print("Done.")
