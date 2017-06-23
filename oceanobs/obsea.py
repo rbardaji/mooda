@@ -134,7 +134,6 @@ class OBSEA(observatory.Observatory):
                 open_csv(path)
                 # qc creation
                 self.data = observatory.qc(self.data)
-                print(self.data.head())
                 # Copy of the data for future resets
                 self.data_original = self.data.copy()
             elif os.path.isdir(path):
@@ -149,98 +148,6 @@ class OBSEA(observatory.Observatory):
         # Create metadata
         create_metadata()
 
-    def estimation_time_to_open(self, path, time_value=0.019):
-        """
-        Calculation of how many time takes to open the data.
-        :param path: Path where the data is.
-        :param time_value: Estimation of time that takes the open processo of one value, in seconds.
-        :return estimation: str with info about how many time takes to open the data.
-        """
-
-        def open_csv(path_csv):
-            """
-            Extract data from csv file
-            :param path_csv: Path from the csv file
-            :type path_csv: str
-            """
-
-            self.dialog = False
-            # Extract data from csv file
-            try:
-                self.data = pd.read_csv(path_csv, sep='\t', parse_dates=['date_sistema'], index_col=0)
-            except ValueError:
-                self.data = pd.read_csv(path_csv, sep='\t', parse_dates=['date_time'], index_col=0)
-            except FileNotFoundError as error:
-                self.dialog = error
-            except OSError:
-                self.dialog = "Error: File = '{}' does not exist.".format(path)
-            # Look for any error
-            if self.dialog:
-                return
-
-        def open_list(path_list):
-            """
-            Read all the data of the list of paths
-            :param path_list: List of paths
-            :return:
-            """
-            big_data = pd.DataFrame()
-            for one_path in path_list:
-                _filename, file_extension = os.path.splitext(one_path)
-                if file_extension == ".txt":
-                    open_csv(one_path)
-                    # Add to big data
-                    big_data = big_data.append(self.data)
-            self.data = big_data
-
-        def listdir_fullpath(d):
-            return [os.path.join(d, f) for f in os.listdir(d)]
-
-        self.dialog = False
-        # Know if it is a string or a list
-        if isinstance(path, str):
-            # It is a string
-            # Know if path is a file or a directory
-            if os.path.isfile(path):
-                # Path is a file
-                open_csv(path)
-            elif os.path.isdir(path):
-                # Path is a directory
-                path_lst = listdir_fullpath(path)
-                open_list(path_lst)
-            else:
-                self.dialog = "Error: {} does not exist.".format(path)
-        elif isinstance(path, list):
-            # It is a list
-            open_list(path)
-
-        # Calculation of the estimation
-        estimation = time.strftime('%H:%M:%S', time.gmtime(self.data.size*time_value*2*len(self.data.columns)/2))
-        return estimation
-
-    @staticmethod
-    def how_to_download_data(language='CAT'):
-        """
-        Returns a string text explaining how to download OBSEA data with the selected language. Now, we just have Catalan.
-        :param lenguage: Idioma con el que quieres la explicacion
-        :type language: str
-        :return: Explicacion
-        :rtype: str
-        """
-        tutorial = ""
-        if language == 'CAT':
-            tutorial = ("1. Abans de tot s'ha de seleccionar el per¡ode de temps (From-to).\n"
-                        "2. DesprŠs es prem el boto Update Plot perquŠ s'actualitzi la grfica.\n"
-                        "3. I per exportar les dades s'ha de pr‚mer el boto Generate Data.\n"
-                        "A partir d'ara hi ha dues maneres per fer l'exportaciÂ¢ (dos quadres):\n"
-                        "\ti. El primer quadre permet exportar nom‚s un parmetre i el que es fa es un promig de les"
-                        " dades depenent del per¡ode (de hores si el per¡ode menor de 24 hores,  de dies si es menor "
-                        "de 7 dies etc...).\n"
-                        "\tii.  El segon quadre si que permet seleccionar m‚s d'un parmetre i tambÂ‚ permet fixar la "
-                        "temporitzaciÂ¢ (cada 10 o 30 min). Aquesta opci¢ no es descarrega el fitxer directament com "
-                        "la opci¢ 1 sin¢ que el descarrega via FTP, per aix• quan es prem el link download via FTP "
-                        "(Raw data) es visualitza en vermell el proc‚s que s'ha de seguir per obtenir el fitxer.")
-        return tutorial
 
 if __name__ == '__main__':
     from matplotlib import style

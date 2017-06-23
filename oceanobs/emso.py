@@ -92,6 +92,7 @@ class EMSOdevAPI:
         :param end_date: Time that you want to end to have data.
         :return: int with the status code of the answer (200 means that everything is ok).
         """
+
         def format_data():
             """
             Creation of the data dataframe with the oceanobs standard.
@@ -100,110 +101,189 @@ class EMSOdevAPI:
             if self.parameter_name == "sea_water_temperature":
                 data_param = pd.DataFrame({'temp': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
+                try:
+                    del self.data['temp']
+                    del self.data['temp_qc']
+                except KeyError:
+                    pass
             elif self.parameter_name == "sea_water_pressure":
                 data_param = pd.DataFrame({'pres': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "turbidity":
                 data_param = pd.DataFrame({'tur': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "oxygen_saturation":
                 data_param = pd.DataFrame({'oxy': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "dissolved_oxygen":
                 data_param = pd.DataFrame({'oxy': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "salinity":
                 data_param = pd.DataFrame({'sal': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                               self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "depth":
                 data_param = pd.DataFrame({'depth': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                 self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "conductivity":
                 data_param = pd.DataFrame({'cond': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "sound_velocity":
                 data_param = pd.DataFrame({'sovel': [x[1] for x in self.observations], 'time': [x[0] for x in
                                                                                                 self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
+                data_param = observatory.qc(data_param)
             elif self.parameter_name == "voltage":
                 data_param = pd.DataFrame({'egim_voltage': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "waterInstrusion":
                 data_param = pd.DataFrame({'egim_water_intrusion': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "energy":
-                data_param = pd.DataFrame({'egim_energy': [x[1] for x in self.observations],
+                data_param = pd.DataFrame({'egim_current': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot1_current":
                 data_param = pd.DataFrame({'egim_slot1_current': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot2_current":
                 data_param = pd.DataFrame({'egim_slot2_current': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot3_current":
                 data_param = pd.DataFrame({'egim_slot3_current': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot4_current":
                 data_param = pd.DataFrame({'egim_slot4_current': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot5_current":
                 data_param = pd.DataFrame({'egim_slot5_current': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot1_SD_capacity":
                 data_param = pd.DataFrame({'egim_slot1_sd_capacity': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot2_SD_capacity":
                 data_param = pd.DataFrame({'egim_slot2_sd_capacity': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot3_SD_capacity":
                 data_param = pd.DataFrame({'egim_slot3_sd_capacity': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot4_SD_capacity":
                 data_param = pd.DataFrame({'egim_slot4_sd_capacity': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot5_SD_capacity":
                 data_param = pd.DataFrame({'egim_slot5_sd_capacity': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot1_temperature":
                 data_param = pd.DataFrame({'egim_slot1_temperature': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot2_temperature":
                 data_param = pd.DataFrame({'egim_slot2_temperature': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot3_temperature":
                 data_param = pd.DataFrame({'egim_slot3_temperature': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot4_temperature":
                 data_param = pd.DataFrame({'egim_slot4_temperature': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot5_temperature":
                 data_param = pd.DataFrame({'egim_slot5_temperature': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot1_pressure":
                 data_param = pd.DataFrame({'egim_slot1_pressure': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot2_pressure":
                 data_param = pd.DataFrame({'egim_slot2_pressure': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot3_pressure":
                 data_param = pd.DataFrame({'egim_slot3_pressure': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot4_pressure":
                 data_param = pd.DataFrame({'egim_slot4_pressure': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
             elif self.parameter_name == "EGIM_slot5_pressure":
                 data_param = pd.DataFrame({'egim_slot5_pressure': [x[1] for x in self.observations],
                                            'time': [x[0] for x in self.observations]})
+                data_param.set_index('time', inplace=True)
+                data_param.index = pd.to_datetime(data_param.index, unit='s')
 
-            data_param.set_index('time', inplace=True)
-            data_param.index = pd.to_datetime(data_param.index, unit='s')
             if any("egim" in s for s in data_param.keys()):
                 # We have read egim parameters
                 self.egim = pd.concat([self.egim, data_param], axis=1)
             else:
+                self.data = pd.concat([self.data, data_param], axis=1)
                 # Adding time_qc
-                data_param['time_qc'] = 0
-                # TODO: aqui ponemos append y arriba concat... no lo entiendo.
-                self.data = self.data.append(data_param)
+                try:
+                    del self.data['time_qc']
+                except KeyError:
+                    pass
+                self.data['time_qc'] = 0
 
         if end_date == "":
             r = requests.get('http://api.emsodev.eu/observatories/{}/instruments/{}/parameters/{}?startDate={}'.format(
@@ -211,7 +291,7 @@ class EMSOdevAPI:
                 auth=(self.login, self.password))
         else:
             r = requests.get(
-                'http://api.emsodev.eu/observatories/{}/instruments/{}/parameters/{}?startDate={}?endDate={}'.format(
+                'http://api.emsodev.eu/observatories/{}/instruments/{}/parameters/{}?startDate={}&endDate={}'.format(
                     self.observatory_name, self.instrument_name, self.parameter_name, start_date, end_date),
                 auth=(self.login, self.password))
         if r.status_code != 200:
@@ -221,7 +301,6 @@ class EMSOdevAPI:
         for observation in answer['observations']:
             self.observations.append((observation['phenomenonTime'], observation['value']))
         format_data()
-        self.data = observatory.qc(self.data)
         return r.status_code
 
     def save_as_pickle(self, directory=""):
@@ -238,7 +317,7 @@ class EMSOdevAPI:
             metadata_cr = pd.DataFrame({'platform_code': [self.observatory_name],
                                         'wmo_platform_code': [" "],
                                         'institution': ["UPC - CSIC"],
-                                        'type': ["Mooring time series"]})
+                                        'type': ["Underwater lab"]})
             return metadata_cr
 
         # Creation of the metadata
@@ -415,7 +494,25 @@ def tui(login=None, password=None):
         # Go back, the search isntruments
         elif choise == "b":
             search_instruments()
-        # else:
+        elif choise == "a":
+            first_time = True
+            for parameter in api.parameters:
+                api.parameter_name = parameter
+                # Ask for time
+                if first_time:
+                    start_date = input("Enter the start date (dd/MM/yyyy): ")
+                    if start_date == "":
+                        start_date = "15/04/2017"
+                    stop_date = input("Enter the stop date (dd/MM/yyyy): ")
+                    first_time = False
+                # Download data
+                print("Downloading data of {}".format(parameter))
+                code = api.read_data(start_date, stop_date)
+                if code != 200:
+                    print("Error: Impossible to connect. Status code: {}".format(code))
+                    return
+                print("Done.")
+            search_instruments()
         # Save the parameter name
         api.parameter_name = api.parameters[choise]
         # Ask for the interval of dates
@@ -445,9 +542,10 @@ def tui(login=None, password=None):
 
 class EMSO(observatory.Observatory):
 
-    def __init__(self):
+    def __init__(self, path_in=None):
         """
-        Constructor of class
+        Constructor of class.
+        :param path_in: Path where data is.
         """
         # Instance variables
         self.data = None
@@ -455,39 +553,25 @@ class EMSO(observatory.Observatory):
         self.dialog = None
         self.egim = None
 
-    def open(self, path_data, path_metadata):
+        if path_in is not None:
+            self.open(path_in)
+
+    def open(self, path_in):
         """
         Open EMSO files. Now, we just can open pikle files.
-        :param path_data: Path where data is.
-        :param path_metadata: Path where metadata is.
+        :param path_in: Path where data is.
         """
         self.dialog = None
         try:
-            self.data = pd.read_pickle(path_data)
-            self.metadata = pd.read_pickle(path_metadata)
-        except e:
-            self.dialog = "Error: {}".format(e)
+            self.metadata, self.data, self.egim = pd.read_pickle(path_in)
+        except TypeError as e:
+            self.dialog = "Error: {}".format(str(e))
 
     """ Information """
 
-    @staticmethod
-    def how_to_download_data(language='ENG'):
-        """
-        Returns a string text explaining how to download OBSEA data with the selected language. Now, we just have
-        English.
-        :param language: Idioma con el que quieres la explicacion
-        :type language: str
-        :return: Explicacion
-        :rtype: str
-        """
-        tutorial = ""
-        if language == 'ENG':
-            tutorial = "Usa directamente la API de EMSOdev o la GUI de oceanobs."
-        return tutorial
-
     def info_egim(self):
         """
-        Return when your data start and stop in terms of time.
+        Return some information about the selg.egim variable.
         :return: info of the egim
         :rtype: str
         """
@@ -506,6 +590,67 @@ class EMSO(observatory.Observatory):
             message = "Error: No good data."
         return message[:-1]
 
+    def stadistics_slots_current_consumptions(self):
+        """
+        Calculation of the Average, Max and Min current consumption of all the slots.
+        :return:
+        """
+        message = ""
+        # Obtain the necessary information of the egim
+        try:
+            egim_data = self.egim[['egim_slot5_current',
+                                   'egim_slot4_current',
+                                   'egim_slot3_current',
+                                   'egim_slot2_current',
+                                   'egim_slot1_current']]
+        except AttributeError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 5 [mA]', 'Slot 4 [mA]', 'Slot 3 [mA]', 'Slot 2 [mA]', 'Slot 1 [mA]']
+        message = egim_data.describe().ix[['mean', 'min', 'max']].astype(int).to_string()
+        return message
+
+    def stadistics_slots_temperature(self):
+        """
+        It calculates the mean, min, max and standar deviation of the temperature measured in all the EGIM slots.
+        :return message: Mean, min, max and std of the temperature measured in all the EGIM slots.
+        """
+        message = ""
+        # Obtain the necessary information of the egim
+        try:
+            egim_data = self.egim[['egim_slot1_temperature',
+                                   'egim_slot2_temperature',
+                                   'egim_slot3_temperature',
+                                   'egim_slot4_temperature',
+                                   'egim_slot5_temperature']]
+        except AttributeError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 1 [degree Celsius]', 'Slot 2 [degree Celsius]', 'Slot 3 [degree Celsius]',
+                             'Slot 4 [degree Celsius]', 'Slot 5 [degree Celsius]']
+        message = egim_data.describe().ix[['mean', 'min', 'max', 'std']].round(2).to_string()
+        return message
+
+    def stadistics_slots_pressure(self):
+        """
+        It calculates the mean, min, max and standar deviation of the pressure measured in all the EGIM slots.
+        :return message: Mean, min, max and std of the pressure measured in all the EGIM slots.
+        """
+        message = ""
+        # Obtain the necessary information of the egim
+        try:
+            egim_data = self.egim[['egim_slot1_pressure',
+                                   'egim_slot2_pressure',
+                                   'egim_slot3_pressure',
+                                   'egim_slot4_pressure',
+                                   'egim_slot5_pressure']]
+        except AttributeError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 1 [mBar]', 'Slot 2 [mBar]', 'Slot 3 [mBar]', 'Slot 4 [mBar]', 'Slot 5 [mBar]']
+        message = egim_data.describe().ix[['mean', 'min', 'max', 'std']].round(2).to_string()
+        return message
+
     """ Plot functions """
 
     def plt_egim_all(self):
@@ -515,6 +660,10 @@ class EMSO(observatory.Observatory):
         """
         fig_dict = {}
         data_keys = self.egim.keys()
+
+        if 'egim_current' in data_keys:
+            fig_current = self.plt_egim_current()
+            fig_dic['Current'] = fig_current
         if 'egim_voltage' in data_keys:
             fig_volt = self.plt_egim_voltage()
             fig_dict['Voltage'] = fig_volt
@@ -589,7 +738,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_voltage(self):
         """
-        Graph of current egim voltage vs time.
+        It creates a plot of the EGIM input voltage over time.
         :return: Figure
         """
         self.dialog = False
@@ -605,7 +754,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot4_sd_capacity(self):
         """
-        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        It creates a plot with the SD remeanding capacity of the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -621,7 +770,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot1_sd_capacity(self):
         """
-        Graph of the capacity of SD of the slot 1 of the egim voltage vs time.
+        It creates a plot with the SD remeanding capacity of the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -637,7 +786,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot2_sd_capacity(self):
         """
-        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        It creates a plot with the SD remeanding capacity of the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -653,7 +802,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot3_sd_capacity(self):
         """
-        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        It creates a plot with the SD remeanding capacity of the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -669,7 +818,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot5_sd_capacity(self):
         """
-        Graph of the capacity of SD of the slot 4 of the egim voltage vs time.
+        It creates a plot with the SD remeanding capacity of the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -685,7 +834,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot1_current(self):
         """
-        Graph of the capacity of SD of the slot 1 of the egim current vs time.
+        It creates a plot with the current consumption of the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -701,7 +850,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot2_current(self):
         """
-        Graph of the capacity of SD of the slot 2 of the egim current vs time.
+        It creates a plot with the current consumption of the slot 2 over time.
         :return: Figure
         """
         self.dialog = False
@@ -717,7 +866,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot3_current(self):
         """
-        Graph of the capacity of SD of the slot 3 of the egim current vs time.
+        It creates a plot with the current consumption of the slot 3 over time.
         :return: Figure
         """
         self.dialog = False
@@ -733,7 +882,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot4_current(self):
         """
-        Graph of the capacity of SD of the slot 4 of the egim current vs time.
+        It creates a plot with the current consumption of the slot 4 over time.
         :return: Figure
         """
         self.dialog = False
@@ -749,7 +898,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot5_current(self):
         """
-        Graph of the capacity of SD of the slot 5 of the egim current vs time.
+        It creates a plot with the current consumption of the slot 5 over time.
         :return: Figure
         """
         self.dialog = False
@@ -765,8 +914,8 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_water_intrusion(self):
         """
-        Create a plot with the water intrusion vs time. The y-axes of the plots are the values (0 means no water
-        instrusion, 1 means water intrusion). The x-axes are the time.
+        It creates a plot with the water intrusion values over time. 0 means no water intrusion,
+        1 means water intrusion.
         :return: Figure
         """
         self.dialog = False
@@ -782,7 +931,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot1_temperature(self):
         """
-        Graph of the water intrusion vs time.
+        It creates a plot with the temperature measured in the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -798,7 +947,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot2_temperature(self):
         """
-        Graph of the water intrusion vs time.
+        It creates a plot with the temperature measured in the slot 2 over time.
         :return: Figure
         """
         self.dialog = False
@@ -814,7 +963,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot3_temperature(self):
         """
-        Graph of the water intrusion vs time.
+        It creates a plot with the temperature measured in the slot 3 over time.
         :return: Figure
         """
         self.dialog = False
@@ -830,7 +979,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot4_temperature(self):
         """
-        Graph of the water intrusion vs time.
+        It creates a plot with the temperature measured in the slot 4 over time.
         :return: Figure
         """
         self.dialog = False
@@ -846,7 +995,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot5_temperature(self):
         """
-        Graph of the water intrusion vs time.
+        It creates a plot with the temperature measured in the slot 5 over time.
         :return: Figure
         """
         self.dialog = False
@@ -862,7 +1011,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot1_pressure(self):
         """
-        Graph of the pressure of the slot 1 vs time.
+        It creates a plot with the pressure measured in the slot 1 over time.
         :return: Figure
         """
         self.dialog = False
@@ -878,7 +1027,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot2_pressure(self):
         """
-        Graph of the pressure of the slot 2 vs time.
+        It creates a plot with the pressure measured in the slot 2 over time.
         :return: Figure
         """
         self.dialog = False
@@ -894,7 +1043,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot3_pressure(self):
         """
-        Graph of the pressure of the slot 3 vs time.
+        It creates a plot with the pressure measured in the slot 3 over time.
         :return: Figure
         """
         self.dialog = False
@@ -910,7 +1059,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot4_pressure(self):
         """
-        Graph of the pressure of the slot 4 vs time.
+        It creates a plot with the pressure measured in the slot 4 over time.
         :return: Figure
         """
         self.dialog = False
@@ -926,7 +1075,7 @@ class EMSO(observatory.Observatory):
 
     def plt_egim_slot5_pressure(self):
         """
-        Graph of the pressure of the slot 5 vs time.
+        It creates a plot with the pressure measured in the slot 5 over time.
         :return: Figure
         """
         self.dialog = False
@@ -940,21 +1089,367 @@ class EMSO(observatory.Observatory):
         axes.set_xlabel('Time UTC')
         return fig_pres
 
-    def plt_egim_energy(self):
+    def plt_egim_current(self, average_time='H', accumulated=True):
         """
-        Graph of the energy consumption since the last reset of the EGIM vs time.
+        Graph of the current consumption since the last reset of the EGIM vs time.
+        :param average_time: Average time interval. It can be None. By default is Hourly.
+        :param accumulated: True means to plot the current consumption accumulated since the last reset.
+            False means to plot the time interval current consumption.
         :return: Figure
         """
+        """
+        INFO ABOUT HOW OFTEN:
+        B       business day frequency
+        C       custom business day frequency (experimental)
+        D       calendar day frequency
+        W       weekly frequency
+        M       month end frequency
+        BM      business month end frequency
+        CBM     custom business month end frequency
+        MS      month start frequency
+        BMS     business month start frequency
+        CBMS    custom business month start frequency
+        Q       quarter end frequency
+        BQ      business quarter endfrequency
+        QS      quarter start frequency
+        BQS     business quarter start frequency
+        A       year end frequency
+        BA      business year end frequency
+        AS      year start frequency
+        BAS     business year start frequency
+        BH      business hour frequency
+        H       hourly frequency
+        T       minutely frequency
+        S       secondly frequency
+        L       milliseonds
+        U       microseconds
+        N       nanoseconds
+        """
         self.dialog = False
-        fig_energy, axes = plt.subplots(nrows=1, ncols=1)
+        # Preparing data
         try:
-            self.egim['egim_energy'].plot(ax=axes)
+            egim_data = self.egim['egim_current']
         except KeyError:
             self.dialog = "Error: No energy data."
-        axes.set_title('EGIM energy')
-        axes.set_ylabel('mW')
-        axes.set_xlabel('Time UTC')
-        return fig_energy
+            return
+        if average_time is not None:
+            egim_data = egim_data.resample(average_time).mean()
+        # Transform from mA to A
+        egim_data /= 1000
+        title = "Acomulated EGIM current consumption since last Reset"
+        if not accumulated:
+            title = "EGIM current consumption"
+            egim_data_copy = egim_data.copy()
+            for i in range(0, len(egim_data)):
+                if i == 0:
+                    egim_data.iloc[i] = np.nan
+                    continue
+                if egim_data_copy[i - 1] > 0:
+                    dif_current = egim_data_copy[i] - egim_data_copy[i-1]
+                    if dif_current > 0:
+                        egim_data.iloc[i] = dif_current
+                    else:
+                        egim_data.iloc[i] = np.nan
+                else:
+                    egim_data.iloc[i] = np.nan
+        # Plot
+        fig_current, axes = plt.subplots(nrows=1, ncols=1)
+        egim_data.plot(drawstyle="steps", ax=axes)
+        axes.set_title(title)
+        axes.set_ylabel('A')
+        axes.set_xlabel('')
+        return fig_current
+
+    def plt_egim_slots_current_consumptions(self, time_interval='W'):
+        """
+        Creates a plot with the current consumption of all the slots and the input voltage of the egim.
+        :param time_interval: Frequency to that we want the data.
+        :type time_interval: str
+        :return: figure
+        """
+        """
+        INFO ABOUT HOW OFTEN:
+        B       business day frequency
+        C       custom business day frequency (experimental)
+        D       calendar day frequency
+        W       weekly frequency
+        M       month end frequency
+        BM      business month end frequency
+        CBM     custom business month end frequency
+        MS      month start frequency
+        BMS     business month start frequency
+        CBMS    custom business month start frequency
+        Q       quarter end frequency
+        BQ      business quarter endfrequency
+        QS      quarter start frequency
+        BQS     business quarter start frequency
+        A       year end frequency
+        BA      business year end frequency
+        AS      year start frequency
+        BAS     business year start frequency
+        BH      business hour frequency
+        H       hourly frequency
+        T       minutely frequency
+        S       secondly frequency
+        L       milliseonds
+        U       microseconds
+        N       nanoseconds
+        """
+        self.dialog = False
+
+        # Extract data
+        try:
+            egim_data = self.egim[['egim_slot1_current',
+                                   'egim_slot2_current',
+                                   'egim_slot3_current',
+                                   'egim_slot4_current',
+                                   'egim_slot5_current',
+                                   'egim_voltage']]
+        except AttributeError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5', 'EGIM voltage']
+        # print(egim_data.head())
+        # Resampling
+        try:
+            egim_data = egim_data.resample(time_interval).mean()
+        except AttributeError:
+            self.dialog = "Error: Cannot resample becouse there is no data."
+            return
+        # Change the voltage prom mV to V
+        egim_data['EGIM voltage'] /= 1000
+        egim_data['EGIM voltage'] = egim_data['EGIM voltage'].round(3)
+        del egim_data.index.name
+        # Plot
+        fig_slot_current, axes = plt.subplots(nrows=1, ncols=1)
+        egim_data.plot(drawstyle="steps", secondary_y=['EGIM voltage'], style=['-', '-', '-', '-', '-', '--'],
+                       linewidth=2, ax=axes)
+
+        axes.set_xlabel("")
+        axes.set_ylabel("Slot current [mA]")
+        axes.right_ax.set_ylabel("Input voltage [V]")
+        return fig_slot_current
+
+    def plt_egim_slots_temperature(self, time_interval='W'):
+        """
+        Creates a plot with the temperature of all the slots of the EGIM.
+        :param time_interval: Frequency to that we want the data.
+        :type time_interval: str
+        :return: figure
+        """
+        """
+        INFO ABOUT HOW OFTEN:
+        B       business day frequency
+        C       custom business day frequency (experimental)
+        D       calendar day frequency
+        W       weekly frequency
+        M       month end frequency
+        BM      business month end frequency
+        CBM     custom business month end frequency
+        MS      month start frequency
+        BMS     business month start frequency
+        CBMS    custom business month start frequency
+        Q       quarter end frequency
+        BQ      business quarter endfrequency
+        QS      quarter start frequency
+        BQS     business quarter start frequency
+        A       year end frequency
+        BA      business year end frequency
+        AS      year start frequency
+        BAS     business year start frequency
+        BH      business hour frequency
+        H       hourly frequency
+        T       minutely frequency
+        S       secondly frequency
+        L       milliseonds
+        U       microseconds
+        N       nanoseconds
+        """
+        self.dialog = False
+        # Extract data
+        try:
+            egim_data = self.egim[['egim_slot1_temperature',
+                                   'egim_slot2_temperature',
+                                   'egim_slot3_temperature',
+                                   'egim_slot4_temperature',
+                                   'egim_slot5_temperature']]
+        except AttributeError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5']
+        # Resampling
+        try:
+            egim_data = egim_data.resample(time_interval).mean()
+        except AttributeError:
+            self.dialog = "Error: Cannot resample becouse there is no data."
+            return
+        del egim_data.index.name
+        # Plot
+        fig_slot_temp, axes = plt.subplots(nrows=1, ncols=1)
+        egim_data.plot(drawstyle="steps", linewidth=2, ax=axes)
+        axes.set_xlabel("")
+        axes.set_ylabel("$^\circ$C")
+        axes.set_title("Temperature of slots")
+        return fig_slot_temp
+
+    def plt_egim_slots_pressure(self, time_interval='W'):
+        """
+        Creates a plot with the pressure of all the slots of the EGIM.
+        :param time_interval: Frequency to that we want the data.
+        :type time_interval: str
+        :return: figure
+        """
+        """
+        INFO ABOUT HOW OFTEN:
+        B       business day frequency
+        C       custom business day frequency (experimental)
+        D       calendar day frequency
+        W       weekly frequency
+        M       month end frequency
+        BM      business month end frequency
+        CBM     custom business month end frequency
+        MS      month start frequency
+        BMS     business month start frequency
+        CBMS    custom business month start frequency
+        Q       quarter end frequency
+        BQ      business quarter endfrequency
+        QS      quarter start frequency
+        BQS     business quarter start frequency
+        A       year end frequency
+        BA      business year end frequency
+        AS      year start frequency
+        BAS     business year start frequency
+        BH      business hour frequency
+        H       hourly frequency
+        T       minutely frequency
+        S       secondly frequency
+        L       milliseonds
+        U       microseconds
+        N       nanoseconds
+        """
+        self.dialog = False
+        # Extract data
+        try:
+            egim_data = self.egim[['egim_slot1_pressure',
+                                   'egim_slot2_pressure',
+                                   'egim_slot3_pressure',
+                                   'egim_slot4_pressure',
+                                   'egim_slot5_pressure']]
+        except AttributeError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5']
+        # Resampling
+        try:
+            egim_data = egim_data.resample(time_interval).mean()
+        except AttributeError:
+            self.dialog = "Error: Cannot resample becouse there is no data."
+            return
+        del egim_data.index.name
+        # Plot
+        fig_slot_temp, axes = plt.subplots(nrows=1, ncols=1)
+        egim_data.plot(drawstyle="steps", linewidth=2, ax=axes)
+        axes.set_xlabel("")
+        axes.set_ylabel("mBars")
+        axes.set_title("Pressure of slots")
+        return fig_slot_temp
+
+    def plt_egim_slots_sd_capacity(self, time_interval='W'):
+        """
+        Creates a plot with the remaining sd capacity of all the slots of the EGIM.
+        :param time_interval: Frequency to that we want the data.
+        :type time_interval: str
+        :return: figure
+        """
+        """
+        INFO ABOUT HOW OFTEN:
+        B       business day frequency
+        C       custom business day frequency (experimental)
+        D       calendar day frequency
+        W       weekly frequency
+        M       month end frequency
+        BM      business month end frequency
+        CBM     custom business month end frequency
+        MS      month start frequency
+        BMS     business month start frequency
+        CBMS    custom business month start frequency
+        Q       quarter end frequency
+        BQ      business quarter endfrequency
+        QS      quarter start frequency
+        BQS     business quarter start frequency
+        A       year end frequency
+        BA      business year end frequency
+        AS      year start frequency
+        BAS     business year start frequency
+        BH      business hour frequency
+        H       hourly frequency
+        T       minutely frequency
+        S       secondly frequency
+        L       milliseonds
+        U       microseconds
+        N       nanoseconds
+        """
+        self.dialog = False
+        # Extract data
+        try:
+            egim_data = self.egim[['egim_slot1_sd_capacity',
+                                   'egim_slot2_sd_capacity',
+                                   'egim_slot3_sd_capacity',
+                                   'egim_slot4_sd_capacity',
+                                   'egim_slot5_sd_capacity']]
+        except KeyError:
+            self.dialog = "Error: No EGIM data."
+            return
+        egim_data.columns = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5']
+        # Resampling
+        try:
+            egim_data = egim_data.resample(time_interval).mean()
+        except AttributeError:
+            self.dialog = "Error: Cannot resample becouse there is no data."
+            return
+        del egim_data.index.name
+        # Plot
+        fig_slots_sd, axes = plt.subplots(nrows=1, ncols=1)
+        egim_data.plot(drawstyle="steps", linewidth=2, ax=axes)
+        axes.set_xlabel("")
+        axes.set_ylabel("kBytes")
+        axes.set_title("Slot SD remaining capacity")
+        return fig_slots_sd
+
+
+def download_metadata_egim(start="24/04/2017", path_egim = r""):
+
+    api = EMSOdevAPI(login='', password='')
+    api.observatory_name = "EMSODEV-EGIM-node00001"
+    api.instrument_name = "0e5f248e-9e90-465f-91a0-f674b1d4eb3a"
+    api.read_parameters()
+
+    for parameter in api.parameters:
+        print("Downloading {}...".format(parameter))
+        api.parameter_name = parameter
+        api.read_data(start_date=start)
+    print("Result (5 first values):")
+    print(api.egim.head())
+
+    api.save_as_pickle(path_egim)
+
+
+def download_temp(start="24/04/2017"):
+
+    api = EMSOdevAPI(login='', password='')
+    api.observatory_name = "EMSODEV-EGIM-node00001"
+    api.parameter_name = "sea_water_temperature"
+    instrument_list = ["SBE54-0049", "4381-606", "37-14998", "Workhorse_ADCP_21582"]
+    path_list = [r"C:\Users\rbard\Google Drive\Work\Data\EMSO\EGIM1\SBE54-0049",
+                 r"C:\Users\rbard\Google Drive\Work\Data\EMSO\EGIM1\4381-606",
+                 r"C:\Users\rbard\Google Drive\Work\Data\EMSO\EGIM1\37-14998",
+                 r"C:\Users\rbard\Google Drive\Work\Data\EMSO\EGIM1\Workhorse_ADCP_21582"]
+
+    for instrument, path in zip(instrument_list, path_list):
+        print("Instrument: {}".format(instrument))
+        api.instrument_name = instrument
+        api.read_data(start_date=start)
+        api.save_as_pickle(path)
 
 
 if __name__ == '__main__':
@@ -962,18 +1457,19 @@ if __name__ == '__main__':
     style.use('ggplot')
 
     ''' DOWNLOAS METADATA OF EGIM'''
-    # download_metadata_egim()
+    # download_metadata_egim(start="24/04/2017")
 
     ''' TUI TO DOWNLOAD DATA '''
-    tui(login='YOUR LOGIN', password='YOUR PASSWORD')
+    tui()
+
+    ''' DOWNLOAD TEMPERATURES '''
+    # download_temp(start="01/04/2017")
 
     ''' EXEMPLE OF CLASS EMSO '''
     ''' LOADING DATA FROM PKL FILE '''
-    # path_file = r"WRITE_THE_PATH"
-    # ob = EMSO()
-    #
-    # with open(path_file, 'rb') as f:
-    #     ob.metadata, ob.data, ob.egim = pickle.load(f)
+    path_file = r"C:\Users\Raul\Google Drive\Work\Data\EMSO\EGIM1\egim\emsodev_20170426092349.pkl"
+    # path_file = r"C:\Users\rbard\Google Drive\Work\Data\EMSO\EGIM1\37-14998\allCTD_20170415\emsodev_20170526140054.pkl"
+    ob = EMSO(path_file)
 
     ''' INFO '''
     # print("METADATA INFORMATION")
@@ -983,7 +1479,11 @@ if __name__ == '__main__':
     # print("DATA MEANING")
     # print(ob.info_parameters())
     # print("EGIM INFORMATION")
-    # print(ob.info_egim())
+    print(ob.info_egim())
+    # print(ob.stadistics_slots_current_consumptions())
+    # print(ob.stadistics_slots_temperature())
+    # print("GAPS")
+    # print(ob.find_gaps())
 
     ''' BUTTERWORTH FILTER'''
     # ob.butterworth_filter('pres')
@@ -992,7 +1492,13 @@ if __name__ == '__main__':
     #     sys.exit()
 
     ''' PLOTS '''
+    # ob.plt_all()
     # ob.plt_egim_all()
-    # plt.show()
+    # ob.plt_egim_slots_current_consumptions('H')
+    # ob.plt_egim_slots_temperature('H')
+    # ob.plt_egim_slots_pressure('W')
+    ob.plt_egim_slots_sd_capacity('W')
+    ob.plt_egim_current(average_time='D', accumulated=False)
+    plt.show()
 
     print("END")

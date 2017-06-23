@@ -240,20 +240,6 @@ class EMODnet(observatory.Observatory):
         elif isinstance(path, list):
             open_list(path)
 
-    @staticmethod
-    def how_to_download_data(lenguage='CAT'):
-        """
-        Returns a string text explaining how to download EMODnet data with the selected language.
-        :param lenguage: Idioma con el que quieres la explicacion
-        :type lenguage: str
-        :return: Explicacion
-        :rtype: str
-        """
-        tutorial = ""
-        if lenguage == 'CAT':
-            tutorial = "Descarrega les dades de ..."
-        return tutorial
-
 if __name__ == '__main__':
     import sys
     from matplotlib import style

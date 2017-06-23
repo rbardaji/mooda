@@ -1,22 +1,70 @@
 import sys
 from matplotlib import style
-
 from matplotlib.backends.backend_qt4agg import (FigureCanvasQTAgg as FigureCanvas,
                                                 NavigationToolbar2QT as NavigationToolbar)
 import matplotlib.pyplot as plt
 from datetime import datetime
-from mainwindow_ui import *
-from emsodev_ui import *
 import pandas as pd
 import time
+
 try:
     import oceanobs.obsea as obsea
     import oceanobs.emodnet as emodnet
     import oceanobs.emso as emso
+    from oceanobs.mainwindow_ui import *
+    from oceanobs.emsodev_ui import *
 except ImportError:
     import obsea
     import emodnet
     import emso
+    from mainwindow_ui import *
+    from emsodev_ui import *
+
+
+class OpenThread(QtCore.QThread):
+    """
+    Thread to open data.It is used for the gui.
+    """
+    def __init__(self, path_in):
+        QtCore.QThread.__init__(self)
+
+        # Instance variables
+        self.path = path_in
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        # Know if it is an OBSEA file or an EMODnet file
+        if self.path[0][-1] == 't' or self.path[0][-1] == 'T':
+            ob = obsea.OBSEA(self.path)
+        elif self.path[0][-1] == 'l' or self.path[0][-1] == 'L':
+            # If you enter here is becouse you have processed data. Yoy can open this type of data with all the
+            # libraries of the package.
+            ob = emso.EMSO(self.path[0])
+        elif self.path[0][-1] == 'c' or self.path[0][-1] == 'C':
+            # It is an EMODnet file, so let's open a EMODnet
+            ob = emodnet.EMODnet(self.path)
+        else:
+            return
+        self.emit(QtCore.SIGNAL("data_loaded"), ob)
+        # self.terminate()
+
+
+class GenericThread(QtCore.QThread):
+    def __init__(self, function, *args, **kwargs):
+        QtCore.QThread.__init__(self)
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        self.function(*self.args, **self.kwargs)
+        self.terminate()
+        return
 
 
 class EMSOdevApp(QtGui.QMainWindow, Ui_mw_emsodev):
@@ -25,8 +73,12 @@ class EMSOdevApp(QtGui.QMainWindow, Ui_mw_emsodev):
         super().__init__(parent)
         self.setupUi(self)
 
+        # Logo
+        self.setWindowIcon(QtGui.QIcon('img/logo.png'))
+
         # Instance variables
         self.ensodev_api = None
+        self.download_thread = None
 
         # Call for the EMSOdev API
         self.ensodev_api = emso.EMSOdevAPI()
@@ -180,24 +232,26 @@ class EMSOdevApp(QtGui.QMainWindow, Ui_mw_emsodev):
         """
         Download data
         """
-        start_date = self.l_start.text()
-        # Translate the date to timestamp
-        start_date = str(int(time.mktime(datetime.strptime(start_date, "%d/%m/%Y").timetuple())))
-        if self.l_stop.text() == "Now":
-            stop_date = ""
-        else:
-            stop_date = self.l_stop.text()
-            # Translate the date to timestamp
-            stop_date = str(int(time.mktime(datetime.strptime(stop_date, "%d/%m/%Y").timetuple())))
+
+        def thread_download_data():
+            start_date = self.l_start.text()
+            if self.l_stop.text() == "Now":
+                stop_date = ""
+            else:
+                stop_date = self.l_stop.text()
+
+            self.statusbar.showMessage("Downloading data...")
+            code = self.ensodev_api.read_data(start_date, stop_date)
+            if code != 200:
+                self.statusbar.showMessage("Error: Impossible to connect. Status code: {}".format(code))
+            else:
+                print("Result (5 first values):")
+                print(self.ensodev_api.data.head())
+                self.statusbar.showMessage("Done. ")
+
         # Downloading data
-        self.statusbar.showMessage("Downloading data...")
-        code = self.ensodev_api.read_data(start_date, stop_date)
-        if code != 200:
-            self.statusbar.showMessage("Error: Impossible to connect. Status code: {}".format(code))
-        else:
-            print("Result (5 first values):")
-            print(self.ensodev_api.data.head())
-            self.statusbar.showMessage("Done. ")
+        self.download_thread = GenericThread(thread_download_data)
+        self.download_thread.start()
 
     def save_data(self):
         """
@@ -209,9 +263,24 @@ class EMSOdevApp(QtGui.QMainWindow, Ui_mw_emsodev):
         self.ensodev_api.save_as_pickle(path)
         self.statusbar.showMessage("Files saved on: {}.".format(path))
 
+    # def thread_download_data(self):
+    #     start_date = self.l_start.text()
+    #     if self.l_stop.text() == "Now":
+    #         stop_date = ""
+    #     else:
+    #         stop_date = self.l_stop.text()
+    #
+    #     self.statusbar.showMessage("Downloading data...")
+    #     code = self.ensodev_api.read_data(start_date, stop_date)
+    #     if code != 200:
+    #         self.statusbar.showMessage("Error: Impossible to connect. Status code: {}".format(code))
+    #     else:
+    #         print("Result (5 first values):")
+    #         print(self.ensodev_api.data.head())
+    #         self.statusbar.showMessage("Done. ")
+
 
 class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -225,10 +294,14 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.toolbar_plot = None
         self.data = None
         self.fig_dict = {}
+        self.egim_dict = {}
         self.ob = None
         self.actual_fig = ""
         self.report_path = ""
         self.emsodevapp = EMSOdevApp()
+        self.mix = pd.DataFrame()
+        self.op_thread = None
+        self.plots_thread = None
 
         # Menu "File"
         self.actionOpenData.triggered.connect(self.open)
@@ -259,7 +332,20 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         # Butterworth option
         self.pb_butterworth_cancel.clicked.connect(self.w_butterworth.hide)
         self.pb_butterworth_apply.clicked.connect(self.butterworth_apply)
-
+        # Plot data
+        self.action_plot_menu.triggered.connect(self.menu_plot)
+        # Buttons
+        self.pb_plot_close.clicked.connect(self.w_plot.hide)
+        self.pb_plot_plot.clicked.connect(self.direct_plot)
+        # Compare data
+        self.action_compare.triggered.connect(self.add_param)
+        # Buttons
+        self.pb_compare_close.clicked.connect(self.w_compare.hide)
+        self.pb_compare_add.clicked.connect(self.compare_add_button)
+        self.pb_compare_del.clicked.connect(self.compare_del_button)
+        self.pb_compare_plot.clicked.connect(self.compare_plot_button)
+        # Add action in the selection of lists
+        self.existent_param_list.itemClicked.connect(self.write_le_text)
         # Menu "view"
         self.actionMetadata_Plots.triggered.connect(self.view_metadata_plots)
         self.actionText_info.triggered.connect(self.view_text)
@@ -293,6 +379,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.under_list.itemClicked.connect(self.view_fig)
         self.above_list.itemClicked.connect(self.view_fig)
         self.qc_list.itemClicked.connect(self.view_fig)
+        self.technical_list.itemClicked.connect(self.view_fig)
 
         # Hide all inforamtion
         self.hide_all()
@@ -324,7 +411,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         """
         self.print_text("Opening data from:")
         for text in path:
-            self.print_text("\t"+text)
+            self.print_text("\t" + text)
         try:
             self.print_text("METADATA INFORMATION")
             self.print_text(self.ob.info_metadata())
@@ -376,62 +463,48 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
 
     """ OPEN DATA, MENU FILE, OPEN """
 
+    def finish_open(self, ob_in):
+        """
+        The open process is done via the OpenThread
+        :param ob_in: observatory object.
+        :return:
+        """
+        self.ob = ob_in
+        # Error message
+        if self.ob.dialog:
+            self.statusbar.showMessage(self.ob.dialog)
+            return
+        self.statusbar.showMessage("Done.")
+        # Hide all
+        self.hide_all()
+        # Remove the figure that is shown in the screen
+        self.remove_fig()
+        self.show_menus()
+        if self.cb_load_all_plots.isChecked():
+            # Create all plots
+            try:
+                self.fig_dict = self.ob.plt_all()
+            except AttributeError:
+                pass
+            try:
+                # This is just for EMSO
+                self.egim_dict = self.ob.plt_egim_all()
+            except AttributeError:
+                pass
+            self.show_plots()
+
     def open(self):
         """
-        Open data file
+        Open data file.
         """
-        path = QtGui.QFileDialog.getOpenFileNames(None, 'Open TXT or netCDF', "",
-                                                  "TXT (*.txt);;netCDF (*.nc);;pickle (*.pkl)")
+
+        path = QtGui.QFileDialog.getOpenFileNames(None, 'Open TXT, netCDF or pickle', "",
+                                                  "pickle (*.pkl);;netCDF (*.nc);;TXT (*.txt)")
         if len(path) > 0:
-            # Open observatory object
             self.statusbar.showMessage("Opening data. Please wait.")
-            # Know if it is an OBSEA file or an EMODnet file
-            if path[0][-1] == 't' or path[0][-1] == 'T':
-                # It is a txt file so let's open OBSEA
-                self.ob = obsea.OBSEA(path)
-            elif path[0][-1] == 'l' or path[0][-1] == 'L':
-                # If you enter here is becouse you have processed data. Yoy can open this type of data with all the
-                # libraries of the package.
-                self.ob = emso.EMSO()
-                if "metadata" in path[0]:
-                    # Metadata file
-                    self.ob.metadata = pd.read_pickle(path[0])
-                    # Extract metadata information
-                    self.show_metadata(self.ob.metadata)
-                    self.print_text("Opening metadata from: {}".format(path[0]))
-                    self.statusbar.showMessage("Done.")
-                    return
-                else:
-                    # Data file
-                    self.ob.data = pd.read_pickle(path[0])
-                    # Adding figures
-                    self.make_plots()
-                    # Remove the figure that is shown in the screen
-                    self.remove_fig()
-                    # Show menus
-                    self.show_menus()
-                    # Write log info
-                    self.print_opening_info(path)
-                    self.statusbar.showMessage("Done.")
-                    return
-            else:
-                # It is an EMODnet file, so let's open a EMODnet
-                self.ob = emodnet.EMODnet(path)
-            if self.ob.dialog:
-                # Error message
-                self.statusbar.showMessage(self.ob.dialog)
-                return
-            # Extract metadata information
-            self.show_metadata(self.ob.metadata)
-            # Adding figures
-            self.make_plots()
-            # Remove the figure that is shown in the screen
-            self.remove_fig()
-            # Show menus
-            self.show_menus()
-            # Write log info
-            self.print_opening_info(path)
-            self.statusbar.showMessage("Done.")
+            self.op_thread = OpenThread(path)
+            self.connect(self.op_thread, QtCore.SIGNAL("data_loaded"), self.finish_open)
+            self.op_thread.start()
 
     """ SHOW AND HIDE COMPONENTS OF THE GUI, MENU VIEW """
 
@@ -456,6 +529,11 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.w_butterworth.hide()
         self.hide_menus()
         self.w_delete.hide()
+        self.w_compare.hide()
+        self.hide_metadata_plots()
+        self.remove_fig()
+        self.w_preferences.hide()
+        self.w_plot.hide()
 
     def hide_menus(self):
         """
@@ -494,6 +572,8 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.under_list.hide()
         self.title_qc.hide()
         self.qc_list.hide()
+        self.title_technical.hide()
+        self.technical_list.hide()
 
     def show_metadata_plots(self):
         """
@@ -514,6 +594,7 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         if self.above_list.count() > 0:
             self.title_plots.show()
             self.title_above.show()
+            self.above_list.sortItems()
             self.above_list.show()
         if self.under_list.count() > 0:
             self.title_plots.show()
@@ -523,6 +604,11 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
             self.title_plots.show()
             self.title_qc.show()
             self.qc_list.show()
+        if self.technical_list.count() > 0:
+            self.title_plots.show()
+            self.title_technical.show()
+            self.technical_list.sortItems()
+            self.technical_list.show()
 
     def show_metadata(self, metadata):
         """
@@ -530,70 +616,90 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         :param metadata: the metadata
         :type metadata: Pandas dataframe
         """
-        self.platform_code.setText(metadata['platform_code'][0])
-        self.wmo_code.setText(metadata['wmo_platform_code'][0])
-        self.institution.setText(metadata['institution'][0])
-        self.type.setText(metadata['type'][0])
-        self.show_metadata_plots()
+        try:
+            self.platform_code.setText(metadata['platform_code'][0])
+            self.wmo_code.setText(metadata['wmo_platform_code'][0])
+            self.institution.setText(metadata['institution'][0])
+            self.type.setText(metadata['type'][0])
+            self.show_metadata_plots()
+        except TypeError:
+            self.statusbar.showMessage("Error: No metadata found.")
 
-    def make_plots(self):
+    def show_plots(self):
         """
         Make all plots.
         """
-        plt.close("all")
+
+        # plt.close("all")
         # Clean figure lists
         self.above_list.clear()
         self.under_list.clear()
         self.qc_list.clear()
+        self.technical_list.clear()
         # Create all plots
-        self.fig_dict = self.ob.plt_all()
-        # Show the plot list
-        plot_keys = self.fig_dict.keys()
-        # Adding items to under_list
-        if 'Salinity' in plot_keys:
-            self.under_list.addItem('Salinity')
-        if 'Temperature' in plot_keys:
-            self.under_list.addItem('Temperature')
-        if 'Sound velocity' in plot_keys:
-            self.under_list.addItem('Sound velocity')
-        if 'Pressure' in plot_keys:
-            self.under_list.addItem('Pressure')
-        if 'Conductivity' in plot_keys:
-            self.under_list.addItem('Conductivity')
-        if 'Wave height' in plot_keys:
-            self.under_list.addItem('Wave height')
-        if 'Wave direction' in plot_keys:
-            self.under_list.addItem('Wave direction')
-        if 'Wave period' in plot_keys:
-            self.under_list.addItem('Wave period')
-        if 'Sea level' in plot_keys:
-            self.under_list.addItem('Sea level')
-        if 'Current speed' in plot_keys:
-            self.under_list.addItem('Current speed')
-        if 'Current direction' in plot_keys:
-            self.under_list.addItem('Current direction')
-        # Adding items to above_list
-        if 'Atmospheric pressure' in plot_keys:
-            self.above_list.addItem('Atmospheric pressure')
-        if 'Wind speed' in plot_keys:
-            self.above_list.addItem('Wind speed')
-        if 'Wind direction' in plot_keys:
-            self.above_list.addItem('Wind direction')
-        if 'Air temperature' in plot_keys:
-            self.above_list.addItem('Air temperature')
-        if 'Pressure sea level' in plot_keys:
-            self.above_list.addItem('Pressure sea level')
-        if 'Rain acumulation' in plot_keys:
-            self.above_list.addItem('Rain acumulation')
-        if 'Relative humidity' in plot_keys:
-            self.above_list.addItem('Relative humidity')
-        if 'Gust wind speed' in plot_keys:
-            self.above_list.addItem('Gust wind speed')
-        # Adding items to qc_list
-        if 'QC flags' in plot_keys:
-            self.qc_list.addItem('QC flags')
-
+        try:
+            # Show the plot list
+            plot_keys = self.fig_dict.keys()
+            # Adding items to under_list
+            if 'Salinity' in plot_keys:
+                self.under_list.addItem('Salinity')
+            if 'Temperature' in plot_keys:
+                self.under_list.addItem('Temperature')
+            if 'Sound velocity' in plot_keys:
+                self.under_list.addItem('Sound velocity')
+            if 'Pressure' in plot_keys:
+                self.under_list.addItem('Pressure')
+            if 'Conductivity' in plot_keys:
+                self.under_list.addItem('Conductivity')
+            if 'Wave height' in plot_keys:
+                self.under_list.addItem('Wave height')
+            if 'Wave direction' in plot_keys:
+                self.under_list.addItem('Wave direction')
+            if 'Wave period' in plot_keys:
+                self.under_list.addItem('Wave period')
+            if 'Sea level' in plot_keys:
+                self.under_list.addItem('Sea level')
+            if 'Current speed' in plot_keys:
+                self.under_list.addItem('Current speed')
+            if 'Current direction' in plot_keys:
+                self.under_list.addItem('Current direction')
+            # Adding items to above_list
+            if 'Atmospheric pressure' in plot_keys:
+                self.above_list.addItem('Atmospheric pressure')
+            if 'Wind speed' in plot_keys:
+                self.above_list.addItem('Wind speed')
+            if 'Wind direction' in plot_keys:
+                self.above_list.addItem('Wind direction')
+            if 'Air temperature' in plot_keys:
+                self.above_list.addItem('Air temperature')
+            if 'Pressure sea level' in plot_keys:
+                self.above_list.addItem('Pressure sea level')
+            if 'Rain acumulation' in plot_keys:
+                self.above_list.addItem('Rain acumulation')
+            if 'Relative humidity' in plot_keys:
+                self.above_list.addItem('Relative humidity')
+            if 'Gust wind speed' in plot_keys:
+                self.above_list.addItem('Gust wind speed')
+            # Adding items to qc_list
+            if 'QC flags' in plot_keys:
+                self.qc_list.addItem('QC flags')
+        except AttributeError:
+            # If you are here, there is not any plot of data
+            self.statusbar.showMessage("There is no data.")
+        try:
+            # This is just for EMSO
+            # Show the plot list
+            plot_keys = list(self.egim_dict.keys())
+            # Adding items to technical list
+            self.technical_list.addItems(plot_keys)
+            # Joining the dicts
+            self.fig_dict = {**self.fig_dict, **self.egim_dict}
+        except AttributeError:
+            pass
+        # Refresh lists
+        self.hide_metadata_plots()
         self.show_metadata_plots()
+        self.statusbar.showMessage("Done.")
 
     def view_text(self):
         """
@@ -643,9 +749,109 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.remove_fig()
 
     def refresh_fig(self):
-        self.make_plots()
+        if self.cb_load_all_plots.isChecked():
+            self.statusbar.showMessage("Updating figures. Please wait.")
+            self.finish_open(self.ob)
+            self.remove_fig()
+            try:
+                self.add_fig(self.fig_dict[self.actual_fig])
+            except KeyError:
+                # If you are here is becouse you don't have selected any figure.
+                pass
+            self.statusbar.showMessage("Done.")
+
+    """ MENU COMPARE DATA """
+
+    def add_param(self):
+        """
+        Adding the selected parameter to the mix pandas data frame.
+        """
+        # Clear the list of existing_param_list
+        self.existent_param_list.clear()
+        # Clear the text of the line edit.
+        self.le_param_name.clear()
+        self.le_offset.clear()
+        # Adding all the parameters to the existent_param_list
+        # First, let's create a list of items
+        items_data = self.ob.data.keys()
+        # Adding the item list to the existing_param_list
+        self.existent_param_list.addItems(items_data)
+        try:
+            # This is just for EGIM data
+            items_egim = self.ob.egim.keys()
+            self.existent_param_list.addItems(items_egim)
+        except AttributeError:
+            pass
+        # Write instructions
+        self.statusbar.showMessage("Select a parameter, write a name and click to Add.")
+        # Show widget
+        self.w_compare.show()
+
+    def compare_add_button(self):
+        """
+        Action when the user press the add button of the compare data option.
+        """
+        item_selected_list = [item.text() for item in self.existent_param_list.selectedItems()]
+        # Check if there is any selected item
+        if len(item_selected_list) == 0:
+            self.statusbar.showMessage("Select a parameter, write a name and click to Add.")
+            return
+        # Read the name of the parameter in the line edit
+        if self.le_param_name.text() == "":
+            self.statusbar.showMessage("Select a parameter, write a name and click to Add.")
+            return
+        # Chack the input of offset
+        offset = 0.0
+        if len(self.le_offset.text()) > 0:
+            try:
+                offset = float(self.le_offset.text())
+            except ValueError:
+                self.statusbar.showMessage("The offset is not a number.")
+                return
+        self.statusbar.showMessage("Working. Please wait.")
+        # Add the parameter to the mix pandas data frame
+        try:
+            self.mix[self.le_param_name.text()] = self.ob.data[item_selected_list[0]] + offset
+        except KeyError:
+            # If you are here is becouse it is an egim parameter
+            self.mix[self.le_param_name.text()] = self.ob.egim[item_selected_list[0]] + offset
+        # Add to the comparation list
+        self.comparation_list.addItem(self.le_param_name.text())
+        # Clear the text of the line edit.
+        self.le_param_name.clear()
+        self.le_offset.clear()
+        self.statusbar.showMessage("Select a parameter, write a name and click to Add.")
+
+    def write_le_text(self, item):
+        """
+        Write the text to the line edit.
+        :param item: Item selected.
+        """
+        self.le_param_name.setText(item.text())
+
+    def compare_del_button(self):
+        """
+        Delete some parameters of the compare_list
+        """
+        list_items = self.comparation_list.selectedItems()
+        if not list_items:
+            return
+        for item in list_items:
+            self.comparation_list.takeItem(self.comparation_list.row(item))
+            del self.mix[item]
+
+    def compare_plot_button(self):
+        """
+        Plot with the selected parameters.
+        """
+        self.statusbar.showMessage("Working. Please wait.")
+        fig_compare, axes = plt.subplots(nrows=1, ncols=1)
+        self.mix.interpolate().plot(ax=axes)
+        axes.set_title('Comparation')
+        # Show the figure
         self.remove_fig()
-        self.add_fig(self.fig_dict[self.actual_fig])
+        self.add_fig(fig_compare)
+        self.statusbar.showMessage("Done.")
 
     """ SLICING DATA, MENU DATA, SLICING """
 
@@ -653,20 +859,22 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         """
         Data slicing process
         """
-        def formating_time(time):
+
+        def formating_time(time_in):
             """
             Formating data
             Our time has a format like this: 01/01/2000 0:00:00
             We need something like this: 20000101000000
-            :param time: time that you want to be formatted
-            :type time:str
+            :param time_in: time that you want to be formatted
+            :type time_in:str
             :return: formated time
             """
-            if time[12] == ':':
-                time = time[6:10]+time[3:5]+time[0:2]+'0'+time[11]+time[13:15]+time[16:]
+            if time_in[12] == ':':
+                time_in = time_in[6:10] + time_in[3:5] + time_in[0:2] + '0' + time_in[11] + time_in[13:15] + \
+                          time_in[16:]
             else:
-                time = time[6:10]+time[3:5]+time[0:2]+time[10:12]+time[13:15]+time[16:]
-            return time
+                time_in = time_in[6:10] + time_in[3:5] + time_in[0:2] + time_in[10:12] + time_in[13:15] + time_in[16:]
+            return time_in
 
         start_time = self.slicing_start_time.text()
         start_time = formating_time(start_time)
@@ -699,9 +907,9 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         """
         # Adding the parameters to the comboBox
         for key in self.ob.data.keys():
-                if "_qc" in key:
-                    continue
-                self.cb_clear_parameters.addItem(key)
+            if "_qc" in key:
+                continue
+            self.cb_clear_parameters.addItem(key)
         self.w_delete.show()
 
     def delete_apply(self):
@@ -718,15 +926,16 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage("Done.")
 
     """ FILTERING """
+
     def butterworth_init(self):
         """
         Add the parameters in the comboBox and show the options
         """
         # Adding the parameters
         for key in self.ob.data.keys():
-                if "_qc" in key:
-                    continue
-                self.cb_butterworth_parameters.addItem(key)
+            if "_qc" in key:
+                continue
+            self.cb_butterworth_parameters.addItem(key)
         # Show the option
         self.w_butterworth.show()
 
@@ -743,6 +952,38 @@ class MyApplication(QtGui.QMainWindow, Ui_MainWindow):
         # Close the option
         self.w_butterworth.hide()
         self.statusbar.showMessage("Done.")
+
+    """ MENU DATA, PLOT"""
+
+    def menu_plot(self):
+        # Clear the list of parameters
+        self.parameter_plot_list.clear()
+        # Adding all the parameters to the parameter_plot_list
+        # First, let's create a list of items
+        items_data = self.ob.data.keys()
+        # Adding the item list to the existing_param_list
+        self.parameter_plot_list.addItems(items_data)
+        try:
+            # This is just for EGIM data
+            items_egim = self.ob.egim.keys()
+            self.parameter_plot_list.addItems(items_egim)
+        except AttributeError:
+            pass
+        # Write instructions
+        self.statusbar.showMessage("Select a parameter and click Plot.")
+        self.w_plot.show()
+
+    def direct_plot(self):
+        item_text = [item.text() for item in self.parameter_plot_list.selectedItems()]
+        if len(item_text) > 0:
+            self.statusbar.showMessage("Working. Please wait.")
+            fig_compare, axes = plt.subplots(nrows=1, ncols=1)
+            self.ob.data[item_text].interpolate().plot(ax=axes)
+            axes.set_title(item_text[0])
+            # Show the figure
+            self.remove_fig()
+            self.add_fig(fig_compare)
+            self.statusbar.showMessage("Done.")
 
     """ PLOT STYLE OPTIONS, MENU SETTINGS, PLOT STYLE """
 
@@ -893,6 +1134,7 @@ def open_emsodev_app():
     window_emso.show()
     app_emso.exec_()
 
+
 if __name__ == "__main__":
-    # open_gui()
-    open_emsodev_app()
+    open_gui()
+    # open_emsodev_app()
