@@ -192,6 +192,8 @@ class EGIM:
                 data_frame_creation('tur4')
                 acronym_creation(key="tur4", long_name="Turbidity",
                                  standard_name="turbidity", units="NTU")
+                # Change from mNTU to NTUs
+                self.wf.data['tur4'] /= 100
             elif self.parameter_name == "oxygen_saturation":
                 data_frame_creation('osat')
                 acronym_creation(key="osat", long_name="Oxygen saturation", standard_name="oxygen_saturation",
@@ -362,7 +364,7 @@ class WaterFrame:
             elif path[-1] == "t":
                 self.from_csv(path)
 
-    def from_netcdf(self, path):
+    def from_netcdf(self, path, parameter=None):
         """
         Load data from a NetCDF file. It extracts the data and the metadata of the file and saves them into a pandas
         DataFrame in self.data and self.metadata.
@@ -382,15 +384,15 @@ class WaterFrame:
                 self.metadata[name] = getattr(df, name)
             self.metadata['summary'] = self.acronym
 
-        def read_data():
+        def read_data(parameter):
             """
             Save the variables of the NetCDF file into self.data
             """
 
             # NetCDF variables without columns
-            variables_without_columns = ["TIME", "TIME_QC", "LATITUDE", "LONGITUDE", "POSITION_QC",
-                                         "POSITIONING_SYSTEM", "GPS_LATITUDE", "GPS_LONGITUDE"]
-            variables_not_saved = ["DC_REFERENCE", "DEPH", "DEPH_QC", "GPS_POSITION_QC"]
+            variables_without_columns = ["TIME", "TIME_QC", "LATITUDE", "LONGITUDE", "POSITION_QC", "GPS_LATITUDE",
+                                         "GPS_LONGITUDE"]
+            variables_not_saved = ["DC_REFERENCE", "DEPH", "DEPH_QC", "GPS_POSITION_QC", "POSITIONING_SYSTEM"]
             variables_no_depth = ["PRRT", "PRRT_QC", "WSPD", "WSPD_QC", "WSPE", "WSPE_QC", "WSPD", "WSPD_QC",
                                   "WSPE", "WSPE_QC", "WSPN", "WSPN_QC", "WTODIR", "WTODIR_QC", "RELH", "RELH_QC",
                                   "DRYT", "DRYT_QC", "SINC", "SINC_QC", "HOURLY_RAIN", "HOURLY_RAIN_QC", "ATMS",
@@ -416,6 +418,11 @@ class WaterFrame:
                 # print(key)
                 if "_DM" in key:
                     continue
+                if parameter is not None:
+                    if key == "TIME":
+                        pass
+                    elif parameter not in key:
+                        continue
                 if key in variables_not_saved:
                     continue
                 elif key in variables_without_columns:
@@ -425,9 +432,6 @@ class WaterFrame:
                         time = Nc.num2date(time[:], time.units)
                     else:
                         data[key.lower()] = df[key][:]
-                # BORRAR ESTO
-                elif "TEMP" not in key:
-                    continue
                 else:
                     # Search the column number (i)
                     n_sensors = len(df[key][:][:][0])
@@ -467,7 +471,7 @@ class WaterFrame:
             df = Nc.Dataset(path)
         except OSError as error:
             return "Error loading NetCDF file ({}): {}".format(path, error)
-        read_data()
+        read_data(parameter)
         read_metadata()
 
     def from_csv(self, path):
@@ -550,6 +554,17 @@ class WaterFrame:
             return "Error loading pickle file {}. This is not a pickle file.".format(path)
         except FileNotFoundError:
             return "Error loading pickle file {}. File not found.".format(path)
+
+    def add_netcdf(self, path):
+        """
+        Add data from a new NetCDF file.
+        :param path: Path of the new NetCDF file.
+        :return:
+        """
+        big_data = self.data.copy()
+        self.from_netcdf(path)
+        big_data = pd.concat([big_data, self.data])
+        self.data = big_data.copy()
 
     def to_pickle(self, path):
         """
@@ -936,7 +951,7 @@ class WaterFrame:
                     continue
                 elif qc_flags[counter_qc] == 3:
                     if self.data.iloc[i][parameter_qc] == 0 or self.data.iloc[i][parameter_qc] == 8:
-                        # We just apply THE flag if there is no qc in the value or it is an interpolated value
+                        # We just apply the flag if there is no qc in the value or it is an interpolated value
                         self.data.ix[i, parameter_qc] = 3
                     elif self.data.iloc[i][parameter_qc] == 2:
                         # Let's check if the value is a spyke
@@ -987,9 +1002,45 @@ class WaterFrame:
 
             self.data.ix[self.data[parameter_qc] == 0, parameter_qc] = 1
 
+        def flat(parameter, lag_in=5):
+            """
+            Flat test.
+            :param parameter:
+            :param lag_in:
+            :return:
+            """
+
+            def flat_algo(y, lag):
+                """
+
+                :param parameter:
+                :param lag:
+                :return:
+                """
+                signals = np.zeros(len(y))
+                for cont in range(lag, len(y)):
+                    values = y[cont-lag:cont]
+                    # Check if all values are equal
+                    if (values[1:] == values[:-1]).all():
+                        signals[cont] = 3
+                    else:
+                        signals[cont] = 0
+                return signals
+
+            qc_flags = flat_algo(y=self.data[parameter].dropna().values, lag=lag_in)
+
+            parameter_qc = self.name_qc(parameter)
+
+            for i in range(len(qc_flags)):
+                if qc_flags[i] == 3:
+                    self.data.ix[i, parameter_qc] = 3
+
         def qc_procedure(parameter, influencer_proces, threshold_proces, multiplier_proces):
             # Calculation of lag
             lag_qc = 3
+            if len(self.data[parameter].dropna().values) == 0:
+                # No values
+                return
             if len(self.data[parameter].dropna().values) > 10:
                 lag_qc = 5
             if len(self.data[parameter].dropna().values) > 100:
@@ -997,12 +1048,15 @@ class WaterFrame:
             elif len(self.data[parameter].dropna().values) > 1000:
                 lag_qc = 50
 
-            missing_values(parameter)
-            impossible_values(parameter)
-            local_impossible_values()
-            spikes(parameter, influencer_proces, lag_qc, threshold_proces)
-            gradients(parameter, influencer_proces, lag_qc, multiplier_proces)
+            #missing_values(parameter)
+            #impossible_values(parameter)
+            #local_impossible_values()
+            #spikes(parameter, influencer_proces, lag_qc, threshold_proces)
+            #gradients(parameter, influencer_proces, lag_qc, multiplier_proces)
+            flat(parameter, lag_qc)
             good_values(parameter)
+
+
 
         if param:
             qc_procedure(param, influencer, threshold, multiplier)
@@ -1016,6 +1070,38 @@ class WaterFrame:
                     continue
                 else:
                     qc_procedure(key, influencer, threshold, multiplier)
+
+    def drop_qc(self, qc_flag):
+        """
+
+        :return:
+        """
+        for key in self.data.keys():
+            if "_qc" in key:
+                continue
+            if "latitude" in key:
+                continue
+            if "longitude" in key:
+                continue
+            parameter_qc = self.name_qc(key)
+            data = self.data[self.data[parameter_qc] != qc_flag]
+            self.data = data
+
+    def name_qc(self, parameter):
+        """
+        Returns the name of the column with the QC Flag information of the parameter.
+        :param parameter: Name of the column od self.data without qc
+        :return:
+        """
+        parts = parameter.split("_")
+        if len(parts) == 1:
+            parameter_qc = parameter + "_qc"
+        elif len(parts) == 2:
+            parameter_qc = parts[0] + "_qc_" + parts[1]
+        else:
+            parameter_qc = "ERROR"
+
+        return parameter_qc
 
     def info(self, path=None):
         """
@@ -1061,17 +1147,6 @@ class WaterFrame:
             if "_qc" in key:
                 self.data[key] = 8
 
-    def add_netcdf(self, path):
-        """
-        Add data from a new NetCDF file.
-        :param path: Path of the new NetCDF file.
-        :return:
-        """
-        big_data = self.data.copy()
-        self.from_netcdf(path)
-        big_data = pd.concat([big_data, self.data])
-        self.data = big_data.copy()
-
 
 def plot_corr(param_1, param_2, title="", x_label="", y_label="", legend=[]):
     """
@@ -1100,7 +1175,7 @@ class PlotMap:
     def __init__(self, ):
         self.m = Basemap()
 
-    def map_world(self, res='h'):
+    def map_world(self, res='l'):
         """
         It creates a map of the world.
         :return:
@@ -1111,7 +1186,19 @@ class PlotMap:
         # Fill the continents with black
         self.m.fillcontinents(color='K')
 
-    def add_point(self, lon, lat, *arg):
+    def map_mediterranean(self, res='l'):
+        """
+        It creates a map of the Mediterranean.
+        :param res: Resolution of the map
+        :return:
+        """
+        self.m = Basemap(projection='mill', resolution=res, llcrnrlat=30, llcrnrlon=-13, urcrnrlat=47, urcrnrlon=38)
+        # Draw the costal lines
+        self.m.drawcoastlines()
+        # Fill the continents with black
+        self.m.fillcontinents(color='K')
+
+    def add_pointxxx(self, lon, lat, *arg):
         """Añadimos puntos al mapa
         :param lon: longitud
         :type lon: float
@@ -1123,10 +1210,25 @@ class PlotMap:
         xpt, ypt = self.m(lon, lat)
         if 1 == len(arg):
             marker_color = arg[0]
-            self.m.plot(xpt, ypt, marker='o', color=str(marker_color), markersize=7)
+            self.m.plot(xpt, ypt, marker='o', color='k', markersize=7)
+            # self.m.plot(xpt, ypt, marker='o', color=str(marker_color), markersize=7)
         elif len(arg) == 4:
             color_red = arg[0]
             color_green = arg[1]
             color_blue = arg[2]
             color_clear = arg[3]
             self.m.plot(xpt, ypt, marker='o', color=[color_red, color_green, color_blue, color_clear], markersize=7)
+
+    def add_point(self, lon, lat, color='blue', label=None):
+        """Añadimos puntos al mapa
+        :param lon: longitud
+        :type lon: float
+        :param lat: latitud
+        :type lat: float
+        :param color_in: color of the point.
+        :type color_in: str
+        """
+        x, y = self.m(float(lon), float(lat))
+        self.m.plot(x, y, color=color, marker='o', markersize=7)
+        if label is not None:
+            plt.text(x+10000,y+5000, label)
