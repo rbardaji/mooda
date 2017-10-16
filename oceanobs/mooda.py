@@ -906,8 +906,8 @@ def open_mooda(login, password):
 
 
 def main():
-    login_in = "emsodev"
-    password_in = "Emsodev2017"
+    login_in = ""
+    password_in = ""
     if login_in is None:
         print("I'm sorry, EMSODEV API is under development, and now you need a login and a password. "
               "This fact will change before April 2018.")
