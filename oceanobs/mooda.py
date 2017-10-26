@@ -1,6 +1,4 @@
 from functools import partial
-from mooda_ui import *
-import inwater as wt
 from PyQt4.QtCore import QThread, SIGNAL
 import sys
 from matplotlib.figure import Figure
@@ -8,6 +6,12 @@ from matplotlib.backends.backend_qt4agg import (FigureCanvasQTAgg as FigureCanva
                                                 NavigationToolbar2QT as NavigationToolbar)
 import matplotlib.pyplot as plt
 import matplotlib.style as style
+try:
+    import inwater as wt
+    from mooda_ui import *
+except ImportError:
+    import oceanobs.inwater as wt
+    from oceanobs.mooda_ui import *
 
 
 class MOODA(QtGui.QMainWindow, Ui_mooda_window):

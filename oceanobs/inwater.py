@@ -15,7 +15,7 @@ class EGIM:
     """
 
     def __init__(self, login=None, password=None, observatory=None, instrument=None, parameter=None, path=None,
-                 start=None, end=None):
+                 start=None, end=""):
 
         # Instance variables
         self.login = None
@@ -36,18 +36,37 @@ class EGIM:
             if observatory is not None and instrument is not None and parameter is not None and path is not None \
                     and start is not None:
                 if isinstance(observatory, str):
-                    self.observatories.append(observatory)
+                    if observatory == 'all':
+                        self.load_observatories()
+                    else:
+                        self.observatories.append(observatory)
                 else:
+                    # It is a list
                     self.observatories += observatory
                 if isinstance(instrument, str):
-                    self.instruments.append(instrument)
+                    if instrument == 'all':
+                        instruments = []
+                        for observatory_ in self.observatories:
+                            self.observatory_name = observatory_
+                            self.load_instruments()
+                            instruments += self.instruments
+                        self.instruments = instruments
+                    else:
+                        self.instruments.append(instrument)
                 else:
+                    # It is a list
                     self.instruments += instrument
                 if isinstance(parameter, str):
                     if parameter == "all":
-                        self.observatory_name = self.observatories[0]
-                        self.instrument_name = self.instruments[0]
-                        self.load_parameters()
+                        parameters = []
+                        for observatory_ in self.observatories:
+                            self.observatory_name = observatory_
+                            for instrument_ in self.instruments:
+                                self.instrument_name = instrument_
+                                self.load_parameters()
+                                parameters += self.parameters
+                        # It saves all the parameters in self.parameters, but remove duplicate strigs
+                        self.parameters = list(set(parameters))
                     else:
                         self.parameters.append(parameter)
                 else:
@@ -154,13 +173,18 @@ class EGIM:
                 if not technical:
                     # Adding QC flag
                     df['time_qc'] = 0
+                    # Adding latitude and longitude
+                    if self.observatory_name == "EMSODEV-EGIM-node00001":
+                        df['latitude'] = 41.185
+                        df['longitude'] = 1.745
                     if "_" in param_name:
                         parts_in = param_name.split("_")
                         df["{}_qc_{}".format(parts_in[0], parts_in[1])] = 0
                     else:
                         df["{}_qc".format(param_name)] = 0
                     try:
-                        self.wf.data = pd.merge(self.wf.data, df, how='outer', on=['time', 'time_qc'])
+                        self.wf.data = pd.merge(self.wf.data, df, how='outer', on=['time', 'time_qc', 'latitude',
+                                                                                   'longitude'])
                     except KeyError:
                         self.wf.data = df
                 else:
@@ -188,6 +212,8 @@ class EGIM:
                 data_frame_creation("pres")
                 acronym_creation(key="pres", long_name="Sea water pressure",
                                  standard_name="sea_water_pressure", units="dBar")
+                # Change from PSI to dBar
+                self.wf.data['pres'] *= 0.6804595706270282
             elif self.parameter_name == "turbidity":
                 data_frame_creation('tur4')
                 acronym_creation(key="tur4", long_name="Turbidity",
@@ -312,12 +338,13 @@ class EGIM:
         for observation in answer['observations']:
             self.observations.append((observation['phenomenonTime'], observation['value']))
 
-        format_data()
-        metadata_creation()
+        if len(self.observations) > 0:
+            format_data()
+            metadata_creation()
 
         return r.status_code
 
-    def auto_download(self, path_in, start_in, end_in=None):
+    def auto_download(self, path_in, start_in, end_in=""):
         """
         Download all the data and save it into a pickle file.
         :param path_in: Path of the pickle file.
@@ -328,7 +355,8 @@ class EGIM:
         for self.observatory_name in self.observatories:
             for self.instrument_name in self.instruments:
                 for self.parameter_name in self.parameters:
-                    self.load_data(start_in, end_in)
+                    print(self.observatory_name, self.instrument_name, self.parameter_name)
+                    print(self.load_data(start_in, end_in))
         answer = self.wf.to_pickle(path_in)
         return answer
 
@@ -359,7 +387,6 @@ class WaterFrame:
             if path[-1] == "c":
                 self.from_netcdf(path)
             elif path[-1] == "l":
-                print("Opening a pickle file.")
                 self.from_pickle(path)
             elif path[-1] == "t":
                 self.from_csv(path)
@@ -399,7 +426,7 @@ class WaterFrame:
                                   "ATMS_QC", "ATMP", "ATMP_QC", "DEWT", "DEWT_QC", "DRYT", "DRYT_QC", "GSPD", "GSPD_QC",
                                   "NRAD", "NRAD_QC", "VAVH", "VAVH_QC", "VDIR", "VDIR_QC", "VEMH", "VEMH_QC", "VGHS",
                                   "VGHS_QC", "VGTA", "VGTA_QC", "VHZA", "VHZA_QC", "VMDR", "VMDR_QC", "VTZM", "VTZM_QC",
-                                  "WDIR", "WDIR_QC"]
+                                  "WDIR", "WDIR_QC", "SWHT", "SWHT_QC"]
 
             # Reading the deph parameter
             try:
@@ -434,12 +461,18 @@ class WaterFrame:
                         data[key.lower()] = df[key][:]
                 else:
                     # Search the column number (i)
+                    #print(key)
                     n_sensors = len(df[key][:][:][0])
                     for i in range(n_sensors):
+                        #print(i, n_sensors)
                         for j in range(len(df[key][:][:, i])):
+                            # This is to run the code faster. We try to find a value just 1000 times. If we do not
+                            # find it, we break
+                            if j == 50:
+                                break
                             if df[key][:][:, i][j] != '--':
                                 # Save the values
-                                if key in variables_no_depth:
+                                if (key in variables_no_depth) or ('--' in str(depth[i])):
                                     data[key.lower().replace("_t", "-t").replace("_r", "-r")] = df[key][:][:, i]
                                 else:
                                     data["{}_{}".format(key.lower().replace("_t", "-t").replace("_r", "-r"),
@@ -447,11 +480,23 @@ class WaterFrame:
                                 # Save the acronym information
                                 try:
                                     info = dict()
-                                    info['long_name'] = df.variables[key].long_name
-                                    info['standard_name'] = df.variables[key].standard_name
-                                    info['units'] = df.variables[key].units
-                                    info['depth'] = "{} m".format(depth[i])
-                                    # print("{}: {}".format(key, df.variables[key].long_name))
+                                    # print(key)
+                                    try:
+                                        info['long_name'] = df.variables[key].long_name
+                                    except AttributeError:
+                                        try:
+                                            info['long_name'] = df.variables[key].standard_name
+                                        except AttributeError:
+                                            pass
+                                    # print(df.variables[key].long_name)
+                                    try:
+                                        info['standard_name'] = df.variables[key].standard_name
+                                        # print(df.variables[key].standard_name)
+                                        info['units'] = df.variables[key].units
+                                        # print(df.variables[key].units)
+                                        info['depth'] = "{} m".format(depth[i])
+                                    except AttributeError:
+                                        pass
                                     if key in variables_no_depth:
                                         self.acronym[key.lower().replace("_t", "-t").replace("_r", "-r")] = info
                                     else:
@@ -817,68 +862,128 @@ class WaterFrame:
         :param multiplier: The multiplier value to calculate the maximum value of the slope procedure.
         """
 
-        def missing_values(parameter):
+        def gap_test(parameter, qc_number = 4):
+            """
+            It detects missing values.
+            :param parameter: Name of the parameter.
+            :param qc_number: Number to write if the value it is flagged.
+            :return:
+            """
+            parameter_qc = self.name_qc(parameter)
+
+            self.data.ix[self.data[parameter].isnull(), parameter_qc] = qc_number
+
+        def location_test(parameter, qc_number = 4):
+            """
+            All the values should have the location of the measures.
+            :param qc_number: Number to write if the value it is flagged.
+            """
+            parameter_qc = self.name_qc(parameter)
+
+            try:
+                self.data.ix[self.data['latitude'].isnull(), parameter_qc] = qc_number
+                self.data.ix[self.data['longitude'].isnull(), parameter_qc] = qc_number
+            except KeyError:
+                # There is no latitude or longitude values
+                self.data[parameter_qc] = qc_number
+
+        def range_test(parameter, qc_number = 4):
+            """
+            Check impossible values of a paramerer.
+            :param parameter: Name of the parameter.
+            :param qc_number: Number to write if the value it is flagged.
+            """
+
+            mediterranean_values = {
+                'longitude':{'min': -5.625709, 'max': 35.560366},
+                'latitude':{'min': 30.235617, 'max': 45.866313},
+                'wdir':{'min': 0, 'max': 360}, # Wind from direction relative true north
+                'swdr':{'min': 0, 'max': 360}, # SWELL DIRECTION REL TRUE N.
+                'vpsp':{'min': 0, 'max': 360}, # dir. spreading at wave peak
+                'vdir':{'min': 0, 'max': 360}, # wave direction rel. true north
+                'vmdr':{'min': 0, 'max': 360}, # Mean wave direction from (Mdir)
+                'head':{'min': 0, 'max': 360}, # PLAT. HEADING REL. TRUE NORTH
+                'relh':{'min': 0, 'max': 360}, # relative humidity
+                'hcdt':{'min': 0, 'max': 360}, # current to direction relative true north
+                'temp':{'min': 4, 'max': 34}, # Sea temperature
+                'atms':{'min': 8, 'max': 1225}, # Atmospheric pressure at sea level
+                'dryt':{'min': -2, 'max': 43}, # Air temperature in dry bulb
+                'swht':{'min': 0, 'max': 8}, # SWELL HEIGHT
+                'wspd':{'min': 0, 'max': 30}, # Horizontal wind speed
+                'swpr':{'min': 0, 'max': 12}, # SWELL PERIOD
+                'vavt':{'min': 0, 'max': 16}, # AVER. PERIOD HIGHEST 1/3 WAVE
+                'vcmx':{'min': 0, 'max': 11}, # MAX CREST TROUGH WAVE HEIGHT
+                'vepk':{'min': 0, 'max': 78}, # WAVE SPECTRUM PEAK ENERGY
+                'vhm0':{'min': 0, 'max': 7}, # SPECTRAL SIGNIF. WAVE HEIGHT
+                'vsmc':{'min': 0, 'max': 10}, # SPECT. MOMENT(0, 2) WAVE PERIOD
+                'vtpk':{'min': 0, 'max': 32}, # WAVE SPECTRUM PEAK PERIOD
+                'vavh':{'min': 0, 'max': 7}, # AVER. HEIGHT HIGHEST 1/3 WAVE
+                'vped':{'min': 0, 'max': 82}, # dir. spreading at wave peak
+                'vtdh':{'min': 0, 'max': 16}, # significant wave height
+                'vtzm':{'min': 0, 'max': 27}, # period of the highest wave
+                'chlt': {'min': 0, 'max': 8},  # total chlorophyll
+                'cndc': {'min': 1, 'max': 7},  # electrical conductivity
+                'osat': {'min': 83, 'max': 120},  # oxygen saturation
+                'phph': {'min': 6, 'max': 9},  # ph
+                'psal': {'min': 24, 'max': 40},  # practical salinity
+                'ewct': {'min': -7, 'max': 6},  # west-east current component
+                'nsct': {'min': -3, 'max': 4},  # south-north current component
+                'atmp': {'min': 846, 'max': 1080},  # atmospheric pressure at altitude
+                'dewt': {'min': -8, 'max': 28},  # dew point temperature
+                'gspd': {'min': 0, 'max': 40},  # gust wind speed
+                'vtza': {'min': 0, 'max': 20},  # AVER ZERO CROSSING WAVE PERIOD
+                'svel': {'min': 1300, 'max': 165000},  # sound velocity
+                'airt': {'min': -2, 'max': 32},  # Temperature of the atmosphere
+                'lw': {'min': 4, 'max': 40},  # Downwelling vector irradiance as energy (longwave) in the atmosphere
+                'pres': {'min': 0, 'max': 41},  # sea pressure
+                'vtm02': {'min': 0, 'max': 13},  # Spectral moments (0, 2) wave period (Tm02)
+                'vzmx': {'min': 0, 'max': 16},  # Maximum zero crossing wave height (Hmax)
+                'prrt': {'min': 0, 'max': 122},  # hourly precipitation rate
+                'slev': {'min': -4, 'max': 27},  # Observed sea level
+                'slvr': {'min': -2, 'max': 2},  # Residual (Observed-Predicted sea level)
+                'linc': {'min': 10, 'max': 2300},  # long-wave incoming radiation
+                'rdin': {'min': 0, 'max': 1100},  # incident radiation
+            }
+
+            obsea_values = {
+                'longitude':{'min': 1.74, 'max': 1.76},
+                'latitude':{'min': 41.18, 'max': 41.19},
+                'wdir':{'min': 0, 'max': 360}, # Wind from direction relative true north
+                'temp':{'min': 11, 'max': 27}, # Sea temperature
+                'atms':{'min': 980, 'max': 1100}, # Atmospheric pressure at sea level
+                'dryt':{'min': -1, 'max': 43}, # Air temperature in dry bulb
+                'wspd':{'min': 0, 'max': 26}, # Horizontal wind speed
+                'cndc': {'min': 3, 'max': 7},  # electrical conductivity
+                'psal': {'min': 34, 'max': 40},  # practical salinity
+                'pres': {'min': 18, 'max': 22},  # sea pressure
+                'svel': {'min': 1300, 'max': 1600},  # Observed sea level
+            }
+
+            parameter_qc = self.name_qc(parameter)
             parts = parameter.split("_")
-            if len(parts) > 1:
-                parameter_qc = "{}_qc_{}".format(parts[0], parts[1])
+
+            # Check if there is latitude parameter in self.data
+            if 'latitude' not in self.data.keys():
+                return
+
+            # Check where is the observation
+            if (obsea_values['latitude']['min'] < self.data['latitude']).all():
+                if (obsea_values['latitude']['max'] > self.data['latitude']).all():
+                    if (obsea_values['longitude']['min'] < self.data['longitude']).all():
+                        if (obsea_values['longitude']['max'] > self.data['longitude']).all():
+                            impossible_values = obsea_values
+            elif (obsea_values['latitude']['min'] < self.data['latitude']).all():
+                if (obsea_values['latitude']['max'] > self.data['latitude']).all():
+                    if (obsea_values['longitude']['min'] < self.data['longitude']).all():
+                        if (obsea_values['longitude']['max'] > self.data['longitude']).all():
+                            impossible_values = mediterranean_values
             else:
-                parameter_qc = "{}_qc".format(parameter)
+                return
 
-            self.data.ix[self.data[parameter].isnull(), parameter_qc] = 9
+            self.data.ix[self.data[parameter] < impossible_values[parts[0]]['min'], parameter_qc] = qc_number
+            self.data.ix[self.data[parameter] > impossible_values[parts[0]]['max'], parameter_qc] = qc_number
 
-        def impossible_values(parameter):
-
-            def impossible_dataframe():
-                # Creation of the impossible values pandas DataFrame
-                df = pd.DataFrame()
-                df['psal'] = [30, 39]
-                df['temp'] = [4, 31]
-                df['cndc'] = [0, 6]
-                df['dox1'] = [0, 16]
-                df['osat'] = [0, 100]
-                df['phph'] = [0, 14]
-                df['tur4'] = [0, 500]
-                df['ewct'] = [-3, 3]
-                df['hcdt'] = [-3, 3]
-                df['hcsp'] = [-3, 3]
-                df['nsct'] = [-3, 3]
-                df['svel'] = [1380, 1650]
-                df['vcsp'] = [-3, 3]
-                df['atmp'] = [0, 1092.1]
-                df['dewt'] = [10, 30]
-                df['dryt'] = [0, 50]
-                df['gspd'] = [0, 120]
-                df['nrad'] = [0, 400]
-                df['relh'] = [0, 100]
-                df['vavh'] = [0, 20]
-                df['vdir'] = [0, 360]
-                df['vemh'] = [0, 20]
-                df['vghs'] = [0, 20]
-                df['vgta'] = [0, 60]
-                df['vhza'] = [0, 20]
-                df['vmdr'] = [0, 360]
-                df['vtzm'] = [0, 60]
-                df['wdir'] = [0, 360]
-                df['wspd'] = [0, 120]
-                df['pres'] = [0, 4000]
-                df['depth'] = [0, 4000]
-                return df
-
-            impossible = impossible_dataframe()
-
-            parts = parameter.split("_")
-            if len(parts) > 1:
-                parameter_qc = "{}_qc_{}".format(parts[0], parts[1])
-            else:
-                parameter_qc = "{}_qc".format(parameter)
-
-            self.data.ix[self.data[parameter] < impossible[parts[0]][0], parameter_qc] = 4
-            self.data.ix[self.data[parameter] > impossible[parts[0]][1], parameter_qc] = 4
-
-        def local_impossible_values():
-            pass
-
-        def spikes(parameter, influence_in=0.8, lag_in=5, threshold_in=6):
+        def spike_test(parameter, influence_in=0.8, lag_in=5, threshold_in=3.5, qc_number = 4):
 
             # Adaptation of algorithm from https://stackoverflow.com/a/22640362/6029703
             def thresholding_algo(y, lag, threshold_algo, influence):
@@ -890,7 +995,7 @@ class WaterFrame:
                 std_filter[lag - 1] = np.std(y[0:lag])
                 for cont in range(lag, len(y)):
                     if abs(y[cont] - avg_filter[cont - 1]) > threshold_algo * std_filter[cont - 1]:
-                        signals[cont] = 2
+                        signals[cont] = 1
                         filtered_y[cont] = influence * y[cont] + (1 - influence) * filtered_y[cont - 1]
                         avg_filter[cont] = np.mean(filtered_y[(cont - lag):cont])
                         std_filter[cont] = np.std(filtered_y[(cont - lag):cont])
@@ -901,24 +1006,14 @@ class WaterFrame:
                         std_filter[cont] = np.std(filtered_y[(cont - lag):cont])
                 return signals
 
-            qc_flags = thresholding_algo(y=self.data[parameter].dropna().values, lag=lag_in,
+            spike_flags = thresholding_algo(y=self.data[parameter].dropna().values, lag=lag_in,
                                          threshold_algo=threshold_in, influence=influence_in)
-            parts = parameter.split("_")
-            if len(parts) > 1:
-                parameter_qc = "{}_qc_{}".format(parts[0], parts[1])
-            else:
-                parameter_qc = "{}_qc".format(parameter)
-            counter_qc = 0
-            for i in range(len(self.data.index)):
-                if np.isnan(self.data.iloc[i][parameter]):
-                    continue
-                elif (self.data.iloc[i][parameter_qc] == 0 or self.data.iloc[i][parameter_qc] == 8) and \
-                                qc_flags[counter_qc] == 2:
-                    # We just apply this flag if there is no qc in the value or it is an interpolated value
-                    self.data.ix[i, parameter_qc] = 2
-                counter_qc += 1
 
-        def gradients(parameter, influence_in=0.8, lag_in=5, multiplier_in=3):
+            parameter_qc = self.name_qc(parameter)
+
+            self.data.ix[spike_flags == 1, parameter_qc] = qc_number
+
+        def range_change_test(parameter, influence_in=0.8, lag_in=5, multiplier_in=3, qc_number=4):
 
             def slope_algo(y, lag, influence, multiplier_algo):
                 signals = np.zeros(len(y))
@@ -927,7 +1022,7 @@ class WaterFrame:
                 slope[lag - 1] = max([abs(x - z) for x, z in zip(filtered_y[:lag - 1], filtered_y[1:lag])])
                 for cont in range(lag, len(y)):
                     if abs(y[cont] - y[cont - 1]) > slope[cont - 1] * multiplier_algo:
-                        signals[cont] = 3
+                        signals[cont] = 1
                         filtered_y[cont] = influence * y[cont] + (1 - influence) * filtered_y[cont - 1]
                     else:
                         signals[cont] = 0
@@ -935,74 +1030,24 @@ class WaterFrame:
                         filtered_y[cont - lag + 1:cont], filtered_y[cont - lag + 2:cont + 1])])
                 return signals
 
-            qc_flags = slope_algo(y=self.data[parameter].dropna().values, lag=lag_in, influence=influence_in,
+            range_flags = slope_algo(y=self.data[parameter].dropna().values, lag=lag_in, influence=influence_in,
                                   multiplier_algo=multiplier_in)
 
-            parts = parameter.split("_")
-            if len(parts) > 1:
-                parameter_qc = "{}_qc_{}".format(parts[0], parts[1])
-            else:
-                parameter_qc = "{}_qc".format(parameter)
+            parameter_qc = self.name_qc(parameter)
 
-            # TODO: Tiene que haber una manera mejor de hacer esto.
-            counter_qc = 0
-            for i in range(len(self.data.index)):
-                if np.isnan(self.data.iloc[i][parameter]):
-                    continue
-                elif qc_flags[counter_qc] == 3:
-                    if self.data.iloc[i][parameter_qc] == 0 or self.data.iloc[i][parameter_qc] == 8:
-                        # We just apply the flag if there is no qc in the value or it is an interpolated value
-                        self.data.ix[i, parameter_qc] = 3
-                    elif self.data.iloc[i][parameter_qc] == 2:
-                        # Let's check if the value is a spyke
-                        try:
-                            if (self.data.iloc[i - 1][parameter] <= self.data.iloc[i][parameter] <=
-                                    self.data.iloc[i + 1][parameter]):
-                                # The value is between two numbers ascendants, it is not a spyke
-                                self.data.ix[i, parameter_qc] = 3
-                            elif (self.data.iloc[i - 1][parameter] >= self.data.iloc[i][parameter] >=
-                                      self.data.iloc[i + 1][parameter]):
-                                # The value is between two numbers descendants, it is not a spyke
-                                self.data.ix[i, parameter_qc] = 3
-                        except IndexError:
-                            pass
-                elif qc_flags[counter_qc] == 0:
-                    if self.data.iloc[i][parameter_qc] == 2:
-                        # It can be a false 2 let's see if this is not a spike
-                        try:
-                            if (self.data.iloc[i - 1][parameter] <= self.data.iloc[i][parameter] <=
-                                        self.data.iloc[i + 1][parameter] * multiplier_in):
-                                # The value is between two numbers ascendants, it is not a spyke
-                                if any(self.data[parameter_qc] == 8):
-                                    self.data.ix[i, parameter_qc] = 8
-                                else:
-                                    self.data.ix[i, parameter_qc] = 0
-                            elif (self.data.iloc[i - 1][parameter] * multiplier_in >= self.data.iloc[i][parameter] >=
-                                      self.data.iloc[i + 1][parameter]):
-                                # The value is between two numbers descendants, it is not a spyke
-                                if any(self.data[parameter_qc] == 8):
-                                    self.data.ix[i, parameter_qc] = 8
-                                else:
-                                    self.data.ix[i, parameter_qc] = 0
-                        except IndexError:
-                            pass
-                counter_qc += 1
+            self.data.ix[range_flags == 1, parameter_qc] = qc_number
 
-        def good_values(parameter):
+        def good_values(parameter, qc_number=1):
             """
             The values that still are with a QC Flag = 0 changes to QC Flag = 1
             :param parameter:
             :return:
             """
-            parts = parameter.split("_")
-            if len(parts) > 1:
-                parameter_qc = "{}_qc_{}".format(parts[0], parts[1])
-            else:
-                parameter_qc = "{}_qc".format(parameter)
+            parameter_qc = self.name_qc(parameter)
 
-            self.data.ix[self.data[parameter_qc] == 0, parameter_qc] = 1
+            self.data.ix[self.data[parameter_qc] == 0, parameter_qc] = qc_number
 
-        def flat(parameter, lag_in=5):
+        def flat_test(parameter, lag_in=5, qc_number=4):
             """
             Flat test.
             :param parameter:
@@ -1022,18 +1067,16 @@ class WaterFrame:
                     values = y[cont-lag:cont]
                     # Check if all values are equal
                     if (values[1:] == values[:-1]).all():
-                        signals[cont] = 3
+                        signals[cont] = 1
                     else:
                         signals[cont] = 0
                 return signals
 
-            qc_flags = flat_algo(y=self.data[parameter].dropna().values, lag=lag_in)
+            flat_flags = flat_algo(y=self.data[parameter].dropna().values, lag=lag_in)
 
             parameter_qc = self.name_qc(parameter)
 
-            for i in range(len(qc_flags)):
-                if qc_flags[i] == 3:
-                    self.data.ix[i, parameter_qc] = 3
+            self.data.ix[flat_flags == 1, parameter_qc] = qc_number
 
         def qc_procedure(parameter, influencer_proces, threshold_proces, multiplier_proces):
             # Calculation of lag
@@ -1048,15 +1091,13 @@ class WaterFrame:
             elif len(self.data[parameter].dropna().values) > 1000:
                 lag_qc = 50
 
-            #missing_values(parameter)
-            #impossible_values(parameter)
-            #local_impossible_values()
-            #spikes(parameter, influencer_proces, lag_qc, threshold_proces)
-            #gradients(parameter, influencer_proces, lag_qc, multiplier_proces)
-            flat(parameter, lag_qc)
+            gap_test(parameter)
+            location_test(parameter)
+            range_test(parameter)
+            spike_test(parameter, influencer_proces, lag_qc, threshold_proces)
+            range_change_test(parameter, influencer_proces, lag_qc, multiplier_proces)
+            flat_test(parameter, lag_qc)
             good_values(parameter)
-
-
 
         if param:
             qc_procedure(param, influencer, threshold, multiplier)
