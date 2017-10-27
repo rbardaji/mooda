@@ -355,9 +355,10 @@ class EGIM:
         for self.observatory_name in self.observatories:
             for self.instrument_name in self.instruments:
                 for self.parameter_name in self.parameters:
-                    print(self.observatory_name, self.instrument_name, self.parameter_name)
-                    print(self.load_data(start_in, end_in))
+                    self.load_data(start_in, end_in)
+                    # print(self.observatory_name, self.instrument_name, self.parameter_name)
         answer = self.wf.to_pickle(path_in)
+        # print(self.wf.data.head())
         return answer
 
     def clean(self):
@@ -618,8 +619,13 @@ class WaterFrame:
         :return:
         """
         try:
+            new_wf = WaterFrame()
+            new_wf.data = self.data.copy()
+            new_wf.metadata = self.metadata.copy()
+            new_wf.technical = self.technical.copy()
+            new_wf.acronym = self.acronym.copy()
             with open(path, 'wb') as handle:
-                pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(new_wf, handle, protocol=pickle.HIGHEST_PROTOCOL)
             return "WaterFrame object saved in {}".format(path)
         except PermissionError:
             return "Error saving WaterFrame object in {}. Permission denied.".format(path)
@@ -979,9 +985,11 @@ class WaterFrame:
                             impossible_values = mediterranean_values
             else:
                 return
-
-            self.data.ix[self.data[parameter] < impossible_values[parts[0]]['min'], parameter_qc] = qc_number
-            self.data.ix[self.data[parameter] > impossible_values[parts[0]]['max'], parameter_qc] = qc_number
+            try:
+                self.data.ix[self.data[parameter] < impossible_values[parts[0]]['min'], parameter_qc] = qc_number
+                self.data.ix[self.data[parameter] > impossible_values[parts[0]]['max'], parameter_qc] = qc_number
+            except KeyError:
+                pass
 
         def spike_test(parameter, influence_in=0.8, lag_in=5, threshold_in=3.5, qc_number = 4):
 
