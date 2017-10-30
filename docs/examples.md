@@ -111,9 +111,31 @@ plt.show()
 ![temp_1.0_qc](/img/examples/netcdf/temp_1.0_qc.png)
 
 
-The graph indicates that no value seems wrong (QC Flag = 4), but some values seem inconsistent or doubtful. It does not mean they are wrong values! It only means that they have generated a higher slope than expected, or a peak, according to the QC algorithm.
+Here you have the complete example source code.
 
-We are currently working on the QC algorithm, as well as the rest of code. It could be that we program better algorithms of QC and these alerts change in the future. The meaning of QC Flags will always be the same.
+```python
+import matplotlib.pyplot as plt
+import matplotlib.style as style
+from oceanobs import inwater
+
+style.use('ggplot')
+
+path = r"netcdf_example.nc" # Write here the path of the data file to load.
+wf = inwater.WaterFrame(path)
+
+print(wf.info())
+
+wf.plot(param="temp", join=True)
+plt.show()
+
+wf.plot(param="temp_1.0")
+plt.show()
+
+wf.qc(param="temp_1.0")
+
+wf.plot(param="temp_1.0")
+plt.show()
+```
 
 # Working with pickle data
 
@@ -189,9 +211,28 @@ plt.show()
 ![temp_ctd_qc](/img/examples/pickle/temp_ctd_qc.png)
 
 
-The graph indicates that no value seems wrong (QC Flag = 4), but some values seem inconsistent or doubtful. It does not mean they are wrong values! It only means that they have generated a higher slope than expected, or a peak, according to the QC algorithm.
+Here you have the complete example source code.
 
-We are currently working on the QC algorithm, as well as the rest of code. It could be that we program better algorithms of QC and these alerts change in the future. The meaning of QC Flags will always be the same.
+```python
+import matplotlib.pyplot as plt
+import matplotlib.style as style
+from oceanobs import inwater
+
+style.use('ggplot')
+
+path = r"pickle_example.pkl" # Write here the path of the data file to load.
+wf = inwater.WaterFrame(path)
+
+print(wf.info())
+
+wf.plot(param="temp_37-14998")
+plt.show()
+
+wf.qc()
+
+wf.plot(param="temp_37-14998")
+plt.show()
+```
 
 > ### Note: QC Flags
 > In a WaterFrame, time series of scientific data are stored inside the variable data (in the case of the example, wf.data). Each data has associated a Quality Control value. 
@@ -217,3 +258,44 @@ We are currently working on the QC algorithm, as well as the rest of code. It co
 > 7 | Nominal value
 > 8 | Interpolated value
 > 9 | Missing value
+
+# Downloading EGIM data
+
+To download data from an EGIM lab, you only need to call the *EGIM* class of the *inwater* module.
+
+```python
+from oceanobs import inwater
+
+# input parameters
+login_in = "YOUR EMSODEV LOGIN" # Write here your login.
+password_in = "YOUR EMSODEV PASSWORD" # Write here your password.
+# Name or list of names of observatories where you want to download data.
+observatory_in = "all"
+# Name or list of names of the instruments that you want to download data. 
+instrument_in = "37-14998" 
+# Name or list of names of the parameters that you want to download data.
+parameter_in = "all" 
+start_in = "01/02/2017" # Start date to download data.
+end_in = "03/02/2017" # End date to download data.
+path_in = "./egim_data.pkl" # Where to save data.
+
+# Call to the class EGIM.
+inwater.EGIM(login=login_in, password=password_in, observatory=observatory_in, 
+	instrument=instrument_in, parameter=parameter_in, start=start_in, 
+	end=end_in, path=path_in)
+
+print("Done!")
+```
+
+# Open the GUI
+
+With the graphical interface you can do almost the same thing as programming a script. You can use it with just four line of code.
+
+```python
+from oceanobs import mooda
+
+login_in = "YOUR EMSODEV LOGIN"
+password_in = "YOUR EMSODEV PASSWORD"
+
+mooda.open(login=login_in, password=password_in) 
+```

@@ -1,5 +1,7 @@
 The easiest way for the majority of users to install oceanobs is to install from [PyPI](https://pypi.python.org/pypi/oceanobs). This way is the recommended installation method for most users.
 
+New to Python? If you don't know anything about Python but you want to use *oceanobs* and its GUI, please follow the [absolute beginner's guide](#absolute-beginners-guide).
+
 We also provide instructions for installing from source, or a [development version](https://github.com/rbardaji/oceanobs).
 
 # Python version support
@@ -8,7 +10,45 @@ All versions of [Python 3](https://www.python.org/downloads/).
 
 # Installing **oceanobs**
 
-## Prerequisites
+## Absolute beginner's guide
+
+1. Download and install Python 3.5 with the Anaconda distribution. Anaconda contains many libraries that we need to use for *oceanobs*.
+	
+	* Anaconda for Windowns 32 bits, [here](https://repo.continuum.io/archive/Anaconda3-4.2.0-Windows-x86.exe).
+	* Anaconda for Windowns 64 bits, [here](https://repo.continuum.io/archive/Anaconda3-4.2.0-Windows-x86_64.exe).
+	* Anaconda for Linux 32 bits, [here](https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86.sh).
+	* Anaconda for Linux 64 bits, [here](https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh).
+	* Anaconda for MacOSX, [here](https://repo.continuum.io/archive/Anaconda3-4.2.0-MacOSX-x86_64.pkg).
+ 
+2. Open the *Anaconda Prompt* and write the following lines to install the *oceanobs* dependencies.
+	
+	2.1. Write **conda install -c conda-forge gsw** to install the library *gsw*.
+	
+	2.2. Write **conda install -c conda-forge basemap** to install the library *basemap*.
+	
+	2.3. Write **pip install netCDF4** to install the library *netCDF4*.
+	
+	2.4. Write **conda install pyqt=4.11** to install the library *pyQT4*.
+	
+	2.5. Write **pip install -U numpy** to upgrade the library *numpy* to the last version.
+	
+	2.6. Write **pip install oceanobs** to install the library *oceanobs*.
+
+**The installation is finished!!!** Now, test that everything is ok writing the following lines:
+
+1. Write **python** to enter to the *python console*.
+
+2. Write **import oceanobs.inwater**. If nothing happens, we are doing good.
+
+3. Write **import oceanobs.mooda**. If nothing happens, congratulations, everything is well installed. Close the Anaconda Prompt and start to analyze oceanographic data.
+
+## Installing from PyPI
+
+You can install oceanobs via pip from [PyPI](https://pypi.python.org/pypi/oceanobs).
+
+```bat
+pip install oceanobs
+```
 
 *oceanobs* has the following Python package dependencies:
 
@@ -23,27 +63,6 @@ All versions of [Python 3](https://www.python.org/downloads/).
 * [PyQT4](https://wiki.python.org/moin/PyQt4/)
 
 Most of the dependencies can be installed via *pip*.
-
-```bat
-pip install matplotlib
-pip install numpy
-pip install pandas
-pip install netCDF4
-pip install requests
-pip install scipy
-pip install pyqt4
-pip install gsw
-```
-
-*basemap* library for Python 3 is not on the [Python Package Index Server](https://pypi.python.org/pypi). If you are a Windows user, the easiest way to install it is downloading from the [Unofficial Windows Binaries for Python Extension Packages](http://www.lfd.uci.edu/~gohlke/pythonlibs/#basemap) and install the binary with the command *pip install [write here the path of the binary]*. Notice that basemap also has dependencies, so you also need to install the [pyprog library](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyproj). *oceanobs* can work without the basemap library, but you could not call to some of its functions. 
-
-## Installing from PyPI
-
-You can install oceanobs via pip from [PyPI](https://pypi.python.org/pypi/oceanobs).
-
-```bat
-pip install oceanobs
-```
 
 ## Installing from source
 
