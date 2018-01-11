@@ -297,5 +297,5 @@ from oceanobs import mooda
 login_in = "YOUR EMSODEV LOGIN"
 password_in = "YOUR EMSODEV PASSWORD"
 
-mooda.open(login=login_in, password=password_in) 
+mooda.open_mooda(login=login_in, password=password_in) 
 ```

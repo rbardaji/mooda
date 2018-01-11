@@ -1,7 +1,7 @@
 ﻿
 # Version control
 
-Our last release is [oceanobs v0.4.1](https://github.com/rbardaji/oceanobs/tarball/0.4.1). We use [SemVer](http://semver.org/) for versioning.
+Our last release is [oceanobs v1.1.1](https://github.com/rbardaji/oceanobs/releases). We use [SemVer](http://semver.org/) for versioning.
 
 Given a version number MAJOR.MINOR.PATCH, increment the:
 
@@ -10,6 +10,10 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 3.	PATCH version when you make backwards-compatible bug fixes.
 
 These are new features and improvements of note in each release.
+
+##v1.1.1 (Jaunuary 11, 2018)
+
+A new version of oceanobs with incompatible API changes. We deleted observatory.py to simplifier the code. The philosophy of the package is the previous one, but we mixed the access modules and the analysis modules into a new module called inWater.py.
 
 ##V0.5.1 (Not distributed)
 
