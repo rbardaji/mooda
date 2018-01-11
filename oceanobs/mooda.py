@@ -240,6 +240,9 @@ class MOODA(QtGui.QMainWindow, Ui_mooda_window):
         # Copy the original data
         self.wf.data = self.wf_original.data.copy()
         self.wf.technical = self.wf_original.technical.copy()
+        # Write info in pte_text
+        self.pte_text.appendPlainText("Resampling data to the original period.")
+        self.statusbar.showMessage("Done.")
 
     def average_minutely(self):
         """
@@ -254,6 +257,8 @@ class MOODA(QtGui.QMainWindow, Ui_mooda_window):
         # Resample
         self.wf.resample('min')
         self.statusbar.showMessage("Done.")
+        # Write info in pte_text
+        self.pte_text.appendPlainText("Resampling data minutely.")
 
     def average_hourly(self):
         """
@@ -268,6 +273,8 @@ class MOODA(QtGui.QMainWindow, Ui_mooda_window):
         # Resample
         self.wf.resample('H')
         self.statusbar.showMessage("Done.")
+        # Write info in pte_text
+        self.pte_text.appendPlainText("Resampling data hourly.")
 
     def average_daily(self):
         """
@@ -282,6 +289,8 @@ class MOODA(QtGui.QMainWindow, Ui_mooda_window):
         # Resample
         self.wf.resample('D')
         self.statusbar.showMessage("Done.")
+        # Write info in pte_text
+        self.pte_text.appendPlainText("Resampling data daily.")
 
     def average_weekly(self):
         """
@@ -296,6 +305,8 @@ class MOODA(QtGui.QMainWindow, Ui_mooda_window):
         # Resample
         self.wf.resample('W')
         self.statusbar.showMessage("Done.")
+        # Write info in pte_text
+        self.pte_text.appendPlainText("Resampling data weekly.")
 
     def inspector_plot(self):
         """
@@ -910,8 +921,8 @@ def open_mooda(login, password):
 
 
 def main():
-    login_in = ""
-    password_in = ""
+    login_in = "emsodev"
+    password_in = "Emsodev2017"
     if login_in is None:
         print("I'm sorry, EMSODEV API is under development, and now you need a login and a password. "
               "This fact will change before April 2018.")
