@@ -112,7 +112,7 @@ message | Summary of what contains the *WaterFrame* object. | string
 
 ### - resample(*rule*)
 
-It resamples and averages the variables *data* and *technical* according the input [rule](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). 
+It resamples and averages the variables *data* and *technical* according to the input [rule](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). 
 
 Input | Description | Type
 --- | --- | ---
@@ -126,6 +126,29 @@ Input | Description | Type
 --- | --- | ---
 path | It is the path of the [NetCDF](http://www.oceansites.org/data/) file. | string
 
+### - to_pickle(*path*)
+
+It saves a WaterFrame object to a pickle (serialize) object in the input path.
+
+Input | Description | Type
+--- | --- | ---
+path | It is the path to save the file. | string
+
+### - drop_qc(*qc_flag*)
+
+It deletes all values with the QC flag number different to qc_flag.
+
+Input | Description | Type
+--- | --- | ---
+qc_flag | QC flag number. | int
+
+### - name_qc(*parameter*)
+
+It returns the name of the column with the QC Flag information of the parameter.
+
+Input | Description | Type
+--- | --- | ---
+parameter | Name of the column of self.data. | string
 
 ## - *class* **EGIM**
 
@@ -213,6 +236,30 @@ answer | **True** if the process was ok or **False** if the process was ok. | bo
 ### - clean()
 
 It erase all data placed into the instance variables *data* and *technical*.
+
+## - *class* **PlotMap**
+
+It contains functions related to the management of maps.
+
+### - _\_init\_\_()
+
+Costructor of the clase. It creates *self.m*, that it is a Basemap object.
+
+### - map_world(*res*=**'l'**)
+
+It creates a map of the world.
+
+### - map_mediterranean(*res*=**'l'**)
+
+It creates a map of the Mediterranean.
+
+### add_pointxxx(*lon*, *lat*, *\*arg*)
+
+It adds points to the map.
+
+### add_point(*lon*, *lat*, *color*=**'blue'**, *label*=**None**)
+
+It adds points to the map.
 
 ## - plot_corr(*param_1*, *param_2*, *title*=**""**, *x_label*=**""**, *y_label*=**""**, *legend*=**[]**)
 
