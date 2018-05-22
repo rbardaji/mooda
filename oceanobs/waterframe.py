@@ -1,0 +1,687 @@
+import pickle
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import xarray as xr
+
+
+class WaterFrame:
+    """This is an object that serves to work with oceanographic timeseries.
+    Its most important instance variables are the following:
+
+    data: A pandas DataFrame that contains the measurement values of the
+    timeserie.
+
+    metadata: A dictionary that contains the metadata information of the
+    timeserie."""
+    def __init__(self):
+        """It creates the instance following variables:
+        data -- A pandas DataFrame that contains the measurement values of the
+        timeserie.
+        metadata -- A dictionary that contains the metadata information of the
+        timeserie.
+        meaning -- A dictionary that contains the meaning of the keys of data
+        (i.e. "TEMP": "Sea water temperature")"""
+        # Instance variables
+        self.data = pd.DataFrame()
+        self.metadata = dict()
+        self.meaning = dict()
+
+    def from_netcdf(self, path):
+        """Load and decode a dataset from a netcdf file.
+
+        Parameters
+        ----------
+            path: str
+                Path to a netCDF file.
+        Returns
+        -------
+            True/False; Bool
+                It indicates if the procedure was successful."""
+        def drop(ds_in):
+            """Drop some parameters of the dataset.
+
+            Parameters
+            ----------
+                ds_in: xarray.Dataset
+                    Input dataset.
+            Returns
+            -------
+                ds_out: xarray.Dataset
+                    Output dataset"""
+            # Creation of a list with the variables to drop. We are going to
+            # drop all variables with a "_DM" in the key name.
+            vars2drop = []
+            for k in ds_in.variables.keys():
+                if '_DM' in k:
+                    vars2drop.append(k)
+
+            # Dropping the previous list and some other variables
+            ds_out = ds_in.drop(vars2drop)
+            if 'POSITIONING_SYSTEM' in ds_in.variables.keys():
+                ds_out = ds_out.drop('POSITIONING_SYSTEM')
+            if 'DC_REFERENCE' in ds_in.variables.keys():
+                ds_out = ds_out.drop('DC_REFERENCE')
+            if 'LATITUDE' in ds_in.variables.keys():
+                ds_out = ds_out.drop('LATITUDE')
+            if 'LONGITUDE' in ds_in.variables.keys():
+                ds_out = ds_out.drop('LONGITUDE')
+            if 'POSITION_QC' in ds_in.variables.keys():
+                ds_out = ds_out.drop('POSITION_QC')
+            if 'DEPH' in ds_in.variables.keys():
+                ds_out = ds_out.drop('DEPH')
+            if 'DEPH_QC' in ds_in.variables.keys():
+                ds_out = ds_out.drop('DEPH_QC')
+
+            return ds_out
+
+        # Check if path contanins a ".nc" file and then, complete the process
+        if '.nc' in path:
+            # Convert the nc to a xarray dataset
+            ds = xr.open_dataset(path)
+            # Save metadata
+            self.metadata = dict(ds.attrs)
+            # Delete not used vars
+            ds = drop(ds)
+            # Save the meanings
+            for variable in ds.variables:
+                if '_QC' in variable:
+                    continue
+                else:
+                    self.meaning[variable] = dict(ds[variable].attrs)
+            # We add the meaning of DEPTH
+            self.meaning['DEPTH'] = {
+                "long_name": "depth_of_measure",
+                "units": "meters"}
+
+            # Conversion to the dataframe
+            self.data = ds.to_dataframe()
+
+            # Set index
+            self.data = self.data.reset_index().set_index('TIME')
+            # self.data.sort_index()
+
+            return True
+        else:
+            return False
+
+    def from_pickle(self, path):
+        """
+        Load and decode a dataset from a pickle file.
+
+        Parameters
+        ----------
+            path: str
+                Path to a pickle file.
+        Returns
+        -------
+            True/False; Bool
+                It indicates if the procedure was successful."""
+        # Check if path contanins a ".pkl" file and then, complete the process
+        if '.pkl' in path:
+            temp_dict = pickle.load(open(path, "rb"))
+            self.__dict__.clear()
+            self.__dict__.update(temp_dict)
+            return True
+        else:
+            return False
+
+    def to_pickle(self, path):
+        """It creates a pickle (serialize) file of the WaterFrame.
+
+        Parameters
+        ----------
+            path: str
+                Path to a pickle file.
+        """
+        pickle.dump(self.__dict__, open(path, "wb"))
+
+    def tsplot(self, key, rolling=None, ax=None, average_time=None,
+               secondary_y=False):
+        """Plot timeseries.
+
+        Parameters
+        ----------
+            key: list of str
+                keys of self.data to plot.
+            rolling: int, optional (rolling = None)
+                Size of the moving window. It is the number of observations
+                used for calculating the statistic.
+            ax: matplotlib.axes object, optional (ax = None)
+                It is used to add the plot to an input axes object.
+            average_time: str, optional (average_time = None)
+                It calculates an average value of a time interval. You can find
+                all of the resample options here:
+                http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
+            secondary_y: bool, optional (secondary_y = False)
+                Plot on the secondary y-axis.
+        Returns
+        -------
+            ax: matplotlib.AxesSubplot
+                New axes of the plot.
+        """
+        # Extract data
+        df = self.data[key].dropna().reset_index().set_index('TIME')
+        df.index.rename("Date", inplace=True)
+
+        # Resample data
+        if average_time is None:
+            pass
+        else:
+            df = df.resample(average_time).mean()
+
+        # Calculation of the rolling value
+        if rolling is None:
+            if df.size <= 100:
+                rolling = 1
+            elif df.size <= 1000:
+                rolling = df.size//10
+            elif df.size <= 10000:
+                rolling = df.size // 100
+            else:
+                rolling = df.size // 1000
+
+        # Calculation of the std and the mean
+        roll = df[key].rolling(rolling, center=True)
+        m = roll.agg(['mean', 'std'])
+        # rename 'mean' column
+        m.rename(columns={'mean': key}, inplace=True)
+        ax = m[key].plot(ax=ax, secondary_y=secondary_y, legend=True)
+        ax.fill_between(m.index, m[key] - m['std'], m[key] + m['std'],
+                        alpha=.25)
+        # Write axes
+        ax.set_ylabel(self.meaning[key]['units'])
+
+        return ax
+
+    def scatter_matrix(self, keys, ax=None):
+        """
+        Draw a matrix of scatter plots.
+
+        Parameters
+        ----------
+            key: list of str
+                keys of self.data to plot. 
+                Keys must contain different words.
+                ex:
+                    keys = ['VAVH', 'VCMX'] is ok.
+                    keys = ['VAVH', 'VAVH'] is not ok.
+            ax: matplotlib.axes object, optional (ax = None)
+                It is used to add the plot to an input axes object.
+        Returns
+        -------
+            ax: matplotlib.AxesSubplot
+                New axes of the plot.
+        """
+        # Remove duplicate keys
+        keys = list(set(keys))
+        if len(keys) > 1:
+            # Extract data
+            df = self.data[keys]
+            ax = pd.plotting.scatter_matrix(df, diagonal='kde', ax=ax)
+            return ax
+
+    def qcplot(self, key, ax=None):
+        """
+        Plot the timeserie with dots of different colours according to the QC
+        Flag.
+
+        Parameters
+        ----------
+            key: list of str
+                keys of self.data to plot.
+            ax: matplotlib.axes object, optional (ax = None)
+                It is used to add the plot to an input axes object.
+        Returns
+        -------
+            ax: matplotlib.AxesSubplot
+                New axes of the plot.
+        """
+        # Extract data
+        df = self.data[
+            [key, key+'_QC']].dropna().reset_index().set_index('TIME')
+        df.index.rename("Date", inplace=True)
+        # Sometimes Depth is on the df
+        if "DEPTH" in df.keys():
+            del df['DEPTH']
+        # Create a dataframe divided with flags
+        for flag in range(0, 10):
+            df_ = pd.DataFrame()
+            df_['{}'.format(flag)] = df.ix[df[key+'_QC'] == flag, key]
+            if len(df_.index) > 0:
+                if flag == 1:
+                    line = '-'
+                else:
+                    line = ""
+                ax = df_.plot(ax=ax, marker='.', linestyle=line)
+        ax.set_ylabel(self.meaning[key]['units'])
+
+        return ax
+
+    def qcbarplot(self, key="all", ax=None):
+        """
+        Bar plot with the count of values with a  '_QC' in the keys of
+        self.data.
+
+        Parameters
+        ----------
+            key: str or list of str, optional (key = "all")
+                keys of self.data to plot.
+            ax: matplotlib.axes object, optional (ax = None)
+                It is used to add the plot to an input axes object.
+        Returns
+        -------
+            ax: matplotlib.AxesSubplot
+                New axes of the plot.
+        """
+        if key == "all":
+            # Creation of dataframe with the count information
+            key_list = []
+            values_list = []
+            for key_qc in self.data.keys():
+                if 'TIME' in key_qc:
+                    continue
+                if '_QC' in key_qc:
+                    key_list.append(key_qc[:-3])
+                    values_list.append(pd.value_counts(self.data[key_qc]))
+
+            df = pd.DataFrame(values_list, key_list)
+            # Creation of the plot
+            ax = df.plot.bar(ax=ax)
+            # Set labels
+            ax.set_ylabel("Number of measurements")
+        else:
+            # Obtain the key with QC
+            key_qc = key + "_QC"
+            # Create the graph
+            ax = pd.value_counts(self.data[key_qc]).plot.bar(ax=ax)
+            # Set labels
+            ax.set_ylabel("Number of measurements")
+            ax.set_xlabel("QC flag")
+
+        return ax
+
+    def spectroplot(self):
+        """
+        It plots the spectrometer of the acoustic data.
+
+        Returns
+        -------
+            matplotlib.Figure
+                New axes of the plot.
+        """
+
+        # Prepare data
+        time = self.data.index
+        wavelength = []
+        values = []
+        for key in self.data.keys():
+            try:
+                wavelength.append(float(key))
+                values.append(self.data[key].values)
+            except ValueError:
+                pass
+
+        # Creation of figure
+        return plt.pcolormesh(time, wavelength, values)
+
+    def spike_test(self, key, window=0, threshold=3, flag=4):
+        """
+        It detects spikes in a timeserie.
+
+        Parameters
+        ----------
+            key: str
+                key of self.data to apply the test.
+            window: int, optional (window = 0)
+                Size of the moving window of values to calculate the mean.
+                If it is 0, the function calculates the optimal window.
+            threshold: int, optional (threshold = 3)
+                The z-score at which the algorithm signals.
+            flag: int, optional (flag = 4)
+                Flag value to write in on the fail values.
+        Returns
+        -------
+            outlier_idx: numpy array
+                Array with the flags result of the test."""
+
+        # Auto calculation of window
+        if window == 0:
+            window = int(len(self.data[key])/100)
+            if window < 3:
+                window = 3
+            elif window > 100:
+                window = 100
+
+        signals = self.data[
+            key].rolling(window=window,
+                         center=True).mean().fillna(method='bfill')
+        difference = np.abs(self.data[key] - signals)
+        outlier_idx = difference > threshold
+        self.data.ix[outlier_idx, key+'_QC'] = flag
+
+        return outlier_idx
+
+    def range_test(self, key, flag=4):
+        """
+        Check impossible values of a paramerer.
+        Parameters
+        ----------
+            key: str
+                key of self.data to apply the test.
+            flag: int, optional (flag = 4)
+                Flag value to write in on the fail values.
+        Returns
+        -------
+            True/False: bool
+                It indicates if the process was successfully."""
+        ranges = {
+            'ATMP': [600, 1500],  # atmospheric pressure at altitude
+            'ATMS': [0, 2000],  # Atmospheric pressure at sea level
+            'CHLT': [0, 30],  # total chlorophyll
+            'CNDC': [0, 30],  # electrical conductivity
+            'GSPD': [0, 40],  # gust wind speed
+            'HCDT': [0, 360],  # current to direction relative true north
+            'HEAD': [0, 360],  # PLAT. HEADING REL. TRUE NORTH
+            'LINC': [0, 3000],  # long-wave incoming radiation
+            'LW': [0, 50],  # Downwelling vector radiance as energy
+            'OSAT': [0, 200],  # oxygen saturation
+            'PHPH': [0, 14],  # ph
+            'PRES': [0, 500],  # sea pressure
+            'PRRT': [0, 200],  # hourly precipitation rate
+            'PSAL': [0, 40],  # practical salinity
+            'RDIN': [0, 1100],  # incident radiation
+            'SVEL': [130, 180000],  # sound velocity
+            'SWDR': [0, 360],  # SWELL DIRECTION REL TRUE N.
+            'SWHT': [0, 50],  # SWELL HEIGHT
+            'SWPR': [0, 20],  # SWELL PERIOD
+            'TEMP': [0, 50],  # Sea temperature
+            'VAVH': [0, 20],  # AVER. HEIGHT HIGHEST 1/3 WAVE
+            'VAVT': [0, 20],  # AVER. PERIOD HIGHEST 1/3 WAVE
+            'VCMX': [0, 20],  # MAX CREST TROUGH WAVE HEIGHT
+            'VDIR': [0, 360],  # wave direction rel. true north
+            'VEPK': [0, 100],  # WAVE SPECTRUM PEAK ENERGY
+            'VHM0': [0, 20],  # SPECTRAL SIGNIFICANT WAVE HEIGHT
+            'VMDR': [0, 360],  # Mean wave direction
+            'VPED': [0, 360],  # dir. spreading at wave peak
+            'VPSP': [0, 360],  # dir. spreading at wave peak
+            'VSMC': [0, 20],  # SPECTUM MOMENT(0, 2) WAVE PERIOD
+            'VTDH': [0, 40],  # significant wave height
+            'VTM02': [0, 13],  # Spectral moments (0, 2) wave period (Tm02)
+            'VTPK': [0, 40],  # WAVE SPECTRUM PEAK PERIOD
+            'VTZA': [0, 40],  # AVER ZERO CROSSING WAVE PERIOD
+            'VTZM': [0, 40],  # period of the highest wave
+            'VZMX': [0, 20],  # Maximum zero crossing wave height
+            'WDIR': [0, 360],  # Wind from direction relative true north
+            'WSPD': [0, 50],  # Horizontal wind speed
+        }
+
+        if key in ranges.keys():
+            self.data.ix[self.data[key] < ranges[key][0], key+'_QC'] = flag
+            self.data.ix[self.data[key] > ranges[key][1], key + '_QC'] = flag
+            return True
+        else:
+            return False
+
+    def flat_test(self, key, window=3, flag=4):
+        """
+        It detects no changes in values of time-series.
+
+        Parameters
+        ----------
+            key: str
+                key of self.data to apply the test.
+            window: int, optional (window = 0)
+                Size of the moving window of values to calculate the mean.
+                If it is 0, the function calculates the optimal window.
+            flag: int, optional (flag = 4)
+                Flag value to write in on the fail values.
+        Returns
+        -------
+            outlier_idx: numpy array
+                Array with the flags result of the test."""
+        signals = self.data[
+            key].rolling(window=window,
+                         center=True).mean().fillna(method='bfill')
+        difference = np.abs(self.data[key] - signals)
+        outlier_idx = difference == 0
+
+        self.data.ix[outlier_idx, key + '_QC'] = flag
+
+        return outlier_idx
+
+    def flag2flag(self, key, original_flag=0, translated_flag=1):
+        """
+        It changes the flags of the key, from original_flag to translated_flag
+
+        Parameters
+        ----------
+            key: str
+                key of self.data to apply the test.
+            original_flag: int, optional (original_flag = 0)
+                Flag number to translate.
+            translated_flag: int, optional (translated_flag = 1)
+                Translation of the original flag number."""
+        self.data[key+'_QC'].replace(original_flag, translated_flag,
+                                     inplace=True)
+
+    def reset_flag(self, key, flag=0):
+        """
+        It changes the flags of the key, from original_flag to translated_flag.
+
+        Parameters
+        ----------
+            key: str
+                key of self.data to apply the test.
+            flag: int, optional (flag = 0)
+                Flag value to write.
+        """
+        for i in range(10):
+            self.data[key + '_QC'].replace(i, flag, inplace=True)
+
+    def qc(self, key, window=3, threshold=3, bad_flag=4, good_flag=1):
+        """
+        Auto QC process.
+
+        Parameters
+        ----------
+            key: str
+                key of self.data to apply the test.
+            window: int, optional (window = 0)
+                Size of the moving window of values to calculate the mean.
+                If it is 0, the function calculates the optimal window.
+            threshold: int, optional (threshold = 3)
+                The z-score at which the algorithm signals.
+            bad_flag: int, optional (flag = 4)
+                Flag value to write in on the fail values.
+            good_flag: int, optional (flag = 1)
+                Flag value to write in on the good values."""
+        self.range_test(key=key, flag=bad_flag)
+        self.spike_test(key=key, window=window, threshold=threshold,
+                        flag=bad_flag)
+        self.flat_test(key=key, window=window, flag=bad_flag)
+        self.flag2flag(key=key, original_flag=0, translated_flag=good_flag)
+
+        self.flag2flag(key=key)
+
+    def drop(self, keys, flags=None):
+        """
+        Remove required keys (and associated QC keys) from self.data requested
+        axis removed.
+
+        Parameters
+        ----------
+            key: list of str
+                keys of self.data to drop.
+            flags: list of int, int, None, optional (flags = False)
+                Number of flag to drop. It can be None, int or a list of int.
+                If it is None, column will be deleted.
+        Returns
+        -------
+            True/False: bool
+                It indicates that the process was successful."""
+        # Look for QC keys and append to "keys"
+        keys_qc = []
+        if isinstance(keys, str):
+            key_qc = keys + "_QC"
+            keys_qc.append(key_qc)
+            # Cast keys (str) to list
+            keys = [keys]
+            keys += keys_qc
+        elif isinstance(keys, list):
+            for key in keys:
+                # Check if key+"_QC" exists in self.data
+                if key + "_QC" in self.data.keys():
+                    keys_qc.append(key+"_QC")
+            keys += keys_qc
+        # Drop
+        if flags is None:
+            self.data.drop(keys, axis=1, inplace=True)
+        else:
+            # If it is an Int, cast to list
+            if isinstance(flags, int):
+                flags = [flags]
+            for key_qc in keys_qc:
+                for flag in flags:
+                    self.data.drop(self.data[self.data[key_qc] == flag].index,
+                                   inplace=True)
+        return True
+
+    def rename(self, old_name, new_name):
+        """
+        It renames keys of self.data.
+
+        Parameters
+        ----------
+            old_name: str
+                key name to change.
+            new_name: str
+                New name of the key."""
+        self.data.rename(columns={old_name: new_name}, inplace=True)
+        self.data.rename(columns={old_name+'_QC': new_name+'_QC'},
+                         inplace=True)
+        self.meaning[new_name] = self.meaning.pop(old_name)
+
+    def concat(self, waterframe):
+        """
+        The concat function does all of the heavy lifting of performing
+        concatenation operations along an axis while performing optional set
+        logic (union or intersection) of the indexes on the other axes.
+
+        Parameters
+        ----------
+            waterframe: WaterFrame
+                WaterFrame object to concat to self
+        """
+        if len(self.data.index) > 0:
+            # Check if keys of waterframes contain the same name
+            keys_self = self.data.keys()
+            keys_new = waterframe.data.keys()
+            for key in keys_new:
+                if '_QC' in key:
+                    continue
+                if key in keys_self:
+                    # It is a repeated key
+
+                    # Look for number of copy
+                    copy_number = 1
+                    saved_number = 0
+                    for key_self in keys_self:
+                        if '_QC' in key_self:
+                            continue
+                        if '{}(NEW'.format(key) in key_self:
+                            saved_number = int(
+                                key_self.split("(NEW")[1].split(")")[0])
+                            saved_number += 1
+                    if saved_number > copy_number:
+                        copy_number = saved_number
+
+                    # Rename the new waterframe
+                    waterframe.rename(key,
+                                      "{}(NEW{})".format(key, copy_number))
+                    keys_new += ['{}(SN{})'.format(key, copy_number)]
+
+            # Concat dataframes
+            frames = [self.data, waterframe.data]
+            self.data = pd.concat(frames, axis=1)
+            # Merge dictionaries
+            self.meaning = {**self.meaning, **waterframe.meaning}
+            # Merge of metadata
+            for key in waterframe.metadata.keys():
+                if key in self.metadata.keys():
+                    if waterframe.metadata[key] == self.metadata[key]:
+                        # Skip if we already have the metadata.
+                        continue
+                    else:
+                        # Merge the two values of metadata.
+                        self.metadata[key] += ", {}".format(
+                            waterframe.metadata[key])
+
+        else:
+            self.data = waterframe.data.copy()
+            self.meaning = waterframe.meaning.copy()
+            self.metadata = waterframe.metadata.copy()
+
+    def resample(self, rule, method='mean'):
+        """
+        Convenience method for frequency conversion and resampling of
+        timeseries of the WaterFrame object.
+
+        Parameters
+        ----------
+            rule: str
+                The offset string or object representing target conversion.
+                You can find all of the resample options here:
+                http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
+            method: "mean", "max", "min", optional, (method = "mean")
+                Save the new value with the mean(), max() or min() function.
+        Returns
+        -------
+            True/False: bool
+                It indicates that the process was successful.
+        """
+        # It only can be possible if the dataframe only contain 1 index.
+        if len(self.data.index.names) == 1:
+            if method == "mean":
+                self.data = self.data.resample(rule).mean()
+            elif method == "max":
+                self.data = self.data.resample(rule).max()
+            elif method == "min":
+                self.data = self.data.resample(rule).min()
+            # Change "_QC" values to 0
+            for key in self.data.keys():
+                if "_QC" in key:
+                    self.data[key] = 0
+            return True
+        else:
+            return False
+
+    def slice(self, start, end):
+        """
+        Delete data outside the time interval
+
+        Parameters
+        ----------
+            start: str, timestamp
+                Start time interval with format 'YYYYMMDDhhmmss' or timestamp.
+            end: str, timestamp
+                End time interval with format 'YYYYMMDDhhmmss' or timestamp.
+        """
+
+        # Sometimes, you have multiindex TIME and DEPTH
+        self.data.reset_index(inplace=True)
+        self.data.set_index('TIME', inplace=True)
+        self.data.sort_index(inplace=True)
+
+        self.data = self.data[start:end]
+
+        # Drop columns without values
+        self.data = self.data.dropna(axis=1, how='all')
+
+    def clear(self):
+        """
+        It delete all data and metadata of the waterframe.
+        """
+        self.data = pd.DataFrame()
+        self.metadata = dict()
+        self.meaning = dict()
