@@ -43,3 +43,4 @@ The compatible input data are from the following observatories:
 * [Installation]: Step by step manual of the installation of oceanobs. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
 * [API reference]: Explanation of the modules and functions of the package.
 * [Examples]: Set of examples to use oceanobs by writing python code or running MOODA.
+* [License](LICENSE)

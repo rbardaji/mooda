@@ -24,6 +24,7 @@
         "ncols",
         "nrows",
         "oceanobs",
+        "pycache",
         "pylab",
         "pyqt",
         "qcbarploteidget",
