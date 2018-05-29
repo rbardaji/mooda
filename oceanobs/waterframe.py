@@ -2,11 +2,13 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import sys
 import xarray as xr
+import datetime
 
 
 class WaterFrame:
-    """This is an object that serves to work with oceanographic timeseries.
+    """Object to manage data series from marine observatories.
     Its most important instance variables are the following:
 
     data: A pandas DataFrame that contains the measurement values of the
@@ -17,9 +19,9 @@ class WaterFrame:
     def __init__(self):
         """It creates the instance following variables:
         data -- A pandas DataFrame that contains the measurement values of the
-        timeserie.
+        time series.
         metadata -- A dictionary that contains the metadata information of the
-        timeserie.
+        time series.
         meaning -- A dictionary that contains the meaning of the keys of data
         (i.e. "TEMP": "Sea water temperature")"""
         # Instance variables
@@ -28,7 +30,12 @@ class WaterFrame:
         self.meaning = dict()
 
     def from_netcdf(self, path):
-        """Load and decode a dataset from a netcdf file.
+        """Load and decode a dataset from a NetCDF file. The compatible
+        netCDF files are from the mooring-buoys of
+        [EMODNET](http://www.emodnet-physics.eu/Map/),
+        [JERICO](http://www.jerico-ri.eu/data-access/),
+        and time series with [NetCDF](http://www.oceansites.org/data/)
+        format.
 
         Parameters
         ----------
@@ -36,7 +43,7 @@ class WaterFrame:
                 Path to a netCDF file.
         Returns
         -------
-            True/False; Bool
+            True/False: Bool
                 It indicates if the procedure was successful."""
         def drop(ds_in):
             """Drop some parameters of the dataset.
@@ -107,7 +114,7 @@ class WaterFrame:
 
     def from_pickle(self, path):
         """
-        Load and decode a dataset from a pickle file.
+        Load and decode a WaterFrame object from a pickle file.
 
         Parameters
         ----------
@@ -132,7 +139,7 @@ class WaterFrame:
         Parameters
         ----------
             path: str
-                Path to a pickle file.
+                Path to save the pickle file.
         """
         pickle.dump(self.__dict__, open(path, "wb"))
 
@@ -194,6 +201,48 @@ class WaterFrame:
 
         return ax
 
+    def barplot(self, key, ax=None, average_time=None):
+        """Bar Plot.
+
+        Parameters
+        ----------
+            key: list of str
+                keys of self.data to plot.
+            ax: matplotlib.axes object, optional (ax = None)
+                It is used to add the plot to an input axes object.
+            average_time: str, optional (average_time = None)
+                It calculates an average value of a time interval. You can find
+                all of the resample options here:
+                http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
+        Returns
+        -------
+            ax: matplotlib.AxesSubplot
+                New axes of the plot.
+        """
+        def format_year(x):
+            return datetime.datetime.\
+                strptime(x, '%Y-%m-%d %H:%M:%S').strftime('%Y')
+
+        # Extract data
+        df = self.data[key].dropna().reset_index().set_index('TIME')
+        df.index.rename("Date", inplace=True)
+
+        # Resample data
+        if average_time is None:
+            pass
+        else:
+            df = df.resample(average_time).mean()
+
+        ax = df[key].plot.bar(ax=ax, legend=True)
+
+        # Write axes
+        ax.set_ylabel(self.meaning[key]['units'])
+        if average_time == 'A':
+            ax.set_xticklabels([format_year(x.get_text())
+                                for x in ax.get_xticklabels()])
+
+        return ax
+
     def scatter_matrix(self, keys, ax=None):
         """
         Draw a matrix of scatter plots.
@@ -201,7 +250,7 @@ class WaterFrame:
         Parameters
         ----------
             key: list of str
-                keys of self.data to plot. 
+                keys of self.data to plot.
                 Keys must contain different words.
                 ex:
                     keys = ['VAVH', 'VCMX'] is ok.
@@ -228,8 +277,8 @@ class WaterFrame:
 
         Parameters
         ----------
-            key: list of str
-                keys of self.data to plot.
+            key: str
+                key of self.data to plot.
             ax: matplotlib.axes object, optional (ax = None)
                 It is used to add the plot to an input axes object.
         Returns
@@ -364,7 +413,7 @@ class WaterFrame:
 
     def range_test(self, key, flag=4):
         """
-        Check impossible values of a paramerer.
+        Check impossible values of a parameter.
         Parameters
         ----------
             key: str
@@ -452,7 +501,7 @@ class WaterFrame:
 
     def flag2flag(self, key, original_flag=0, translated_flag=1):
         """
-        It changes the flags of the key, from original_flag to translated_flag
+        It changes the flags of the key, from original_flag to translated_flag.
 
         Parameters
         ----------
@@ -467,7 +516,7 @@ class WaterFrame:
 
     def reset_flag(self, key, flag=0):
         """
-        It changes the flags of the key, from original_flag to translated_flag.
+        It changes all the flags of the key to the input flag value.
 
         Parameters
         ----------
@@ -511,9 +560,9 @@ class WaterFrame:
 
         Parameters
         ----------
-            key: list of str
+            keys: str, list of str
                 keys of self.data to drop.
-            flags: list of int, int, None, optional (flags = False)
+            flags: list of int, int, None, optional (flags = None)
                 Number of flag to drop. It can be None, int or a list of int.
                 If it is None, column will be deleted.
         Returns
@@ -624,8 +673,8 @@ class WaterFrame:
 
     def resample(self, rule, method='mean'):
         """
-        Convenience method for frequency conversion and resampling of
-        timeseries of the WaterFrame object.
+        Convenience method for frequency conversion and sampling of
+        time series of the WaterFrame object.
 
         Parameters
         ----------
@@ -658,7 +707,7 @@ class WaterFrame:
 
     def slice(self, start, end):
         """
-        Delete data outside the time interval
+        Delete data outside the time interval.
 
         Parameters
         ----------
@@ -685,3 +734,72 @@ class WaterFrame:
         self.data = pd.DataFrame()
         self.metadata = dict()
         self.meaning = dict()
+
+    def memory_usage(self):
+        """
+        Memory usage of the WaterFrame.
+
+        Returns
+        -------
+            size: int
+                Number of bytes in use.
+        """
+        size = sys.getsizeof(self.data) + sys.getsizeof(self.metadata)
+        return size
+
+    def parameters(self):
+        """
+        It return the parameter list used in this WaterFrame.
+        The parameters are the keys of self.data without "_QC".
+
+        Returns
+        -------
+            parameter_list: list of str
+                Parameters used in the WaterFrame.
+        """
+
+        parameter_list = [key for key in self.data.keys()
+                          if "_QC" not in key
+                          if key+"_QC" in self.data.keys()]
+
+        return parameter_list
+
+    def use_only(self, parameters, flags=None, dropnan=False):
+        """
+        Drop all parameters not presented in the input list with QC flags
+        different than given in the input flags.
+
+        Parameters
+        ----------
+            parameters: list of str, str
+                Parameter to save in the WaterFrame.
+            flags: list of int, int, None, optional (flags = None)
+                QC Flag of the parameter to save.
+            dropnan: Bool, optional (dropnan = False)
+                Drop all lines of self.data that contain a nan in any of their
+                columns.
+        """
+
+        if isinstance(parameters, str):
+            parameters = [parameters]
+
+        # Calculation of parameters to drop
+        drop_parameters = [drop_param for drop_param in self.parameters()
+                           if drop_param not in parameters]
+
+        if drop_parameters:
+            self.drop(keys=drop_parameters)
+            if flags is None:
+                pass
+            else:
+                if isinstance(flags, int):
+                    flags = [flags]
+
+                # Calculation of flags to drop
+                drop_flags = [i for i in range(10) if i not in flags]
+                self.drop(keys=parameters, flags=drop_flags)
+            if dropnan:
+                self.data.dropna(inplace=True)
+            return True
+        else:
+            return False

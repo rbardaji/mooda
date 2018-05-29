@@ -1,4 +1,4 @@
-# *oceanobs* is a Python package that provides a wide range of tools to analyze data from marine observatories, including procedures for feature extraction, quality control generation, filtering methods and content visualization.
+***oceanobs* is a Python package that provides a wide range of tools to analyze data from marine observatories, including procedures for feature extraction, quality control generation, filtering methods and content visualization.**
 
 Check the documentation on [oceanobs.readthedocs.io](http://oceanobs.readthedocs.io/).
 
@@ -38,9 +38,10 @@ The compatible input data are from the following observatories:
 
 # More information
 
-* [Git Repository Structure]: Describes the git repository structure and branching model used for the oceanobs project.
-* [Package Structure]: The Python package is located inside the oceanobs folder. This document describes how the python modules within the package have been structured.
+* [Git Repository Structure](/docs/github_struct.md): Describes the git repository structure and branching model used for the oceanobs project.
+* [Package Overview](/docs/package.md): The Python package is located in the [oceanobs folder](/oceanobs). This document describes how the python modules within the package have been structured.
 * [Installation]: Step by step manual of the installation of oceanobs. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
-* [API reference]: Explanation of the modules and functions of the package.
-* [Examples]: Set of examples to use oceanobs by writing python code or running MOODA.
+* [API reference](/docs/api.md): Explanation of the modules and functions of the package.
+* [Examples](/docs/examples/index_examples.md): Set of examples to use oceanobs by writing python code or running MOODA.
+* [Version log](/docs/news.md)
 * [License](LICENSE)

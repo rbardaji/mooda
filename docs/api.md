@@ -1,279 +1,433 @@
-# inwater
+# API Reference
+This page gives an overview of all public pandas objects, functions and methods. All classes and functions exposed in oceanobs.* namespace are public.
 
-Data access and analysis module.
+## WaterFrame
 
-## - *class* **WaterFrame**
+Object to manage data series from marine observatories.
 
-Class to manage data series from marine observatories. The compatible input data are from the following observatories:
+### Constructor
 
-* [EMSO](http://www.emso-eu.org/) Generic Instrument Module ([EGIM](http://www.emsodev.eu)) in pickle file format.
+It creates the instance following variables:
 
-* [OBSEA](http://www.upc.edu/cdsarti/OBSEA/) in text files with CSV format.
+* WaterFrame.data: A pandas DataFrame that contains the measurement values of the time series.
+* WaterFrame.metadata: A dictionary that contains the metadata information of the time series.
+* WaterFrame.meaning: A dictionary that contains the meaning of the keys of data (i.e. "TEMP": "Sea water temperature").
 
-* [EMODNET](http://www.emodnet-physics.eu/Map/) and [JERICO](http://www.jerico-ri.eu/data-access/) in [NetCDF](http://www.oceansites.org/data/) format.
+### WaterFrame.from_netcdf(*path*)
 
-The scientific data is saved into the instance variable *data* and the technical data (e.g. voltage of sensors) is saved into the instance variable *technical*.
+Load and decode a dataset from a netcdf file. The compatible netCDF files are from the mooring-buoys of [EMODNET](http://www.emodnet-physics.eu/Map/), [JERICO](http://www.jerico-ri.eu/data-access/), and all time series with [NetCDF](http://www.oceansites.org/data/) format.
 
-The variable *data* is a [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) that contains keys with QC flags (e.g. temp_qc is the key that contains the QC flags of the key temp). 
-
-### - \_\_init\_\_(*path*=**None**)
-
-Constructor. It creates the following instance variables:
-
-* data: [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) with scientific values.
-* metadata: Dictionary with metadata information.
-* technical: [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) with instrumental values (e.g. voltage and current consumption of sensors). 
-* acronym: Dictionary with the meaning of the keys of the *data* variables.
-
-### - from_netcdf(*path*)
-
-It loads data from a [NetCDF](http://www.oceansites.org/data/) file. It adds data values into the variable *data* and the metadata information into *metadata*.
-
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-path | It is the path of the [NetCDF](http://www.oceansites.org/data/) file. | string
+path | Path to a [NetCDF](http://www.oceansites.org/data/) file. | string
 
-### - from_csv(*path*)
-
-It loads data from a text file with a CSV format. It adds data values into the variable *data* and creates the metadata information. The CSV file comes from [OBSEA](http://www.upc.edu/cdsarti/OBSEA/) and the metadata information contains predefined information added by code.
-
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-path | It is the path of the CSV file. | string
+True/False | It indicates if the procedure was successful. | bool
 
-### - from_pickle(*path*)
+### WaterFrame.from_pickle(*path*)
 
-It loads data from a pickle file. It copies the *data*, *metadata*, *technical* and *acronym* from the *WaterFrame* object of the pickle file to the instance variables.
+Load and decode a WaterFrame object from a pickle file.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-path | It is the path of the pickle file. | string
+path | Path of the pickle file. | string
 
-### - plot(*param*, *join*=**False**)
-
-It creates the figure of the input parameter.
-
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-param | Key of the *data* or *technical* variable to plot. | string
-join | Some keys are similar, but with suffixes (i.e. temp_1, temp_2). If *join* = **True**, the figure will contain all the similar keys. | bool
+True/False | It indicates if the procedure was successful. | bool
 
-Return | Description | Type
+### WaterFrame.to_pickle(*path*)
+
+It creates a pickle (serialize) file of the WaterFrame.
+
+Parameters | Description | Type
 --- | --- | ---
-fig | Figure with the graph. | [matplotlib.figure](https://matplotlib.org/api/figure_api.html)
+path | Path to save the pickle file. | string
 
-### - plot_ts(*name_temp*)
+### WaterFrame.tsplot(*key*, *rolling*=*None*, *ax*=*None*, *average_time*=*None*, *secondary_y*=*False*)
 
-It creates a [TS diagram](https://en.wikipedia.org/wiki/Temperature_vs._specific_entropy_diagram).
+Plot time series.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-name_temp | Key of the *data* variable that contains the temperature values. | string
+key | keys of *self.data* to plot. | list of str
+rolling | Size of the moving window. It is the number of observations used for calculating the statistic. | int
+ax | It is used to add the plot to an input axes object. | matplotlib.axes object
+average_time | It calculates an average value of a time interval. You can find all of the resample options [here](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). | matplotlib.axes object
+secondary_y | Plot on the secondary y-axis. | bool
 
-Return | Description | Type
+Returns | Description | Type
 --- | --- | ---
-fig_ts | Figure with the graph. | [matplotlib.figure](https://matplotlib.org/api/figure_api.html)
+ax | New axes of the plot. | matplotlib.AxesSubplot
 
-### - predefined_plot(*name*, *average_time*=**'W'**)
+### WaterFrame.barplot(*key*, *ax*=*None*, *average_time*=*None*)
 
-It creates some basic technical plots. This function is useful if you are using  technical data from an [EGIM](http://www.emsodev.eu).
+Bar plot of time series.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-name | Name of the plot. Options: *current_slots*, *temperature* and *sd*. | string
-average_time | It resamples and averages the *technical* data according to the input [rule](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). | string
+key | keys of *self.data* to plot. | list of str
+ax | It is used to add the plot to an input axes object. | matplotlib.axes object
+average_time | It calculates an average value of a time interval. You can find all of the resample options [here](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). | matplotlib.axes object
 
-Return | Description | Type
+Returns | Description | Type
 --- | --- | ---
-fig | Figure with the graph. | [matplotlib.figure](https://matplotlib.org/api/figure_api.html)
+ax | New axes of the plot. | matplotlib.AxesSubplot
 
-### - qc(*param*=**None**, *influencer*=**0.7**)
+### WaterFrame.scatter_matrix(*keys*, *ax*=*None*)
 
-It analyzes the values of the variable *data* and changes the QC flags from 0 to the corresponding number.
+Draw a matrix of scatter plots.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-param | Key of *data* to analyze. If *data* = **None**, all keys will be analyzed. | string
-influencer | Influence of erroneous values for in the QC algorithm. **0** means that the algorithm will ignore the erroneous values and **1** means that the algorithm will use the values. The between values means that the algorithm will use some percent of the value. | float
-threshold | A threshold of X will signal if a datapoint is X standard deviations away from the moving mean. It is used for the spike procedure. | float
-multiplier | The multiplier value to calculate the maximum value of the slope procedure. | float
+key | keys of self.data to plot. | list of str
+ax | It is used to add the plot to an input axes object. | matplotlib.axes
 
-### - info(*path*=**None**)
+Keys must contain different words. Example:
 
-It returns a full summary of what contains the *WaterFrame* object.
+* keys = ['VAVH', 'VCMX'] is ok.
+* keys = ['VAVH', 'VAVH'] is not ok.
 
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-path | The path of the data file. It is not necessary to introduce the parameter. | string
+ax | New axes of the plot. | matplotlib.AxesSubplot
 
-Return | Description | Type
+### WaterFrame.qcplot(*key*, *ax*=*None*)
+
+Plot the time series with dots of different colours according to the QC Flag.
+
+Parameters | Description | Type
 --- | --- | ---
-message | Summary of what contains the *WaterFrame* object. | string
+key | key of self.data to plot. | str
+ax | It is used to add the plot to an input axes object. | matplotlib.axes
 
-### - resample(*rule*)
-
-It resamples and averages the variables *data* and *technical* according to the input [rule](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). 
-
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-rule | [Rule](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases) to resample the variables *data* and *technical*. | string
+ax | New axes of the plot. | matplotlib.AxesSubplot
 
-### - add_netcdf(*path*)
+### WaterFrame.qcbarplot(*key*=*"all"*, *ax*=*None*)
 
-It adds the data of a NetCDF file to the instance variable *data*.
+Plot the time series with dots of different colours according to the QC Flag.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-path | It is the path of the [NetCDF](http://www.oceansites.org/data/) file. | string
+key | keys of self.data to plot. | str or list of str
+ax | It is used to add the plot to an input axes object. | matplotlib.axes
 
-### - to_pickle(*path*)
-
-It saves a WaterFrame object to a pickle (serialize) object in the input path.
-
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-path | It is the path to save the file. | string
+ax | New axes of the plot. | matplotlib.AxesSubplot
 
-### - drop_qc(*qc_flag*)
+### WaterFrame.spectroplot()
 
-It deletes all values with the QC flag number different to qc_flag.
+It plots the spectrometer of the acoustic data.
 
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-qc_flag | QC flag number. | int
+ax | New axes of the plot. | matplotlib.AxesSubplot
 
-### - name_qc(*parameter*)
+### WaterFrame.spike_test(*key*, *window*=*0*, *threshold*=*3*, *flag*=*4*)
 
-It returns the name of the column with the QC Flag information of the parameter.
+It detects spikes in a time series.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-parameter | Name of the column of self.data. | string
+key | key of self.data to apply the test. | str
+window | Size of the moving window of values to calculate the mean.If it is 0, the function calculates the optimal window. | int
+threshold | The z-score at which the algorithm signals. | int
+flag | Flag value to write in on the fail values. | int
 
-## - *class* **EGIM**
-
-Class to download [EGIM](http://www.emsodev.eu) data using the EMSODEV DMP API.
-
-The class uses instance variables to save data. So, the functions change the values of the instance variables.
-
-### - \_\_init\_\_(*login*=**None**, *password*=**None**, *observatory*=**None**, *instrument*=**None**, *parameter*=**None**, *path*=**None**, *start*=**None**, *end*=**None**)
-
-Constructor. It creates the following instance variables:
-
-* *login*: Login to use the EMSODEV DMP API.
-* *password*: Password to use the EMSODEV DMP API.
-* *observatories*: List of available [EGIMs](http://www.emsodev.eu).
-* *instruments*: List of available instruments of an [EGIM](http://www.emsodev.eu).
-* *parameters*: List of available parameters of an instrument.
-* *observations*: Values of a parameter.
-* *observatory_name*: Name of the selected observatory to download data.
-* *instrument_name*: Name of the selected instrument to download data.
-* *parameter_name*: Name of the selected parameter to download data.
-* *wf*: *WaterFrame* object to save the downloaded data.
-
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-login | Login to use the EMSODEV DMP API. | string
-password | Password to use the EMSODEV DMP API. | string
-observatory | Observatories to download data. | list[string] or string
-instrument | Instruments to download data. | list[string] or string
-parameter | Parameters to download data. | list[string] or string
-path | Path to save the *WaterFrame* object into a Pickle file. | string
-start | Start date to download data with format *"dd/mm/yyyy"*. | string
-end | End date to download data with format *"dd/mm/yyyy"*. | string
+outlier_idx | Array with the flags result of the test. | numpy array
 
-### - load_observatories()
+### WaterFrame.range_test(*key*, *flag*=*4*)
 
-It searches the available [EGIMs](http://www.emsodev.eu) and saves their names into the variable *observatories*.
+Check impossible values of a parameter.
 
-Return | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-status | [Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) | int
+key | key of self.data to apply the test. | str
+flag | Flag value to write in on the fail values. | int
 
-### - load_instruments()
-
-It searches the available instruments of the selected [EGIM](http://www.emsodev.eu) (saved into *observatory_name*) and saves their names into the variable *instruments*.
-
-Return | Description | Type
+Returns | Description | Type
 --- | --- | ---
-status | [Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) | int
+ True/False | It indicates if the process was successfully. | bool
 
-### - load_parameters()
+### WaterFrame.flat_test(*key*, *window*=*3*, *flag*=*4*)
 
-It searches the available parameters of a selected instrument (saved into *instrument_name*) of a selected [EGIM](http://www.emsodev.eu) (saved into *observatory_name*) and saves their names into the variable *parameters*.
+It detects no changes in values of time-series.
 
-Return | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-status | [Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) | int
+key | key of self.data to apply the test. | str
+window | Size of the moving window of values to calculate the mean.If it is 0, the function calculates the optimal window. | int
+flag | Flag value to write in on the fail values. | int
 
-### - load_data(*start_date*, *end_date*=**""**)
-
-It downloads the observations of a selected parameter (saved into *parameter_name*) of a selected instrument (saved into *instrument_name*) of a selected [EGIM](http://www.emsodev.eu) (saved into *observatory_name*). It saves their values into the variable *observations* and finally, appends the *observations* into the variable *wf* in the correct format.
-
-Input | Description | Type
+Returns | Description | Type
 --- | --- | ---
-start_date | Start date to download data, with format “dd/mm/yyyy”. | string
-end_date | End date to download data, with format “dd/mm/yyyy”. If *end_date*=**" "**, end_date is today. | string
+outlier_idx | Array with the flags result of the test. | numpy array
 
-Return | Description | Type
+### WaterFrame.flag2flag(*key*, *original_flag*=*0*, *translated_flag*=*1*)
+
+It changes the flags of the key, from original_flag to translated_flag.
+
+Parameters | Description | Type
 --- | --- | ---
-status | [Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) | int
+key | key of self.data to apply the test. | str
+original_flag | Flag number to translate. | int
+translated_flag | Translation of the original flag number. | int
 
-### - auto_download(*path_in*, *start_in*, *end_in*=**None**)
+### WaterFrame.reset_flag(*key*, *flag*=*0*)
 
-It downloads the observations of a all the parameters of *parameters* of all the instruments of *instruments* of all the [EGIMs](http://www.emsodev.eu) of *observatories*. It saves their values into the variable *observations* and finally, appends the *observations* into the variable *wf* in the correct format.
+It changes all the flags of the key to the input flag value.
 
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-path_in | Path to save the *WaterFrame* object into a Pickle file. | string
-start_in | Start date to download data, with format “dd/mm/yyyy”. | string
-end_in | End date to download data, with format “dd/mm/yyyy”. If *end_in*=**None**, end_in is today. | string
+key | key of self.data to apply the test. | str
+flag | Flag value to write. | int
 
-Return | Description | Type
+### WaterFrame.qc(*key*, *window*=*3*, *threshold*=*3*, *bad_flag*=*4*, *good_flag*=*1*)
+
+Auto QC process.
+
+Parameters | Description | Type
 --- | --- | ---
-answer | **True** if the process was ok or **False** if the process was ok. | bool
+key | key of self.data to apply the test. | str
+window | Size of the moving window of values to calculate the mean. If it is 0, the function calculates the optimal window. | int
+threshold | Flag value to write in on the fail values. | int
+bad_flag | key of self.data to apply the test. | str
+good_flag | Flag value to write in on the good values. | int
 
-### - clean()
+### WaterFrame.drop(*keys*, *flags*=*None*)
 
-It erase all data placed into the instance variables *data* and *technical*.
+Remove required keys (and associated QC keys) from self.data requested axis removed.
 
-## - *class* **PlotMap**
+Parameters | Description | Type
+--- | --- | ---
+key | keys of self.data to drop. | list of str
+flags | Number of flag to drop. It can be None, int or a list of int. If it is None, column will be deleted. | list of int, , int, None
 
-It contains functions related to the management of maps.
+Returns | Description | Type
+--- | --- | ---
+True/False | It indicates if the process was successfully. | bool
 
-### - _\_init\_\_()
+### WaterFrame.rename(*old_name*, *new_name*)
 
-Costructor of the clase. It creates *self.m*, that it is a Basemap object.
+It renames keys of self.data.
 
-### - map_world(*res*=**'l'**)
+Parameters | Description | Type
+--- | --- | ---
+old_name | key name to change. | str
+new_name | New name of the key. | str
 
-It creates a map of the world.
+### WaterFrame.rename(*waterframe*)
 
-### - map_mediterranean(*res*=**'l'**)
+The concat function does all of the heavy lifting of performing concatenation operations along an axis while performing optional set logic (union or intersection) of the indexes on the other axes.
+
+Parameters | Description | Type
+--- | --- | ---
+waterframe | WaterFrame object to concat to self. | WaterFrame
+
+### WaterFrame.resample(*rule*, *method*=*'mean'*)
+
+Convenience method for frequency conversion and sampling of time series of the WaterFrame object.
+
+Parameters | Description | Type
+--- | --- | ---
+rule | The offset string or object representing target conversion. You can find all of the resample options [here](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases) | str
+method | Save the new value with the mean(), max() or min() function. | "mean", "max" or "min"
+
+Returns | Description | Type
+--- | --- | ---
+True/False | It indicates if the process was successfully. | bool
+
+### WaterFrame.slice(*start*, *end*)
+
+Delete data outside the time interval.
+
+Parameters | Description | Type
+--- | --- | ---
+start | Start time interval with format 'YYYYMMDDhhmmss' or timestamp. | str, timestamp
+end | Start time interval with format 'YYYYMMDDhhmmss' or timestamp. | str, timestamp
+
+### WaterFrame.clear()
+
+It delete all data and metadata of the waterframe.
+
+### WaterFrame.memory_usage()
+
+Memory usage of the WaterFrame.
+
+Returns | Description | Type
+--- | --- | ---
+size | Number of bytes in use. | int
+
+### WaterFrame.parameters()
+
+It return the parameter list used in this WaterFrame. The parameters are the keys of self.data without "_QC".
+
+Returns | Description | Type
+--- | --- | ---
+parameter_list | Parameters used in the WaterFrame. | list of str
+
+### WaterFrame.use_only(*parameters*, *flags*=*None*, *dropnan*=*False*)
+
+Drop all parameters not presented in the input list with QC flags different than given in the input flags.
+
+Parameters | Description | Type
+--- | --- | ---
+parameters | Parameters to save in the WaterFrame. | list of str, str
+flags | QC Flag of the parameter to save. | list of int, int, None
+dropnan | Drop all lines of self.data that contain a nan in any of their columns. | Bool
+
+## PlotMap
+
+ It contains functions related to the management of maps. It creates an instance variable called 'm' that is a Basemap object. We are going to use and modify 'm' in all functions.
+
+### Constructor
+    It creates the instance variable *m*. *m* id s Basemap object.
+
+### PlotMap.map_world(*res*=*'l'*)
+
+It creates a map of the world and saves into 'm'.
+
+Parameters | Description | Type
+--- | --- | ---
+res | Resolution of boundary database to use. Can be c (crude), l (low), i (intermediate), h (high), f (full) or None. If None,  no boundary data will be read in (and class methods such as draw coastlines will raise an if invoked). Higher res datasets are much slower to draw. | str, 'l', 'i', 'h', 'f'
+
+### PlotMap.map_mediterranean(*res*=*'l'*)
 
 It creates a map of the Mediterranean.
 
-### add_pointxxx(*lon*, *lat*, *\*arg*)
+Parameters | Description | Type
+--- | --- | ---
+res | Resolution of boundary database to use. Can be c (crude), l (low), i (intermediate), h (high), f (full) or None. If None,  no boundary data will be read in (and class methods such as draw coastlines will raise an if invoked). Higher res datasets are much slower to draw. | str, 'l', 'i', 'h', 'f'
+
+### PlotMap.add_point(*lon*, *lat*, *color*=*'blue'*, *label*=*None*)
 
 It adds points to the map.
 
-### add_point(*lon*, *lat*, *color*=**'blue'**, *label*=**None**)
-
-It adds points to the map.
-
-## - plot_corr(*param_1*, *param_2*, *title*=**""**, *x_label*=**""**, *y_label*=**""**, *legend*=**[]**)
-
-It creates a graph with the linear regression between the two input parameters.
-
-Input | Description | Type
+Parameters | Description | Type
 --- | --- | ---
-param_1 | Name of the parameter 1 to plot. | string
-param_2 | Name of the parameter 2 to plot. | string
-title | Text of the title of the graph. | string
-x_label | Text of the x label of the graph. | string
-y_label | Text of the y label of the graph. | string
-legend | List of names to write on the legend. | string
+lon | Longitude. | float
+lat | Latitude. | float
+color | Color of the point. | str
+label | Text to write in the point. | str
 
-Return | Description | Type
+## access.EGIM
+
+Class to download [EGIM](http://www.emsodev.eu) data using the EMSODEV DMP API.
+
+### Constructor
+It creates the instance variables login and password to use the DMP API.
+
+Parameters | Description | Type
 --- | --- | ---
-fig_correlation | Figure with the graph. | [matplotlib.figure](https://matplotlib.org/api/figure_api.html)
+login | Login of the EMSODEV DMP API. | str
+password | Password of the EMSODEV DMP API. | str
+
+### EGIM.observatories()
+
+It represents the EGIM observatories accessible through the EMSODEV DMP API.
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, observatoryList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list with names of observatories) | (int, list of str)
+
+### EGIM.instruments(*observatory*)
+
+It represents the instruments deployed in an EGIM observatory.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, instrumentList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list with dictionaries of available instruments) | (int, list of dict{"name": "string", "sensorLongName": "string", "sensorType": "string", "sn": "string"})
+
+### EGIM.metadata(*observatory*, *instrument*)
+
+Get EGIM observatory instrument resource.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+instrument | Instrument name. | str
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, metadataList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list with dictionaries of metadata) | (int, list of dict{{"instrumentName": "string", "metadataList": [{"metadata": "string","validityDate": "string"}]}})
+
+### EGIM.parameters(*observatory*, *instrument*)
+
+Get the list of EGIM parameters for a specific EGIM instrument of an EGIM Observatory.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+instrument | Instrument name. | str
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, parameterList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list of dict of parameters) | (int, list of dict{"name": "string", "uom": "string"})
+
+### EGIM.observation(*observatory*, *instrument*, *parameter* *startDate*=*None*, *endDate*=*None*, *limit*=*None*)
+
+Gets the time-series of a specific EGIM parameter in a certain  time range or  the last X (limit) values for an EGIM instrument of an EGIM observatory.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+instrument | Instrument name. | str
+parameter | Parameter name. | str
+startDate | Beginning date for the time series range. The date format is dd/MM/yyyy. If the start time is not supplied, we are going to use 'limit'. | str
+endDate | End date for the time series range. The date format is dd/MM/yyyy. If the end time is not supplied, the current time will be used. | str
+limit | The last x-measurements. | str
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, data) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list of DataFrame) | (int, list with dict of parameters)
+
+### EGIM.acoustic_date(*observatory*, *instrument*)
+
+Gets the date list of available acoustic files observed by a specific EGIM instrument of an EGIM Observatory.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+instrument | Instrument name. | str
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, data) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list with dict of dates) | (int, list of dict{})
+
+### EGIM.acoustic_observation(*observatory*, *instrument*, *date*, *hour_minute*)
+
+Gets an Acoustic file for a specific EGIM instrument of an EGIM Observatory.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+instrument | Instrument name. | str
+date | Date of Acoustic file. The date format is dd/MM/yyyy. | str
+hour_minute | Hour and Minute of an Acoustic file. The Hour Minute format is HHMM. | str
+
+Returns | Description | Type
+--- | --- | ---
+(statusCode, text) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), text of the acoustic file) | (int, str)
+
+### EGIM.to_waterframe(*data*, *metadata*)
+
+It creates a WaterFrame object from the input variables.
+
+Parameters | Description | Type
+--- | --- | ---
+data | Pandas DataFrame with data without WaterFrame format. | Pandas DataFrame
+metadata | Dictionary with metadata information. | dict
+
+Returns | Description | Type
+--- | --- | ---
+wf |  Data and metadata formated in a WaterFrame Object. | WaterFrame

@@ -21,7 +21,7 @@ class PlotMap:
                 Resolution of boundary database to use. Can be c (crude),
                 l (low), i (intermediate), h (high), f (full) or None. If None,
                 no boundary data will be read in (and class methods such as
-                drawcoastlines will raise an if invoked). Higher res datasets
+                draw coastlines will raise an if invoked). Higher res datasets
                 are much slower to draw.
         """
         self.m = Basemap(projection='mill', resolution=res)

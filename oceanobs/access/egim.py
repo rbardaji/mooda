@@ -162,7 +162,7 @@ class EGIM:
                 EGIM observatory name.
             instrument: str
                 Instrument name.
-            instrument: str
+            parameter: str
                 Parameter name.
             startDate: str, optional (startDate = None)
                 Beginning date for the time series range. The date format is
@@ -323,7 +323,7 @@ class EGIM:
         Returns
         -------
             wf: WaterFrame
-                Data and metadate formated in a WaterFrame Object.
+                Data and metadata formated in a WaterFrame Object.
         """
 
         # Delete columns without data

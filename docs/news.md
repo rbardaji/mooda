@@ -11,7 +11,7 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 
 These are new features and improvements of note in each release.
 
-##v1.1.1 (Jaunuary 11, 2018)
+## v1.1.1 (January 11, 2018)
 
 A new version of oceanobs with incompatible API changes. We deleted observatory.py to simplifier the code. The philosophy of the package is the previous one, but we mixed the access modules and the analysis modules into a new module called inWater.py.
 
@@ -38,7 +38,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 		* drop_qc(): It deletes all values with the QC flag number different to qc_flag.
 		* name_qc(): It returns the name of the column with the QC Flag information of the parameter.
 		* info(): It returns a full summary of what contains the WaterFrame object.
-		* resample(): It resamples and averages the variables data and technical according to the input rule.
+		* resample(): It samples and averages the variables data and technical according to the input rule.
 	* Function plot_corr(): It creates a graph with the linear regression between the two input parameters.
 	* PlotMap: It contains functions related to the management of maps.
 		* _\_init\_\_(): Constructor.
@@ -48,7 +48,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 		* add_pointxxx(): It adds points to the map.
 
 
-##V0.5.1 (Not distributed)
+## V0.5.1 (Not distributed)
 
 **New Features**
 
@@ -58,7 +58,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 	* In class MyApplication:
 		* add_param(): Add offset functionality. 
 		* compare_add_button(): Add offset functionality.
-		* hide_all(): It hides the plot and the comparation option.
+		* hide_all(): It hides the plot and the comparison option.
 		* hide_metadata_plots(): It hides the technical title and the technical list.
 		* \_\_init\_\_(): We added the action when users clicks the check box to select all the parameters.
 		* selection_all_parameters(): Action when clicking the check box of the parameter widget.
@@ -66,11 +66,11 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 * In emso.py:
 	* In class EMSO:
 		* plt_egim_slots_current_consumptions(): It creates a plot with the current consumption of all the slots and the input voltage of the EGIM.
-		* stadistics_slots_current_consumptions(): It calculates the mean, max and min current consumption of each slot. Return a string with the information.
+		* statistics_slots_current_consumptions(): It calculates the mean, max and min current consumption of each slot. Return a string with the information.
 		* plt_egim_energy(): Function deleted. It was not plotting the energy of the EGIM, but the current consumption.
 		* plt_egim_current(): It returns a plot of the accumulated-since-last-reset current consumption of the EGIM.
 		* how_to_download_data(): Function deleted. It was not useful.
-		* stadistics_slots_pressure(): It calculates the mean, max and min pressure of each slot. Return a string with the information.		
+		* statistics_slots_pressure(): It calculates the mean, max and min pressure of each slot. Return a string with the information.		
 * In obsea.py:
 	* In class OBSEA:
 		* estimation_time_to_open(): Function deleted. It was not useful.
@@ -78,8 +78,8 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 * In observatory.py:
 	* In class Observatory:
 		* plt_depth(): It plots the depth of the sensor over time.
-		* stadistics_ctd(): It returns a message with the mean, max, min and stand. desv of the measurements of the CTD (temperature, conductivity, pressure, salinity and sound velocity.)
-	* New function plt_comparation(): It creates a graph with all the time series of the list parameters.
+		* statistics_ctd(): It returns a message with the mean, max, min and stand. dev of the measurements of the CTD (temperature, conductivity, pressure, salinity and sound velocity.)
+	* New function plt_comparison(): It creates a graph with all the time series of the list parameters.
 		* plt_ncus(): It plots the North – South current speed over time.	
 * In emodnet.py:
 	* In class EMODnet:
@@ -95,7 +95,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 		* search_observatories(): Auto select the observatory if there is just one.
 		* search_instruments(): Auto select the instrument if there is just one.
 		* search_parameters(): Auto select the parameter if there is just one.
-		* New class: DownloadThread(): It allows multithreading for the downloading part. Related to this class, we created other functions to communicate variables between threads (def message_for_statusbar() and def refresh_emsodevapi()).
+		* New class: DownloadThread(): It allows multi-threading for the downloading part. Related to this class, we created other functions to communicate variables between threads (def message_for_statusbar() and def refresh_emsodevapi()).
 	* In class MyApplication:
 		* hide_metadata_plots(): Added the technical plots to the function.
 		* make_plots(): Added the technical plots.
@@ -121,7 +121,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 	* In class Observatory:
 		* plt_ts(): We restructured all the function. Now, the plot is nicer.
 
-##V0.4.1 (April 19, 2017)
+## V0.4.1 (April 19, 2017)
 
 **New Features**
 
@@ -149,7 +149,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 	* New class PlotMat: Helps to make a map with data based on Basemap library.
 		* \_\_init\_\_(): Constructor of the class.
 		* new_map_world(): Create a world map.
-		* new_map_iberic(): Create a map of the Iberian peninsula.
+		* new_map_iberian(): Create a map of the Iberian peninsula.
 		*  new_map_pyrenees(): Create a map of the Pyrenees.
 		* new_map_pyrenees_arcgisapi(): Create a map of the Pyrenees using the ArcGIS API.
 		* new_map_mediterranean(): Create a map of the Mediterranean sea.
@@ -172,7 +172,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 		* clear_bad_data(): Added np.nan to bad values.
 * In emodnet.py:
 	* In class EMODnet:
-		* open(): It adds latitude and longitude info to the variable self.metatada. Added more parameters to measure.
+		* open(): It adds latitude and longitude info to the variable self.metadata. Added more parameters to measure.
 * In gui.py:
 	* In class EMSOdevApp:
 		* download_data(): Fixed bug downloading data.
@@ -186,7 +186,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 	* In class OBSEA:
 		* open(): Changing the way to create the QC flags.
 
-##V0.3.2 (February 27, 2017)
+## V0.3.2 (February 27, 2017)
 
 **Performance Enhancements**
 
@@ -195,7 +195,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 		* open(): Deleted some print() functions.
 * In emso.py: We changed the wrong name of import libraries to the right ones.
 
-##V0.3.1 (February 23, 2017)
+## V0.3.1 (February 23, 2017)
 
 **New Features**
 
@@ -292,7 +292,7 @@ A new version of oceanobs with incompatible API changes. We deleted observatory.
 	* In class OBSEA:
 		* qc(): Fixed bug.
 
-##V0.2.1 (December 27, 2016)
+## V0.2.1 (December 27, 2016)
 
 **New Features**
 
@@ -403,3 +403,7 @@ Set of libraries to analyze EMODnet and OBSEA data easily.
 			* show_slicing(): It shows the slicing options.
 			* accept_slicing(): It is the data slicing process.
 		* open_gui(): It opens the GUI.
+
+## V2.0.0 (June, 2017)
+
+Complete new version. Not compatible with previous version.
