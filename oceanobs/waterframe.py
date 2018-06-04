@@ -5,6 +5,7 @@ import pandas as pd
 import sys
 import xarray as xr
 import datetime
+import warnings
 
 
 class WaterFrame:
@@ -197,7 +198,10 @@ class WaterFrame:
         ax.fill_between(m.index, m[key] - m['std'], m[key] + m['std'],
                         alpha=.25)
         # Write axes
-        ax.set_ylabel(self.meaning[key]['units'])
+        try:
+            ax.set_ylabel(self.meaning[key]['units'])
+        except KeyError:
+            warnings.warn("No units on y_label")
 
         return ax
 
@@ -297,13 +301,18 @@ class WaterFrame:
         for flag in range(0, 10):
             df_ = pd.DataFrame()
             df_['{}'.format(flag)] = df.ix[df[key+'_QC'] == flag, key]
-            if len(df_.index) > 0:
+            if df_.index.size > 0:
+                # Change line style -> Maybe not necessary
+                '''
                 if flag == 1:
                     line = '-'
                 else:
                     line = ""
+                '''
+                line = ""
                 ax = df_.plot(ax=ax, marker='.', linestyle=line)
         ax.set_ylabel(self.meaning[key]['units'])
+        ax.legend(title="QC Flags")
 
         return ax
 
@@ -472,7 +481,7 @@ class WaterFrame:
         else:
             return False
 
-    def flat_test(self, key, window=3, flag=4):
+    def flat_test(self, key, window=1, flag=4):
         """
         It detects no changes in values of time-series.
 
@@ -480,24 +489,31 @@ class WaterFrame:
         ----------
             key: str
                 key of self.data to apply the test.
-            window: int, optional (window = 0)
+            window: int, optional (window = 1)
                 Size of the moving window of values to calculate the mean.
                 If it is 0, the function calculates the optimal window.
             flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
         Returns
         -------
-            outlier_idx: numpy array
+            signals: numpy array
                 Array with the flags result of the test."""
-        signals = self.data[
-            key].rolling(window=window,
-                         center=True).mean().fillna(method='bfill')
-        difference = np.abs(self.data[key] - signals)
-        outlier_idx = difference == 0
+        if window > 0:
+            signals = []
+            for i in range(len(self.data[key])):
+                try:
+                    if self.data[key][i] - self.data[key][i-window] == 0:
+                        signals.append(True)
+                    else:
+                        signals.append(False)
+                except IndexError:
+                    signals.append(False)
 
-        self.data.ix[outlier_idx, key + '_QC'] = flag
+            self.data.ix[signals, key + '_QC'] = flag
 
-        return outlier_idx
+            return signals
+        else:
+            return False
 
     def flag2flag(self, key, original_flag=0, translated_flag=1):
         """

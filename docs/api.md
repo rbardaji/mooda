@@ -1,4 +1,5 @@
 # API Reference
+
 This page gives an overview of all public pandas objects, functions and methods. All classes and functions exposed in oceanobs.* namespace are public.
 
 ## WaterFrame
@@ -222,7 +223,7 @@ Parameters | Description | Type
 old_name | key name to change. | str
 new_name | New name of the key. | str
 
-### WaterFrame.rename(*waterframe*)
+### WaterFrame.concat(*waterframe*)
 
 The concat function does all of the heavy lifting of performing concatenation operations along an axis while performing optional set logic (union or intersection) of the indexes on the other axes.
 
@@ -286,7 +287,8 @@ dropnan | Drop all lines of self.data that contain a nan in any of their columns
 
  It contains functions related to the management of maps. It creates an instance variable called 'm' that is a Basemap object. We are going to use and modify 'm' in all functions.
 
-### Constructor
+### PlotMap._\_init_\_()
+
     It creates the instance variable *m*. *m* id s Basemap object.
 
 ### PlotMap.map_world(*res*=*'l'*)
@@ -320,7 +322,8 @@ label | Text to write in the point. | str
 
 Class to download [EGIM](http://www.emsodev.eu) data using the EMSODEV DMP API.
 
-### Constructor
+### EGIM.\_\_init\_\_()
+
 It creates the instance variables login and password to use the DMP API.
 
 Parameters | Description | Type

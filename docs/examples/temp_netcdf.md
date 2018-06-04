@@ -17,6 +17,7 @@ Customarily, we import as follows:
 import oceanobs as oc
 import matplotlib.pyplot as plt
 ```
+
 This is optional, but I like to use the plot style 'ggplot'.
 
 ```python
@@ -37,19 +38,24 @@ The file contains the parameter "seawater temperature" with the name "TEMP," but
 print("Parameters:", wf.parameters())
 print("Memory usage:", wf.memory_usage()/10**6, "MBytes")
 ```
+
 Output:
-```
+
+```bash
 Parameters: ['VAVH', 'TEMP', 'VT110', 'VHM0', 'VHZA', 'VZMX', 'VAVT', 'VH110', 'VMDR', 'VTPK', 'VTZA', 'VTM02']
 Memory usage: 83.35604 MBytes
 ```
+
 Since we only want to use the water temperature, we will eliminate other parameters to reduce the size of the object. Original data has already been processed by its source and data considered as good was marked with QC Flag = 1. We are only going to use the accurate data. We will also remove all NaN (Not a Number) values. Now the memory consumption of our object is much smaller.
 
 ```python
 wf.use_only('TEMP', flags=1, dropnan=True)
 print("Memory usage:", wf.memory_usage()/10**6, "MBytes")
 ```
+
 Output:
-```
+
+```bash
 Memory usage: 1.411648 MBytes
 ```
 
@@ -59,23 +65,29 @@ We need full year data to calculate the average annual temperature, so let's see
 print("Start:", wf.data.index[0])
 print("End:", wf.data.index[-1])
 ```
+
 Output:
-```
+
+```bash
 Start: 2013-01-12 10:00:00
 End: 2017-03-28 11:00:00
 ```
+
 Now we know that we only have full years from 2013 to 2016. We are going to work with the complete years eliminating the data after 2016-12-31 23:59:59.
 
 ```python
 wf.slice('20130101000000', '20161231235959')
 ```
+
 Finally, we will create a bar graph with the annual average temperature.
 
 ```python
 wf.barplot(key='TEMP', average_time='A')
 plt.show()
 ```
+
 Output:
+
 <center>
     <figure>
         <img src="../img/examples/netcdf/annual_temp_Tarragona.png" alt="Module types of oceanobs">
