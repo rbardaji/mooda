@@ -46,13 +46,13 @@ Parameters | Description | Type
 --- | --- | ---
 path | Path to save the pickle file. | string
 
-### WaterFrame.tsplot(*key*, *rolling*=*None*, *ax*=*None*, *average_time*=*None*, *secondary_y*=*False*)
+### WaterFrame.tsplot(*keys*, *rolling*=*None*, *ax*=*None*, *average_time*=*None*, *secondary_y*=*False*)
 
 Plot time series.
 
 Parameters | Description | Type
 --- | --- | ---
-key | keys of *self.data* to plot. | list of str
+keys | keys of *self.data* to plot. | list of str
 rolling | Size of the moving window. It is the number of observations used for calculating the statistic. | int
 ax | It is used to add the plot to an input axes object. | matplotlib.axes object
 average_time | It calculates an average value of a time interval. You can find all of the resample options [here](http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases). | matplotlib.axes object
@@ -307,7 +307,7 @@ Parameters | Description | Type
 --- | --- | ---
 res | Resolution of boundary database to use. Can be c (crude), l (low), i (intermediate), h (high), f (full) or None. If None,  no boundary data will be read in (and class methods such as draw coastlines will raise an if invoked). Higher res datasets are much slower to draw. | str, 'l', 'i', 'h', 'f'
 
-### PlotMap.add_point(*lon*, *lat*, *color*=*'blue'*, *label*=*None*)
+### PlotMap.add_point(*lon*, *lat*, *dot_color*=*'blue'*, *label*=*None*, *label_color*=*Green*)
 
 It adds points to the map.
 
@@ -315,8 +315,9 @@ Parameters | Description | Type
 --- | --- | ---
 lon | Longitude. | float
 lat | Latitude. | float
-color | Color of the point. | str
+label_color | Color of the point. | str
 label | Text to write in the point. | str
+label_color | Color of the label. | str
 
 ## access.EGIM
 

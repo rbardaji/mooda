@@ -328,7 +328,7 @@ class EGIM:
 
         # Delete columns without data
         for key in data.keys():
-            if data[key]:
+            if data[key].empty:
                 del data[key]
 
         wf = WaterFrame()

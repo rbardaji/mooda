@@ -50,7 +50,8 @@ class PlotMap:
         # Fill the continents with black
         self.m.fillcontinents(color='K')
 
-    def add_point(self, lon, lat, color='blue', label=None):
+    def add_point(self, lon, lat, dot_color="blue", label=None,
+                  label_color="Green"):
         """
         It adds points to the map.
 
@@ -60,12 +61,14 @@ class PlotMap:
                 Longitude.
             lat: float
                 Latitude.
-            color: str
+            dot_color: str
                 Color of the point.
             label: str
                 Text to write in the point.
+            label_color: str
+                Color of the label.
         """
         x, y = self.m(float(lon), float(lat))
-        self.m.plot(x, y, color=color, marker='o', markersize=7)
+        self.m.plot(x, y, color=dot_color, marker='o', markersize=7)
         if label is not None:
-            plt.text(x+10000, y+5000, label)
+            plt.text(x+10000, y+5000, label, color=label_color)

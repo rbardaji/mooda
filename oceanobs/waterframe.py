@@ -1,11 +1,11 @@
 import pickle
+import sys
+import datetime
+import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import sys
 import xarray as xr
-import datetime
-import warnings
 
 
 class WaterFrame:
@@ -144,13 +144,13 @@ class WaterFrame:
         """
         pickle.dump(self.__dict__, open(path, "wb"))
 
-    def tsplot(self, key, rolling=None, ax=None, average_time=None,
+    def tsplot(self, keys, rolling=None, ax=None, average_time=None,
                secondary_y=False):
         """Plot timeseries.
 
         Parameters
         ----------
-            key: list of str
+            keys: list of str, str
                 keys of self.data to plot.
             rolling: int, optional (rolling = None)
                 Size of the moving window. It is the number of observations
@@ -168,8 +168,27 @@ class WaterFrame:
             ax: matplotlib.AxesSubplot
                 New axes of the plot.
         """
+        def make_plot(df_in, ax_in, key_in):
+            # Calculation of the std and the mean
+            roll = df_in[key_in].rolling(rolling, center=True)
+            m = roll.agg(['mean', 'std'])
+            # rename 'mean' column
+            m.rename(columns={'mean': key_in}, inplace=True)
+            ax_out = m[key_in].plot(ax=ax_in, secondary_y=secondary_y,
+                                    legend=True)
+            ax_out.fill_between(m.index,
+                                m[key_in] - m['std'], m[key_in] + m['std'],
+                                alpha=.25)
+            # Write axes
+            try:
+                ax_out.set_ylabel(self.meaning[key_in]['units'])
+            except KeyError:
+                warnings.warn("No units on y_label")
+
+            return ax_out
+
         # Extract data
-        df = self.data[key].dropna().reset_index().set_index('TIME')
+        df = self.data[keys].dropna().reset_index().set_index('TIME')
         df.index.rename("Date", inplace=True)
 
         # Resample data
@@ -189,20 +208,12 @@ class WaterFrame:
             else:
                 rolling = df.size // 1000
 
-        # Calculation of the std and the mean
-        roll = df[key].rolling(rolling, center=True)
-        m = roll.agg(['mean', 'std'])
-        # rename 'mean' column
-        m.rename(columns={'mean': key}, inplace=True)
-        ax = m[key].plot(ax=ax, secondary_y=secondary_y, legend=True)
-        ax.fill_between(m.index, m[key] - m['std'], m[key] + m['std'],
-                        alpha=.25)
-        # Write axes
-        try:
-            ax.set_ylabel(self.meaning[key]['units'])
-        except KeyError:
-            warnings.warn("No units on y_label")
-
+        if isinstance(keys, str):
+            key = keys
+            ax = make_plot(df, ax, key)
+        elif isinstance(keys, list):
+            for key in keys:
+                ax = make_plot(df, ax, key)
         return ax
 
     def barplot(self, key, ax=None, average_time=None):
