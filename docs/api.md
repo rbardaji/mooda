@@ -378,7 +378,7 @@ Returns | Description | Type
 --- | --- | ---
 (statusCode, parameterList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list of dict of parameters) | (int, list of dict{"name": "string", "uom": "string"})
 
-### EGIM.observation(*observatory*, *instrument*, *parameter* *startDate*=*None*, *endDate*=*None*, *limit*=*None*)
+### EGIM.observation(*observatory*, *instrument*, *parameter*, *startDate*=*None*, *endDate*=*None*, *limit*=*None*)
 
 Gets the time-series of a specific EGIM parameter in a certain  time range or  the last X (limit) values for an EGIM instrument of an EGIM observatory.
 

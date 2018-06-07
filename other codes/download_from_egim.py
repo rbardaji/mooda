@@ -1,23 +1,17 @@
 from oceanobs.access import EGIM
 import matplotlib.pylab as plt
 
-login = "emsodev"
-password = "Emsodev2017"
-
+login = "YOUR LOGIN"
+password = "YOUR PASSWORD"
 egim = EGIM(login, password)
 
-'''
 code, observatories = egim.observatories()
 if code == 200:
     for i, observatory in enumerate(observatories):
         print(i, observatory)
 else:
     print("Error code:", code)
-
 observatory = observatories[0]
-'''
-observatory = "EMSODEV-EGIM-node00001"
-
 
 code, instruments = egim.instruments(observatory)
 if code == 200:
@@ -25,7 +19,6 @@ if code == 200:
         print(i, instrument['sensorLongName'])
 else:
     print("Error code:", code)
-
 
 instrument_ctd = instruments[1]['name']
 instrument_oximeter = instruments[2]['name']
@@ -73,7 +66,6 @@ if code == 200:
 else:
     print("Error code:", code)
 
-
 wf_oximeter = egim.to_waterframe(observation, metadata)
 wf_oximeter.rename(old_name="TEMP", new_name="OXIMETER")
 
@@ -81,12 +73,13 @@ wf.concat(wf_oximeter)
 
 print(wf.parameters())
 
-wf.resample(rule="5T")
-
-wf.tsplot(["CTD", "OXIMETER"])
-plt.show()
+wf.resample(rule="T")
 
 wf.scatter_matrix(["CTD", "OXIMETER"])
+plt.show()
+
+
+wf.tsplot(["CTD", "OXIMETER"])
 plt.show()
 
 wf.to_pickle("egim_temps.pkl")
