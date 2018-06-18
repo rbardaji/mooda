@@ -1,21 +1,6 @@
-# Compare sea water temperature measurements of two sensors in the same marine observatory
+# Compare sea water temperature measurements of two sensors in the same EGIM with MOODA
 
-An [EMSO](http://emso.eu/) Generic Module ([EGIM](http://www.emsodev.eu/)) contains several instruments to characterize some physical properties of water. In this example, we will check if two of the devices that measure water temperature register the same values. To do this, we will download temperature data from a CTD and an Oximeter installed in the EGIM, and later, we will correlate them to obtain our conclusions. To download and analyze the data we will use the WaterFrame object and the EGIM object of the oceanobs package and the following functions:
-
-* [EGIM.observatories()](../api.md#EGIM.observatories())
-* [EGIM.instruments()](../api.md#EGIM.instruments(*observatory*))
-* [EGIM.parameters()](../api.md#EGIM.parameters(*observatory*,_*instrument*))
-* [EGIM.metadata()](../api.md#EGIM.metadata(*observatory*,_*instrument*))
-* [EGIM.observation()](../api.md#EGIM.observation(*observatory*,_*instrument*,_*parameter*,_*startDate*=*None*,_*endDate*=*None*,_*limit*=*None*))
-* [EGIM.to_waterframe()](../api.md#EGIM.to_waterframe(*data*,_*metadata*))
-* [WaterFrame.parameters()](../api.md#WaterFrame.parameters())
-* [WaterFrame.rename()](../api.md#WaterFrame.rename(*old_name*,_*new_name*))
-* [WaterFrame.resample()](../api.md#WaterFrame.resample(*rule*,_*method*=*'mean'*))
-* [WaterFrame.concat()](../api.md#WaterFrame.concat(*waterframe*))
-* [WaterFrame.scatter_matrix()](../api.md#WaterFrame.scatter_matrix(*keys*,_*ax*=*None*))
-* [WaterFrame.tsplot()](../api.md#WaterFrame.tsplot(*keys*,_*rolling*=*None*,_*ax*=*None*,_*average_time*=*None*,_*secondary_y*=*False*))
-* [WaterFrame.to_pickle()](../api.md#WaterFrame.to_pickle(*path*))
-
+An [EMSO](http://emso.eu/) Generic Module ([EGIM](http://www.emsodev.eu/)) contains several instruments to characterize some physical properties of water. In this example, we will check if two of the devices that measure water temperature register the same values. To do this, we will download temperature data from a CTD and an Oximeter installed in the EGIM, and later, we will correlate them to obtain our conclusions.
 Customarily, we import as follows:
 
 ```python
@@ -30,7 +15,8 @@ login = "YOUR LOGIN"
 password = "YOUR PASSWORD"
 egim = EGIM(login, password)
 ```
-First, we will ask for information on how many observatories are currently available in the DMP. 
+
+First, we will ask for information on how many observatories are currently available in the DMP.
 
 ```python
 code, observatories = egim.observatories()

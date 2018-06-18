@@ -22,7 +22,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/temp_netcdf.py"
+            "program": "${file}"
         },
         {
             "name": "Python: Attach",

@@ -88,12 +88,9 @@ plt.show()
 
 Output:
 
-<center>
-    <figure>
-        <img src="../img/examples/netcdf/annual_temp_Tarragona.png" alt="Module types of oceanobs">
-        <figcaption> Figure 1: Module types of oceanobs </figcaption>
-    </figure>
-</center>
+![Module types of oceanobs](../img/examples/netcdf/annual_temp_Tarragona.png)
+
+Figure 1: Module types of oceanobs
 
 The output of the WaterFrame.barplot function is a matplotlib.AxesSubplot so you could stylize the figure with the functions and properties of matplotlib.
 

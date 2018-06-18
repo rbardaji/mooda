@@ -55,7 +55,8 @@ df['TEMP_QC'] = 0
 # Creation of WaterFrame
 wf = WaterFrame()
 wf.data = df.copy()
-wf.metadata['name'] = 'Test data with errors'
+wf.metadata["name"] = "Test data with errors"
+wf.meaning["TEMP"] = "Seawater temperature"
 units = {'units': 'degree Celsius'}
 wf.meaning['TEMP'] = units
 

@@ -1,4 +1,8 @@
-### Python ###
-# Byte-compiled / optimized / DLL files
+# Compiled python modules.
 *.pyc
-__pycache__/ (any folder anywhere with that name)
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
