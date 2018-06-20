@@ -92,5 +92,6 @@
         "widi",
         "xkcd",
         "xticklabels"
-    ]
+    ],
+    "python.pythonPath": "C:\\Users\\rbard\\Anaconda3\\python.exe"
 }
