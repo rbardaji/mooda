@@ -40,7 +40,7 @@ The compatible input data are from the following observatories:
 
 * [Git Repository Structure](/docs/github_struct.md): Describes the git repository structure and branching model used for the oceanobs project.
 * [Package Overview](/docs/package.md): The Python package is located in the [oceanobs folder](/oceanobs). This document describes how the python modules within the package have been structured.
-* [Installation]: Step by step manual of the installation of oceanobs. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
+* [Installation](/docs/installation.md): Step by step manual of the installation of oceanobs. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
 * [API reference](/docs/api.md): Explanation of the modules and functions of the package.
 * [Examples](/docs/examples/index_examples.md): Set of examples to use oceanobs by writing python code or running MOODA.
 * [Version log](/docs/news.md)

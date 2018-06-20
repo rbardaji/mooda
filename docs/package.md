@@ -24,3 +24,5 @@ Oceanobs can also read netCDF files (with SeaDataNet format) and serialized Wate
 Analysis modules are located in the root of the package. Right now, we have waterframe.py, that contains the code of the WaterFrame object, and plotmap.py, that is a module to make data visualization on a static map.
 
 App modules are located in oceanobs/app/[name of the app] folder. The idea is that each app will be placed in a different folder inside oceanobs/app folder. We have developed an app called "Module for Ocean Observatory Data Analysis" (MOODA). With MOODA, users could use most of the oceanobs package functionalities without the need of write code.
+
+Return to [main page](../README.md).
