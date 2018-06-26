@@ -60,12 +60,9 @@ plt.show()
 
 Output:
 
-<center>
-    <figure>
-        <img src="../img/examples/map/obsea_point.png" alt="Module types of oceanobs">
-        <figcaption> Figure 1: Position of OBSEA on the Mediterranean Sea</figcaption>
-    </figure>
-</center>
+![Map with OBSEA position](../img/examples/map/obsea_point.png)
+
+Figure 1: Position of OBSEA on the Mediterranean Sea
 
 The complete code:
 

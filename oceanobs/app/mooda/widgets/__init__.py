@@ -7,7 +7,7 @@ from oceanobs.app.mooda.widgets.scattermatrixplotwidget \
     import ScatterMatrixPlotWidget
 from oceanobs.app.mooda.widgets.qcplotwidget import QCPlotWidget
 from oceanobs.app.mooda.widgets.tsplotwidget import TSPlotWidget
-from oceanobs.app.mooda.widgets.qcbarploteidget import QCBarPlotWidget
+from oceanobs.app.mooda.widgets.qcbarplotwidget import QCBarPlotWidget
 from oceanobs.app.mooda.widgets.spectrogramplotwidget \
     import SpectrogramPlotWidget
 from oceanobs.app.mooda.widgets.textframe import TextFrame

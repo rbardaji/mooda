@@ -10,7 +10,7 @@ The main problem when analyzing marine data from different research infrastructu
 
 Another problem with the marine data is the Quality Control (QC). Some platforms offer to download a processed data set with QC Flags, but others, like [EMSODev](http://www.emsodev.eu), only give the option to download raw data. In some occasions, for an environmental scientist, it is hard to discriminate if data is adequate for a particular study.
 
-*oceanobs* offers the possibility to open data in different formats and vocabularies. With *oceanobs*, the original data are translated into a WaterFrame object. Thus, all data analysis functions can be used independently of the data source format. 
+*oceanobs* offers the possibility to open data in different formats and vocabularies. With *oceanobs*, the original data are translated into a WaterFrame object. Thus, all data analysis functions can be used independently of the data source format.
 
 Some of the features that *oceanobs* offers are:
 

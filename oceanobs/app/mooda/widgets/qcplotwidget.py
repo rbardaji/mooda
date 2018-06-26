@@ -6,6 +6,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT \
 from PyQt5.QtWidgets import QWidget, QToolBar, QAction, QVBoxLayout
 from PyQt5.QtGui import QIcon
 import seaborn as sms
+import os
 
 
 class QCPlotWidget(QWidget):
@@ -40,6 +41,9 @@ class QCPlotWidget(QWidget):
         self.initUI()
 
     def initUI(self):
+        path_icon = str(
+            os.path.dirname(os.path.abspath(__file__))) + \
+                    "\\..\\icon\\"
 
         # Canvas
         self.plotCanvas = FigureCanvas(self.fig)
@@ -51,10 +55,10 @@ class QCPlotWidget(QWidget):
         # Custom Toolbar
         actionToolbar = QToolBar(self)
         # - Actions -
-        refreshAct = QAction(QIcon('oceanobs//app//mooda//icon//refresh.png'),
+        refreshAct = QAction(QIcon(path_icon+"refresh.png"),
                              'Refresh', self)
         refreshAct.triggered.connect(self.refreshPlot)
-        closeAct = QAction(QIcon('oceanobs//app//mooda//icon//close.png'),
+        closeAct = QAction(QIcon(path_icon+"close.png"),
                            'Close', self)
         closeAct.triggered.connect(self.hide)
         # - Format -

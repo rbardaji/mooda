@@ -70,6 +70,7 @@
         "pyqt",
         "pyuic",
         "qcbarploteidget",
+        "qcbarplotwidget",
         "qcplotwidget",
         "qcwidget",
         "r'icon",
