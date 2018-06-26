@@ -17,5 +17,3 @@ Now, you only need to install the package directly from the downloaded folder. G
 ```bat
 python setup.py install
 ```
-
-Return to [main page](../README.md).
