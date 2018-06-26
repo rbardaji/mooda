@@ -60,7 +60,7 @@ plt.show()
 
 Output:
 
-![Map with OBSEA position](../img/examples/map/obsea_point.png)
+![Map with OBSEA position](../img/examples/map/obsea_point.PNG)
 
 Figure 1: Position of OBSEA on the Mediterranean Sea
 
