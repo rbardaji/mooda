@@ -1,3 +1,4 @@
+import os
 from numpy import timedelta64
 import seaborn as sms
 import matplotlib.pyplot as plt
@@ -9,7 +10,6 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QAction, QComboBox, QLabel, QSpinBox, QToolBar,
                              QVBoxLayout, QWidget)
-import os
 
 
 class TSPlotWidget(QWidget):

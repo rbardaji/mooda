@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg \
     as FigureCanvas
@@ -6,7 +7,6 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT \
 from PyQt5.QtWidgets import QWidget, QToolBar, QAction, QVBoxLayout
 from PyQt5.QtGui import QIcon
 import seaborn as sms
-import os
 
 
 class QCPlotWidget(QWidget):
