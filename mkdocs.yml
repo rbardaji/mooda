@@ -1,6 +1,6 @@
 site_name: oceanobs
 pages:
-    - Home: ../README.md
+    - Home: index.md
     - Installation: installation.md
     - Examples: /examples/index_examples.md
     - Package overview: package.md
