@@ -12,19 +12,19 @@ Customarily, we open MOODA from a terminal just writing "mooda":
 
 Now we load the NetCDF file. Click on File->Open and look for the file downloaded from EMODnet (see Figure 1).
 
-![File, open](../img/examples/mooda/file_open.png)
+![File, open](../img/examples/mooda/file_open.PNG)
 
 Figure 1: File -> Open
 
 The file contains the parameter "seawater temperature" with the name "TEMP," but also it contains other parameters. Passing the cursor by the name of the parameters, a little more information will appear on the screen. MOODA automatically creates a bar graph with the amount of data with each QC flag.
 
-![MOODA main page](../img/examples/mooda/main_page_tarragona.png)
+![MOODA main page](../img/examples/mooda/main_page_tarragona.PNG)
 
 Figure 2: Main page
 
 Since we only want to use the water temperature, we will eliminate the other parameters to reduce the amount of RAM that MOODA needs to work with the file information. Click on *Data*->*Remove parameter* and select all the parameters that are not necessary. Next, click on *all* to delete all data of the selected parameters, and finally, *Apply* (view Figure 3.)
 
-![MOODA remove parameters](../img/examples/mooda/remove_parameters_not_temp.png)
+![MOODA remove parameters](../img/examples/mooda/remove_parameters_not_temp.PNG)
 
 Figure 3: Remove parameters
 
@@ -32,12 +32,12 @@ In this case, the data has already been preprocessed and already passed some QC 
 
 We are only going to work with good data so we will remove all NaN (Not a Number) values. Click on the *TEMP* parameter, and the on *Use QC Flags = 0 and 1*. Finally, click on *Apply* (view Figure 4.)
 
-![MOODA only temp](../img/examples/mooda/remove_qc_not_1.png)
+![MOODA only temp](../img/examples/mooda/remove_qc_not_1.PNG)
 
 Figure 4: Remove data with QC Flag different to 0 and 1
 
 Now, click on *TEMP* of the *Data list* and MOODA will create a graph with the time series. Figure 5 shows the result.
 
-![MOODA temp time series](../img/examples/mooda/temp_ts.png)
+![MOODA temp time series](../img/examples/mooda/temp_ts.PNG)
 
 Figure 5: Seawater temperature time series
