@@ -1,36 +1,26 @@
-# Analyze a water temperature time series from netCDF files
+# Analyze a water temperature time series from netCDF files with MOODA
 
-In this example, we will discover if the average temperature of the sea water near Tarragona (Spain) has increased or decreased in recent years. We are going to use the MOODA app.
+In this example, we will play with a sea water temperature time series of a mooring system near Tarragona (Spain.) We are going to use the MOODA app.
 
 Data comes from a netCDF file of [EMODnet](http://www.emodnet.eu/). EMODnet is a network of organizations that make marine data with European format standards (such as SeaDataNet netCDF standards) freely available. For this example, we have to download the "reprocessed data" from 1992 to 2018 of the [Tarragona-coast-buoy](http://www.emodnet-physics.eu/map/platinfo/piroosdownload.aspx?platformid=28150). You need to register (it is free!) to download the file but you don't want to sign in EMODnet, you can download a monthly period.
 
-Customarily, we open MOODA as follows:
+Customarily, we open MOODA from a terminal just writing "mooda":
 
- -- OPEN MOODA
+```bash
+> mooda
+```
 
-Now we load the NetCDF file path location. Click on File->Open and find the file downloaded from EMODnet (see Figure 1).
+Now we load the NetCDF file. Click on File->Open and look for the file downloaded from EMODnet (see Figure 1).
 
 ![File, open](../img/examples/mooda/file_open.png)
 
 Figure 1: File -> Open
 
-The file contains the parameter "seawater temperature" with the name "TEMP," but it also has other parameters. In fact, the file contains so many parameters that consume a lot of memory.
+The file contains the parameter "seawater temperature" with the name "TEMP," but also it contains other parameters. Passing the cursor by the name of the parameters, a little more information will appear on the screen.
 
 ![MOODA main page](../img/examples/mooda/main_page_tarragona.png)
 
 Figure 2: Main page
-
-```python
-print("Parameters:", wf.parameters())
-print("Memory usage:", wf.memory_usage()/10**6, "MBytes")
-```
-
-Output:
-
-```bash
-Parameters: ['VAVH', 'TEMP', 'VT110', 'VHM0', 'VHZA', 'VZMX', 'VAVT', 'VH110', 'VMDR', 'VTPK', 'VTZA', 'VTM02']
-Memory usage: 83.35604 MBytes
-```
 
 Since we only want to use the water temperature, we will eliminate other parameters to reduce the size of the object. Original data has already been processed by its source and data considered as good was marked with QC Flag = 1. We are only going to use the accurate data. We will also remove all NaN (Not a Number) values. Now the memory consumption of our object is much smaller.
 
