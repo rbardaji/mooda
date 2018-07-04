@@ -11,6 +11,10 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 
 These are new features and improvements of note in each release.
 
+## V2.0.0 (June, 2018)
+
+Complete new version. Not compatible with previous version.
+
 ## v1.1.1 (January 11, 2018)
 
 A new version of oceanobs with incompatible API changes. We deleted observatory.py to simplifier the code. The philosophy of the package is the previous one, but we mixed the access modules and the analysis modules into a new module called inWater.py.
@@ -403,7 +407,3 @@ Set of libraries to analyze EMODnet and OBSEA data easily.
 			* show_slicing(): It shows the slicing options.
 			* accept_slicing(): It is the data slicing process.
 		* open_gui(): It opens the GUI.
-
-## V2.0.0 (June, 2017)
-
-Complete new version. Not compatible with previous version.

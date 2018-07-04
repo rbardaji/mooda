@@ -34,7 +34,7 @@ The compatible input data are from the following observatories:
 
 *oceanobs* contains a Graphical User Interface (GUI) called Module for Ocean Observatory Data Analysis (**MOODA**).
 
-![MOODA screenshot](/docs/img/home/mooda_screenshot.png)
+![MOODA screenshot](/docs/img/home/mooda_screenshot.PNG)
 
 # More information
 
