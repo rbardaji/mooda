@@ -12,7 +12,7 @@ Customarily, we open MOODA from a terminal just writing "mooda":
 
 Now we load the pickle file. Click on **File->Open** and look for the file. You should select **"*.pkl"** to view the pickle files (see Figure 1).
 
-![Opening the file](../img/examples/mooda/open_bad_Temp.PNG)
+![Opening the file](../img/examples/mooda/open_bad_temp.PNG)
 
 Figure 1: Selection of *.pkl files
 
