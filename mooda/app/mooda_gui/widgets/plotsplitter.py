@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QListWidget, QPushButton,
                              QVBoxLayout, QSplitter, QGroupBox, QRadioButton,
                              QAbstractItemView)
 from PyQt5.QtCore import pyqtSignal, Qt
-from oceanobs import WaterFrame
-from oceanobs.app.mooda.widgets import (DropWidget, QCWidget, RenameWidget,
+from mooda import WaterFrame
+from mooda.app.mooda_gui.widgets import (DropWidget, QCWidget, RenameWidget,
                                         ResampleWidget, SliceWidget,
                                         ScatterMatrixPlotWidget, QCPlotWidget,
                                         TSPlotWidget, QCBarPlotWidget,

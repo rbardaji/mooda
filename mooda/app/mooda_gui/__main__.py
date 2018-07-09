@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from oceanobs.app.mooda.widgets import MOODA
+from mooda.app.mooda_gui.widgets import MOODA
 
 
 def main():

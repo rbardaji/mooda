@@ -1,3 +1,3 @@
-from oceanobs.waterframe import WaterFrame
-from oceanobs.plotmap import PlotMap
+from mooda.waterframe import WaterFrame
+from mooda.plotmap import PlotMap
 

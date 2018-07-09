@@ -1,7 +1,7 @@
 import ast
 from io import StringIO
 import requests
-from oceanobs import WaterFrame
+from mooda import WaterFrame
 import pandas as pd
 
 

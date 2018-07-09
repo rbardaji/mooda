@@ -1,16 +1,16 @@
-from oceanobs.app.mooda.widgets.dropwidget import DropWidget
-from oceanobs.app.mooda.widgets.qcwidget import QCWidget
-from oceanobs.app.mooda.widgets.renamewidget import RenameWidget
-from oceanobs.app.mooda.widgets.resamplewidget import ResampleWidget
-from oceanobs.app.mooda.widgets.slicewidget import SliceWidget
-from oceanobs.app.mooda.widgets.scattermatrixplotwidget \
+from mooda.app.mooda_gui.widgets.dropwidget import DropWidget
+from mooda.app.mooda_gui.widgets.qcwidget import QCWidget
+from mooda.app.mooda_gui.widgets.renamewidget import RenameWidget
+from mooda.app.mooda_gui.widgets.resamplewidget import ResampleWidget
+from mooda.app.mooda_gui.widgets.slicewidget import SliceWidget
+from mooda.app.mooda_gui.widgets.scattermatrixplotwidget \
     import ScatterMatrixPlotWidget
-from oceanobs.app.mooda.widgets.qcplotwidget import QCPlotWidget
-from oceanobs.app.mooda.widgets.tsplotwidget import TSPlotWidget
-from oceanobs.app.mooda.widgets.qcbarplotwidget import QCBarPlotWidget
-from oceanobs.app.mooda.widgets.spectrogramplotwidget \
+from mooda.app.mooda_gui.widgets.qcplotwidget import QCPlotWidget
+from mooda.app.mooda_gui.widgets.tsplotwidget import TSPlotWidget
+from mooda.app.mooda_gui.widgets.qcbarplotwidget import QCBarPlotWidget
+from mooda.app.mooda_gui.widgets.spectrogramplotwidget \
     import SpectrogramPlotWidget
-from oceanobs.app.mooda.widgets.textframe import TextFrame
-from oceanobs.app.mooda.widgets.plotsplitter import PlotSplitter
-from oceanobs.app.mooda.widgets.egimdownloaderframe import EgimDownloaderFrame
-from oceanobs.app.mooda.widgets.mainwindow import MOODA
+from mooda.app.mooda_gui.widgets.textframe import TextFrame
+from mooda.app.mooda_gui.widgets.plotsplitter import PlotSplitter
+from mooda.app.mooda_gui.widgets.egimdownloaderframe import EgimDownloaderFrame
+from mooda.app.mooda_gui.widgets.mainwindow import MOODA

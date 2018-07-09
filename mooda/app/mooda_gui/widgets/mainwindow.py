@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import (QMainWindow, QAction, qApp, QSplitter,
                              QFileDialog, QMenu)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QDateTime, Qt
-from oceanobs.app.mooda.widgets import (TextFrame, PlotSplitter,
-                                        EgimDownloaderFrame)
-from oceanobs import WaterFrame
+from mooda.app.mooda_gui.widgets import (TextFrame, PlotSplitter,
+                                         EgimDownloaderFrame)
+from mooda import WaterFrame
 
 
 class MOODA(QMainWindow):

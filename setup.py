@@ -3,9 +3,9 @@ from distutils.core import setup
 from setuptools import find_packages
 
 
-NAME = 'oceanobs'
-VERSION = '2.0.0'
-DESCRIPTION = 'Package to analyze ocean observatories data.'
+NAME = 'mooda'
+VERSION = '0.0.1'
+DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 README_FILE = os.path.join(os.path.dirname(__file__), 'README.md')
 LONG_DESCRIPTION = open(README_FILE).read()
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
@@ -32,7 +32,7 @@ AUTHOR_EMAIL = 'rbardaji@gmail.com'
 LICENSE = 'MIT'
 PACKAGES = find_packages()
 requirements = ['requirements-waterframe.txt',
-                'requirements-app-mooda.txt',
+                'requirements-app-mooda_gui.txt',
                 'requirements-access-egim.txt']
 INSTALL_REQUIRES = sorted(
     set(
@@ -40,7 +40,8 @@ INSTALL_REQUIRES = sorted(
         for file in (os.path.join(os.path.dirname(__file__), file)
                      for file in requirements)
         for line in open(file)) - {''})
-ENTRY_POINTS = {'gui_scripts': ['mooda = oceanobs.app.mooda.__main__:main']}
+ENTRY_POINTS = {
+    'gui_scripts': ['mooda = oceanobs.app.mooda_gui.__main__:main']}
 
 setup(name=NAME,
       version=VERSION,

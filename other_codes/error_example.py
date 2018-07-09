@@ -1,4 +1,4 @@
-from oceanobs import WaterFrame
+from mooda import WaterFrame
 import matplotlib.pyplot as plt
 import matplotlib.style as style
 

@@ -1,10 +1,10 @@
-import oceanobs as oc
+import mooda
 import matplotlib.pyplot as plt
 import matplotlib.style as style
 
 style.use('ggplot')
 
-wf = oc.WaterFrame()
+wf = mooda.WaterFrame()
 wf.from_netcdf(r"C:\Users\rbard\Desktop\Tarragona-coast-buoy\IR_TS_MO_Tarragona-coast-buoy.nc")
 
 print("Parameters:", wf.parameters())

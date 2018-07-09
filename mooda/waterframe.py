@@ -758,8 +758,9 @@ class WaterFrame:
             self.data.set_index('TIME', inplace=True)
 
         self.data.sort_index(inplace=True)
-        datetime_start = datetime.datetime.strptime(start, '%d/%m/%Y %H:%M')
-        datetime_end = datetime.datetime.strptime(end, '%d/%m/%Y %H:%M')
+        datetime_start = datetime.datetime.strptime(start, '%Y%m%d%H%M%S')
+        datetime_end = datetime.datetime.strptime(end, '%Y%m%d%H%M%S')
+            
         start_slice = self.data.index.searchsorted(datetime_start)
         end_slice = self.data.index.searchsorted(datetime_end)
         self.data = self.data.ix[start_slice:end_slice]

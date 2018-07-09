@@ -1,8 +1,8 @@
-from oceanobs.access import EGIM
+from mooda.access import EGIM
 import matplotlib.pylab as plt
 
-login = "YOUR LOGIN"
-password = "YOUR PASSWORD"
+login = "emsodev"
+password = "Emsodev2017"
 egim = EGIM(login, password)
 
 code, observatories = egim.observatories()

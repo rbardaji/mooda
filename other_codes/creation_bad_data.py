@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from oceanobs import WaterFrame
+from mooda import WaterFrame
 
 dates = pd.date_range(start='20180101', end='20180131', freq='T')
 

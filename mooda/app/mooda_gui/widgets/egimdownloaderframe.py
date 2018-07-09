@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import (QFrame, QPushButton, QListWidget,
                              QWidget, QVBoxLayout, QHBoxLayout, QInputDialog,
                              QLineEdit)
 from PyQt5.QtCore import pyqtSignal, QThread, QTime, QDateTime, QDate
-from oceanobs import WaterFrame
-from oceanobs.access import EGIM
+from mooda import WaterFrame
+from mooda.access import EGIM
 
 
 class EgimDownloaderFrame(QFrame):
