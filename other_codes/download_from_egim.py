@@ -1,8 +1,8 @@
 from mooda.access import EGIM
 import matplotlib.pylab as plt
 
-login = "emsodev"
-password = "Emsodev2017"
+login = "YOUR LOGGIN"
+password = "YOUR PASSWORD"
 egim = EGIM(login, password)
 
 code, observatories = egim.observatories()

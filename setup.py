@@ -26,7 +26,7 @@ KEYWORDS = ['ocean',
             'OBSEA',
             'EMODnet',
             'EMSO']
-URL = 'https://github.com/rbardaji/oceanobs'
+URL = 'https://github.com/rbardaji/mooda'
 AUTHOR = 'Raul Bardaji Benach'
 AUTHOR_EMAIL = 'rbardaji@gmail.com'
 LICENSE = 'MIT'
@@ -41,7 +41,7 @@ INSTALL_REQUIRES = sorted(
                      for file in requirements)
         for line in open(file)) - {''})
 ENTRY_POINTS = {
-    'gui_scripts': ['mooda = oceanobs.app.mooda_gui.__main__:main']}
+    'gui_scripts': ['mooda = mooda.app.mooda_gui.__main__:main']}
 
 setup(name=NAME,
       version=VERSION,
