@@ -244,7 +244,7 @@ Returns | Description | Type
 --- | --- | ---
 True/False | It indicates if the process was successfully. | bool
 
-### WaterFrame.slice(*start*, *end*)
+### WaterFrame.slice_temp(*start*, *end*)
 
 Delete data outside the time interval.
 

@@ -2,10 +2,9 @@
 
 If you are not a regular user of GitHub, it is possible that the structure of data and directories in this repository is confusing. For this reason, we will explain that it contains each folder of the project and its most essential files.
 
-The GitHub repository of the oceanobs project is structured as follows:
+The GitHub repository of the mooda project is structured as follows:
 
-    oceanobs
-    ├─ .vscode
+    mooda
     ├─ docs
     |   ├─ example_data
     |   ├─ examples
@@ -18,10 +17,10 @@ The GitHub repository of the oceanobs project is structured as follows:
     |       |   └─ pickle
     |       ├─ home
     |       └─ package
-    ├─ oceanobs
+    ├─ mooda
     |   ├─ access
     |   └─ app
-    |       └─ mooda
+    |       └─ mooda_gui
     ├─ other codes
     └─ tests
         └─ data
@@ -41,7 +40,6 @@ Most of the files that are in the root contain code or information specific to g
 
 The directories contain the following information:
 
-* [.vscode](../.vscode): If you use the oceanobs package with the Visual Studio Code editor, maybe this folder could be useful. Here, you can find the settings that we use.
 * [docs](../docs): It contains the texts that are displayed on the [documentation site](https://oceanobs.readthedocs.io/).
 * [docs/example_data](../docs/example_data): It contains the data files used in the example documentation.
 * [docs/examples](../docs/examples): It contains the texts of the example documentation.
@@ -49,8 +47,6 @@ The directories contain the following information:
 * [docs/img/examples](../docs/img/examples): It contains the images of the example documentation.
 * [docs/img/home](../docs/img/home): It contains the images of the main page documentation.
 * [docs/img/package](../docs/img/package): It contains the images of the package overview documentation.
-* [oceanobs](../oceanobs): **It contains the oceanobs python package.**
+* [mooda](../mooda): **It contains the oceanobs python package.**
 * [tests](../tests): It contains the python code to test the oceanobs package. We are not using any standard to check oceanobs. We write our test routines.
 * [other_codes](../other_codes): It contains a set of python scripts that uses the oceanobs package.
-
-Return to [main page](../README.md).

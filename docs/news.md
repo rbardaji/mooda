@@ -11,6 +11,10 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 
 These are new features and improvements of note in each release.
 
+## oceanobs is now mooda - mooda v0.0.1 (July, 2018)
+
+Due to the requirements of the EMSODEV project, the package had to be renamed to "mooda." So, the directory where the MOODA app was, is now called as "mooda_gui."  The release count will start again from scratch, calling the first release as "mooda v0.0.1."
+
 ## V2.0.0 (June, 2018)
 
 Complete new version. Not compatible with previous version.
