@@ -8,7 +8,7 @@ VERSION = '0.0.1'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 README_FILE = os.path.join(os.path.dirname(__file__), 'README.md')
 LONG_DESCRIPTION = open(README_FILE).read()
-CLASSIFIERS = ['Development Status :: 3 - Alpha',
+CLASSIFIERS = ['Development Status :: 4 - Beta',
                'Environment :: X11 Applications :: Qt',
                'Environment :: Console',
                'Natural Language :: English',

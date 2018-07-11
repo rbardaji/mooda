@@ -1,6 +1,6 @@
 # API Reference
 
-This page gives an overview of all public pandas objects, functions and methods. All classes and functions exposed in oceanobs.* namespace are public.
+This page gives an overview of all public pandas objects, functions and methods. All classes and functions exposed in mooda.* namespace are public.
 
 ## WaterFrame
 

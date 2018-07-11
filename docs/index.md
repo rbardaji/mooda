@@ -12,8 +12,6 @@ The package is designed to be open, adaptable and scalable allowing future contr
 
 This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
 
-Check the documentation on [oceanobs.readthedocs.io](http://oceanobs.readthedocs.io/).
-
 ## Why use *mooda*
 
 The main problem when analyzing marine data from different research infrastructures is th lack of a unique data format and nomenclature. Regardless of the type of file i.e., CSV, NetCDF, HDF, XML, names that describe measurements (vocabularies) may vary depending on the provider/source. Although there is some effort to produce and provide documentation with standard vocabulary, until now, no consensus has been reached concerning the use of a common nomenclature to describe the measurements. For example, water temperature values can be listed as ‘TEMP,’ ‘temp,’ ‘sea_temp,’ or ‘temperature.’
@@ -34,14 +32,14 @@ For the moment, the compatible source data can be from the following observatori
 
 *Mooda* can be executed through a graphical interface with which a large part of the implemented functions can be performed.
 
-![MOODA screenshot](/docs/img/home/mooda_screenshot.png)
+![MOODA screenshot](https://github.com/rbardaji/mooda/blob/master/docs/img/home/mooda_screenshot.png?raw=true)
 
 ## More information
 
-* [Git Repository Structure](github_struct.md): Describes the git repository structure and branching model used for the oceanobs project.
+* [Git Repository Structure](github_struct.md): Describes the git repository structure and branching model used for the mooda project.
 * [Package Overview](package.md): The Python package is located in the [mooda folder](https://github.com/rbardaji/mooda/tree/master/mooda). This document describes how the python modules within the package have been structured.
-* [Installation](installation.md): Step by step manual of the installation of oceanobs. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
+* [Installation](installation.md): Step by step manual of the installation of mooda. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
 * [API reference](api.md): Explanation of the modules and functions of the package.
-* [Examples](./examples/index_examples.md): Set of examples to use oceanobs by writing python code or running the MOODA GUI.
+* [Examples](./examples/index_examples.md): Set of examples to use mooda by writing python code or running the MOODA GUI.
 * [Version log](news.md)
 * [License](https://github.com/rbardaji/mooda/blob/master/LICENSE)

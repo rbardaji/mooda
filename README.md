@@ -12,7 +12,7 @@ The package is designed to be open, adaptable and scalable allowing future contr
 
 This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
 
-Check the documentation on [oceanobs.readthedocs.io](http://oceanobs.readthedocs.io/).
+Check the documentation on [mooda.readthedocs.io](http://mooda.readthedocs.io/).
 
 ## Why use *mooda*
 
@@ -38,10 +38,10 @@ For the moment, the compatible source data can be from the following observatori
 
 ## More information
 
-* [Git Repository Structure](/docs/github_struct.md): Describes the git repository structure and branching model used for the oceanobs project.
+* [Git Repository Structure](/docs/github_struct.md): Describes the git repository structure and branching model used for the mooda project.
 * [Package Overview](/docs/package.md): The Python package is located in the [mooda folder](/mooda). This document describes how the python modules within the package have been structured.
-* [Installation](/docs/installation.md): Step by step manual of the installation of oceanobs. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
+* [Installation](/docs/installation.md): Step by step manual of the installation of mooda. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
 * [API reference](/docs/api.md): Explanation of the modules and functions of the package.
-* [Examples](/docs/examples/index_examples.md): Set of examples to use oceanobs by writing python code or running MOODA.
+* [Examples](/docs/examples/index_examples.md): Set of examples to use mooda by writing python code or running MOODA.
 * [Version log](/docs/news.md)
 * [License](LICENSE)

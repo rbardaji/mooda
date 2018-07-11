@@ -10,15 +10,15 @@ Officially [Python](https://www.python.org/downloads/) >= 3.4.
 
 ## Installing with pip
 
-You can install oceanobs via pip with the following command:
+You can install mooda via pip with the following command:
 
 ```bat
-pip install https://github.com/rbardaji/oceanobs/archive/v2.0.0-beta.zip
+pip install mooda
 ```
 
 ## Installing from source
 
-There are many ways to clone or download the source code from [GitHub](https://github.com/rbardaji/oceanobs) on your computer. If you do not have a git client, you can press the *Download ZIP* button, which is located under the *Clone or Download* drop-down of the [GitHub page](https://github.com/rbardaji/oceanobs).
+There are many ways to clone or download the source code from [GitHub](https://github.com/rbardaji/mooda) on your computer. If you do not have a git client, you can press the *Download ZIP* button, which is located under the *Clone or Download* drop-down of the [GitHub page](https://github.com/rbardaji/mooda).
 
 Now, you only need to install the package directly from the downloaded folder. Go to the downloaded folder and write the following instruction in a terminal.
 
