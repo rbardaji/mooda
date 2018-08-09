@@ -7,7 +7,22 @@ NAME = 'mooda'
 VERSION = '0.0.1'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 README_FILE = os.path.join(os.path.dirname(__file__), 'README.md')
-LONG_DESCRIPTION = open(README_FILE).read()
+LONG_DESCRIPTION = """
+MOODA - Module for Ocean Observatory Data Analysis
+
+Mooda is a python package designed mainly for oceanographers and marine science students. It is based on a power scripting system for:
+
+direct data access;
+data filtering methods;
+complex visualization tools;
+quality control generation;
+specific data analysis tools for different scientific disciplines.
+The package is designed to be open, adaptable and scalable allowing future contributions from researchers and developers from all the marine science disciplines.
+
+This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
+
+Check the documentation on [mooda.readthedocs.io](http://mooda.readthedocs.io/).
+"""
 CLASSIFIERS = ['Development Status :: 4 - Beta',
                'Environment :: X11 Applications :: Qt',
                'Environment :: Console',
@@ -40,6 +55,8 @@ INSTALL_REQUIRES = sorted(
         for file in (os.path.join(os.path.dirname(__file__), file)
                      for file in requirements)
         for line in open(file)) - {''})
+EXTRAS_REQUIRE = {'gui': ['pyqt5']}
+
 ENTRY_POINTS = {
     'gui_scripts': ['mooda = mooda.app.mooda_gui.__main__:main']}
 
@@ -55,6 +72,7 @@ setup(name=NAME,
       license=LICENSE,
       packages=PACKAGES,
       install_requires=INSTALL_REQUIRES,
+      extras_require=EXTRAS_REQUIRE,
       entry_points=ENTRY_POINTS,
       include_package_data=True,
       zip_safe=False)

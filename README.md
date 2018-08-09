@@ -26,8 +26,8 @@ Another problem with the marine data is the Quality Control (QC). Some platforms
 
 For the moment, the compatible source data can be from the following observatories:
 
-* [EMSO](http://www.emso-eu.org/) Generic Instrument Module ([EGIM](http://www.emsodev.eu)).
-* [JERICO](http://www.jerico-ri.eu/data-access/) in NetCDF.
+* [EMSO](http://www.emso-eu.org/) Generic Instrument Module ([EGIM](http://www.emsodev.eu));
+* [JERICO](http://www.jerico-ri.eu/data-access/) in NetCDF;
 * Mooring time series from [EMODNET-physics](http://www.emodnet-physics.eu/Map/) in NetCDF.
 
 ## No knowledge of Python is needed

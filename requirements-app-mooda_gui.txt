@@ -1,4 +1,0 @@
-pyqt5
-matplotlib
-seaborn
-numpy>=1.9.0

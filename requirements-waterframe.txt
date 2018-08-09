@@ -4,3 +4,4 @@ matplotlib
 pandas
 numpy>=1.9.0
 xarray
+seaborn

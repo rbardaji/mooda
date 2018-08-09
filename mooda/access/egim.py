@@ -1,12 +1,470 @@
 import ast
+import datetime
 from io import StringIO
 import requests
 from mooda import WaterFrame
 import pandas as pd
+import xarray as xr
 
 
 class EGIM:
     """Class to download EGIM data from the EMSODEV DMP."""
+
+    METADATA_00001 = {'site_code': 'OBSEA',
+                      'platform_code': 'prototype1',
+                      'data_mode': 'D',
+                      'title': ('Test dataset from EMSODEV shallow water test',
+                                'side'),
+                      'summary': ('Test dataset from EMSODEV shallow water',
+                                  'test side in the Mediterranean Sea'),
+                      'naming_authority': 'UPC-CSIC',
+                      'source': 'subsurface mooring',
+                      'institution': 'EMSO',
+                      'project': 'EMSODEV',
+                      'keywords_vocabulary': 'GCMD Science Keywords',
+                      'comment': 'Test data',
+                      'geospatial_lat_min': '41.182',
+                      'geospatial_lat_max': '41.182',
+                      'geospatial_lat_units': 'degree_north',
+                      'geospatial_lon_min': '1.752',
+                      'geospatial_lon_mX': '1.752',
+                      'geospatial_lon_units': 'degree_east',
+                      'geospatial_vertical_min': '17.841',
+                      'geospatial_vertical_max': '19.879',
+                      'geospatial_vertical_positive': 'down',
+                      'geospatial_vertical_units': 'meter',
+                      'time_coverage_start': '2017-01-27T09:28:57Z',
+                      'time_coverage_end': '2017-04-24T07:11:24Z',
+                      'time_coverage_duration': '',
+                      'time_coverage_resolution': 'PT30S',
+                      'cmd_data_type': 'Station',
+                      'data_type': 'OceanSITES time-series data',
+                      'format_version': '1.3',
+                      'publisher_name': '',
+                      'publisher_email': '',
+                      'publisher_url': '',
+                      'references': ('http://www.oceansites.org,',
+                                     'http://emso.eu'),
+                      'data_assembly_center': '',
+                      'update_interval': 'void',
+                      'license': ('Follows CLIVAR (Climate Variability and',
+                                  'Predictability) standards, cf.',
+                                  'http://www.clivar.org/data/data_policy.php',
+                                  'Data available free of charge. User',
+                                  'assumes all risk for use of data. Uer must',
+                                  'display citation in any publication or',
+                                  'product using data. User must contact PI',
+                                  'prior to any commercial use of data.'),
+                      'citation': ('These data were collected and made freely',
+                                   'available by the EMSODEV project.'),
+                      'acknowledgement': ('This work benefited from the H2020',
+                                          'INFRADEV-3-2015 EMSODEV Project',
+                                          'n°676555.'),
+                      'date_created':
+                      datetime.datetime.utcnow().isoformat()[:-6]+'Z',
+                      'date_modified':
+                      datetime.datetime.utcnow().isoformat()[:-6]+'Z',
+                      'history': 'Data collected and processed with MOODA',
+                      'processing_level': 'Ranges applied, bad data flagged',
+                      'QC_indicator': 'excellent',
+                      'contributor_name': 'EMSODEV project',
+                      'contributor_role': 'consortium',
+                      'contributor_email': ''}
+
+    METADATA_ADCP_21582 = {'sensor_model': 'TELEDYNE RDI Workhorse monitor',
+                           'sensor_manufactured': 'TELEDYNE RD INSTRUMENTS',
+                           'sensor_reference': 'Workhorse_ADCP_21582',
+                           'sensor_serial_number': '21582',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_icListen_1636 = {'sensor_model': 'OceanSonics icListen SB60L-ETH',
+                              'sensor_manufactured': 'Ocean Sonics',
+                              'sensor_reference': 'icListen-1636',
+                              'sensor_serial_number': '1636',
+                              'sensor_mount':
+                              'mounted_on_seafloor_structure_riser',
+                              'sensor_orientation': 'downward',
+                              }
+
+    METADATA_TEMP_SBE37 = {'standard_name': 'sea_water_temperature',
+                           'units': 'degree_Celsius',
+                           'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                           'long_name': '	Temperature of the water column',
+                           'QC_indicator': 'Good data',
+                           'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                           'valid_min': '-5.f',
+                           'valid_max': '45.f',
+                           'ancillary_variables': 'TEMP_QC',
+                           'history': '',
+                           'uncertainty': '0.002f',
+                           'accuracy': '0.002f',
+                           'precision': '0.002f',
+                           'resolution': '0.002f',
+                           'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                           'DM_indicator': 'D',
+                           'reference_scale': 'ITS-90',
+                           'sensor_model': 'SBE37-SIP-P7000-RS232',
+                           'sensor_manufactured': 'Sea-Bird Scientific',
+                           'sensor_reference': '37-14998',
+                           'sensor_serial_number': '14998',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_TEMP_AADI4381 = {'standard_name': 'sea_water_temperature',
+                              'units': 'degree_Celsius',
+                              'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                              'long_name': 'Temperature of the water column',
+                              'QC_indicator': 'Good data',
+                              'processing_level': ('Ranges applied, bad data',
+                                                   'flagged'),
+                              'valid_min': '-5.f',
+                              'valid_max': '40.f',
+                              'ancillary_variables': 'TEMP_QC',
+                              'history': '',
+                              'uncertainty': '0.03f',
+                              'accuracy': '0.03f',
+                              'precision': '0.03f',
+                              'resolution': '0.01f',
+                              'cell_methods': ('TIME: mean DEPTH: point',
+                                               'LATITUDE: point LONGITUDE:',
+                                               'point'),
+                              'DM_indicator': 'D',
+                              'reference_scale': 'ITS-90',
+                              'sensor_model': 'AADI-3005214831 DW4831',
+                              'sensor_manufactured': ('Aanderaa Data',
+                                                      'Instruments AS'),
+                              'sensor_reference': '4381-606',
+                              'sensor_serial_number': '606',
+                              'sensor_mount':
+                              'mounted_on_seafloor_structure_riser',
+                              'sensor_orientation': 'downward',
+                              }
+
+    METADATA_TEMP_QC = {'long_name': 'quality flag for sea water temperature',
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_PSAL_SBE37 = {'standard_name': 'sea_water_practical_salinity',
+                           'units': 'PSU',
+                           'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                           'long_name': '	Salinity of the water column',
+                           'QC_indicator': 'Good data',
+                           'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                           'valid_min': '33.f',
+                           'valid_max': '37.f',
+                           'ancillary_variables': 'PSAL_QC',
+                           'history': '',
+                           'uncertainty': '',
+                           'accuracy': '',
+                           'precision': '',
+                           'resolution': '',
+                           'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                           'DM_indicator': 'D',
+                           'reference_scale': '',
+                           'sensor_model': 'SBE37-SIP-P7000-RS232',
+                           'sensor_manufactured': 'Sea-Bird Scientific',
+                           'sensor_reference': '37-14998',
+                           'sensor_serial_number': '14998',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_PSAL_QC = {'long_name': ('quality flag for sea water practical',
+                                      'salinity'),
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_CNDC_SBE37 = {'standard_name':
+                           'sea_water_electrical_conductivity',
+                           'units': 'S/m',
+                           'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                           'long_name': ('Electrical conductivity of the',
+                                         'water column'),
+                           'QC_indicator': 'Good data',
+                           'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                           'valid_min': '0.f',
+                           'valid_max': '7.f',
+                           'ancillary_variables': 'CNDC_QC',
+                           'history': '',
+                           'uncertainty': '0.0003f',
+                           'accuracy': '0.0003f',
+                           'precision': '0.0003f',
+                           'resolution': '0.0003f',
+                           'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                           'DM_indicator': 'D',
+                           'reference_scale': '',
+                           'sensor_model': 'SBE37-SIP-P7000-RS232',
+                           'sensor_manufactured': 'Sea-Bird Scientific',
+                           'sensor_reference': '37-14998',
+                           'sensor_serial_number': '14998',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_CNDC_QC = {'long_name': ('quality flag for sea water electrical',
+                                      'conductivity'),
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_MPMN_SBE37 = {'standard_name': 'depth',
+                           'units': 'meters',
+                           'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                           'long_name': 'Moored instrument depth',
+                           'QC_indicator': 'Good data',
+                           'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                           'valid_min': '0.f',
+                           'valid_max': '7000.f',
+                           'ancillary_variables': 'MPMN_QC',
+                           'history': '',
+                           'uncertainty': '',
+                           'accuracy': '',
+                           'precision': '',
+                           'resolution': '',
+                           'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                           'DM_indicator': 'D',
+                           'reference_scale': '',
+                           'sensor_model': 'SBE37-SIP-P7000-RS232',
+                           'sensor_manufactured': 'Sea-Bird Scientific',
+                           'sensor_reference': '37-14998',
+                           'sensor_serial_number': '14998',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_MPMN_QC = {'long_name': 'quality flag for instrument depth',
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_SVEL_SBE37 = {'standard_name': 'sea_water_sound_velocity',
+                           'units': 'meters/second',
+                           'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                           'long_name': 'Sound velocity of the water column',
+                           'QC_indicator': 'Good data',
+                           'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                           'valid_min': '',
+                           'valid_max': '',
+                           'ancillary_variables': 'SVEL_QC',
+                           'history': '',
+                           'uncertainty': '',
+                           'accuracy': '',
+                           'precision': '',
+                           'resolution': '',
+                           'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                           'DM_indicator': 'D',
+                           'reference_scale': '',
+                           'sensor_model': 'SBE37-SIP-P7000-RS232',
+                           'sensor_manufactured': 'Sea-Bird Scientific',
+                           'sensor_reference': '37-14998',
+                           'sensor_serial_number': '14998',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_SVEL_QC = {'long_name': ('quality flag for sea water sound',
+                                      'velocity'),
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_PRES_SBE54 = {'standard_name': 'sea_water_pressure',
+                           'units': 'psia',
+                           'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                           'long_name': 'Pressure of water',
+                           'QC_indicator': 'Good data',
+                           'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                           'valid_min': '0.f',
+                           'valid_max': '10000.f',
+                           'ancillary_variables': 'PRES_QC',
+                           'history': '',
+                           'uncertainty': '0.0011f',
+                           'accuracy': '0.0011f',
+                           'precision': '0.0011f',
+                           'resolution': '0.0011f',
+                           'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                           'DM_indicator': 'D',
+                           'reference_scale': '',
+                           'sensor_model': 'SBE54-0049',
+                           'sensor_manufactured': 'Sea-Bird Scientific',
+                           'sensor_reference': '54-0049',
+                           'sensor_serial_number': '0049',
+                           'sensor_mount':
+                           'mounted_on_seafloor_structure_riser',
+                           'sensor_orientation': 'downward',
+                           }
+
+    METADATA_PRES_QC = {'long_name': 'quality flag for sea water pressure',
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_TUR4_NTURTD = {'standard_name': 'turbidity',
+                            'units': 'NTU',
+                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                            'long_name': 'Turbidity of water',
+                            'QC_indicator': 'Good data',
+                            'processing_level': ('Ranges applied, bad data',
+                                                 'flagged'),
+                            'valid_min': '',
+                            'valid_max': '',
+                            'ancillary_variables': 'TUR4_QC',
+                            'history': '',
+                            'uncertainty': '',
+                            'accuracy': '',
+                            'precision': '',
+                            'resolution': '',
+                            'cell_methods': ('TIME: mean DEPTH: point',
+                                             'LATITUDE: point LONGITUDE:',
+                                             'point'),
+                            'DM_indicator': 'D',
+                            'reference_scale': '',
+                            'sensor_model': 'WETlabs ECO NTUrtd',
+                            'sensor_manufactured': 'Sea-Bird Scientific',
+                            'sensor_reference': 'NTURTD-648',
+                            'sensor_serial_number': '648',
+                            'sensor_mount':
+                            'mounted_on_seafloor_structure_riser',
+                            'sensor_orientation': 'horizontal',
+                            }
+
+    METADATA_TUR4_QC = {'long_name': 'quality flag for sea water turbidity',
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_OSAT_AADI4381 = {'standard_name': 'oxygen_saturation',
+                              'units': '%',
+                              'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                              'long_name': 'oxygen saturation of water',
+                              'QC_indicator': 'Good data',
+                              'processing_level': ('Ranges applied, bad data',
+                                                   'flagged'),
+                              'valid_min': '0.f',
+                              'valid_max': '100.f',
+                              'ancillary_variables': 'OSAT_QC',
+                              'history': '',
+                              'uncertainty': '5f',
+                              'accuracy': '5f',
+                              'precision': '5f',
+                              'resolution': '0.4f',
+                              'cell_methods': ('TIME: mean DEPTH: point',
+                                               'LATITUDE: point LONGITUDE:',
+                                               'point'),
+                              'DM_indicator': 'D',
+                              'reference_scale': '',
+                              'sensor_model': 'AADI-3005214831 DW4831',
+                              'sensor_manufactured': 'Aanderaa Data Instruments AS',
+                              'sensor_reference': '4381-606',
+                              'sensor_serial_number': '606',
+                              'sensor_mount':
+                              'mounted_on_seafloor_structure_riser',
+                              'sensor_orientation': 'downward',
+                              }
+
+    METADATA_OSAT_QC = {'long_name': 'quality flag for oxygen saturation',
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
+
+    METADATA_DOX2_AADI4381 = {'standard_name': 'dissolbed_oxygen',
+                              'units': 'microMols / liter',
+                              'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
+                              'long_name': 'moles_of_oxygen_per_unit_mass',
+                              'QC_indicator': 'Good data',
+                              'processing_level': ('Ranges applied, bad data',
+                                                'flagged'),
+                              'valid_min': '0.f',
+                              'valid_max': '500.f',
+                              'ancillary_variables': 'DOX2_QC',
+                              'history': '',
+                              'uncertainty': '8f',
+                              'accuracy': '8f',
+                              'precision': '8f',
+                              'resolution': '2.5f',
+                              'cell_methods': ('TIME: mean DEPTH: point',
+                                            'LATITUDE: point LONGITUDE:',
+                                            'point'),
+                              'DM_indicator': 'D',
+                              'reference_scale': '',
+                              'sensor_model': 'AADI-3005214831 DW4831',
+                              'sensor_manufactured': 'Aanderaa Data  Instruments AS',
+                              'sensor_reference': '4381-606',
+                              'sensor_serial_number': '606',
+                              'sensor_mount':
+                              'mounted_on_seafloor_structure_riser',
+                              'sensor_orientation': 'downward',
+                              }
+
+    METADATA_DOX2_QC = {'long_name': 'quality flag for dissolved oxygen',
+                        'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
+                        'flag_meanings': ('unknown good_data',
+                                          'probably_good_data',
+                                          'potentially_correctable_bad_data',
+                                          'bad_data nominal_value',
+                                          'interpolated_value missing_value'),
+                        }
 
     def __init__(self, login=None, password=None):
         """
@@ -248,7 +706,7 @@ class EGIM:
             return None, None
         if r.status_code == 200:
             answer = r.json()
-            dateList = answer['acousticOobservationDate']
+            dateList = answer['acousticObservationDate']
             return r.status_code, dateList
         else:
             return r.status_code, None
@@ -337,9 +795,9 @@ class EGIM:
         # Change names
         for key in data.keys():
             if key == "depth":
-                wf.data.rename(columns={"depth": "DEPTH"}, inplace=True)
-                wf.data["DEPTH_QC"] = 0
-                wf.meaning['DEPTH'] = {"long_name": "depth", "units": "meters"}
+                wf.data.rename(columns={"depth": "MPMN"}, inplace=True)
+                wf.data["MPMN_QC"] = 0
+                wf.meaning['MPMN'] = {"long_name": "depth", "units": "meters"}
             elif key == "salinity":
                 wf.data.rename(columns={"salinity": "PSAL"}, inplace=True)
                 wf.data["PSAL_QC"] = 0
@@ -513,3 +971,93 @@ class EGIM:
         wf.metadata = metadata
 
         return wf
+
+    @staticmethod
+    def to_netcdf(observatory, instrument, data, path):
+        """It creates a netCDF file following the OceanSites standard.
+
+        Parameters
+        ----------
+            path: str
+                Path to save the pickle file.
+        """
+        # Choose observatory metadata
+        if observatory == 'EMSODEV-EGIM-node00001':
+            metadata = EGIM.METADATA_00001
+
+        # Creation of WaterFrame
+        if type(data).__name__ == 'WaterFrame':
+            wf = data
+        else:
+            wf = EGIM.to_waterframe(data, metadata)
+
+        # Creation of QC Flags following OceanSites recomendation
+        for parameter in wf.parameters():
+            # Reset QC Flags to 0
+            wf.reset_flag(key=parameter, flag=0)
+            # Flat test
+            wf.flat_test(key=parameter, window=0, flag=4)
+            # Spike test
+            wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+            # Range test
+            wf.range_test(key=parameter, flag=4)
+            # Change flags from 0 to 1
+            wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+        # Creation of an xarray dataset
+        ds = xr.Dataset(data_vars=wf.data, attrs=metadata)
+
+        # Creation of attr of dataset parameters
+        for key in wf.data.keys():
+            if key == 'TEMP':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    if instrument == '37-14998':
+                        attr = EGIM.METADATA_TEMP_SBE37
+                    elif instrument == '4381-606':
+                        attr = EGIM.METADATA_TEMP_AADI4381
+            if key == 'PSAL':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_PSAL_SBE37
+            if key == 'SVEL':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_SVEL_SBE37
+            if key == 'CNDC':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_CNDC_SBE37
+            if key == 'MPMN':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_MPMN_SBE37
+            if key == 'PRES':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_PRES_SBE54
+            if key == 'TUR4':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_TUR4_NTURTD
+            if key == 'OSAT':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_OSAT_AADI4381
+            if key == 'DOX2':
+                if observatory == 'EMSODEV-EGIM-node00001':
+                    attr = EGIM.METADATA_DOX2_AADI4381
+            if key == 'TEMP_QC':
+                attr = EGIM.METADATA_TEMP_QC
+            if key == 'PSAL_QC':
+                attr = EGIM.METADATA_PSAL_QC
+            if key == 'SVEL_QC':
+                attr = EGIM.METADATA_SVEL_QC
+            if key == 'CNDC_QC':
+                attr = EGIM.METADATA_CNDC_QC
+            if key == 'MPMN_QC':
+                attr = EGIM.METADATA_MPMN_QC
+            if key == 'PRES_QC':
+                attr = EGIM.METADATA_PRES_QC
+            if key == 'TUR4_QC':
+                attr = EGIM.METADATA_TUR4_QC
+            if key == 'OSAT_QC':
+                attr = EGIM.METADATA_OSAT_QC
+            if key == 'DOX2_QC':
+                attr = EGIM.METADATA_DOX2_QC
+            # Add the attrs to the variable
+            ds[key].attrs = attr
+
+        # Creation of the nc file
+        ds.to_netcdf(path)

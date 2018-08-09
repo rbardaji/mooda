@@ -17,6 +17,7 @@ class WaterFrame:
 
     metadata: A dictionary that contains the metadata information of the
     timeserie."""
+
     def __init__(self):
         """It creates the instance following variables:
         data -- A pandas DataFrame that contains the measurement values of the
