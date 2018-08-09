@@ -411,7 +411,8 @@ class EGIM:
                               'DM_indicator': 'D',
                               'reference_scale': '',
                               'sensor_model': 'AADI-3005214831 DW4831',
-                              'sensor_manufactured': 'Aanderaa Data Instruments AS',
+                              'sensor_manufactured': ('Aanderaa Data',
+                                                      'Instruments AS'),
                               'sensor_reference': '4381-606',
                               'sensor_serial_number': '606',
                               'sensor_mount':
@@ -434,7 +435,7 @@ class EGIM:
                               'long_name': 'moles_of_oxygen_per_unit_mass',
                               'QC_indicator': 'Good data',
                               'processing_level': ('Ranges applied, bad data',
-                                                'flagged'),
+                                                   'flagged'),
                               'valid_min': '0.f',
                               'valid_max': '500.f',
                               'ancillary_variables': 'DOX2_QC',
@@ -444,12 +445,13 @@ class EGIM:
                               'precision': '8f',
                               'resolution': '2.5f',
                               'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
-                                            'point'),
+                                               'LATITUDE: point LONGITUDE:',
+                                               'point'),
                               'DM_indicator': 'D',
                               'reference_scale': '',
                               'sensor_model': 'AADI-3005214831 DW4831',
-                              'sensor_manufactured': 'Aanderaa Data  Instruments AS',
+                              'sensor_manufactured': ('Aanderaa Data',
+                                                      'Instruments AS'),
                               'sensor_reference': '4381-606',
                               'sensor_serial_number': '606',
                               'sensor_mount':
@@ -978,8 +980,14 @@ class EGIM:
 
         Parameters
         ----------
+            observatory: str
+                EGIM observatory name.
+            instrument: str
+                Instrument name.
+            data: Pandas dataframe, WaterFrame
+                Data to be saved into a netCDF file.
             path: str
-                Path to save the pickle file.
+                Path to save the netCDF file.
         """
         # Choose observatory metadata
         if observatory == 'EMSODEV-EGIM-node00001':

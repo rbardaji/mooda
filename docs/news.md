@@ -1,7 +1,7 @@
 ﻿
 # Version control
 
-Our last release is [oceanobs v1.1.1](https://github.com/rbardaji/oceanobs/releases). We use [SemVer](http://semver.org/) for versioning.
+Our last release is [mooda v0.0.1](https://github.com/rbardaji/mooda/releases). We use [SemVer](http://semver.org/) for versioning.
 
 Given a version number MAJOR.MINOR.PATCH, increment the:
 

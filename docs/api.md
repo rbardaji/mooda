@@ -435,3 +435,16 @@ metadata | Dictionary with metadata information. | dict
 Returns | Description | Type
 --- | --- | ---
 wf |  Data and metadata formated in a WaterFrame Object. | WaterFrame
+
+### EGIM.to_netcdf(*observatory*, *instrument*, *data*, *path*)
+
+It creates a netCDF file following the [OceanSites](http://archimer.ifremer.fr/doc/00250/36149/34703.pdf) standard.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+instrument | Instrument name. | str
+data | Data to be saved into a netCDF file. | Pandas dataframe, WaterFrame
+path | Path to save the netCDF file | str
+
+
