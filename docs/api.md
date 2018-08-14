@@ -447,4 +447,14 @@ instrument | Instrument name. | str
 data | Data to be saved into a netCDF file. | Pandas dataframe, WaterFrame
 path | Path to save the netCDF file | str
 
+### EGIM.to_csv(*observatory*, *data*, *path*)
 
+From mooda v0.1.0.
+
+It creates a csv file following the OceanSites standard.
+
+Parameters | Description | Type
+--- | --- | ---
+observatory | EGIM observatory name. | str
+data | Data to be saved into a netCDF file. | Pandas dataframe, WaterFrame
+path | Path to save the csv file | str

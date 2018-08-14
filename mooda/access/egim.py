@@ -1069,3 +1069,55 @@ class EGIM:
 
         # Creation of the nc file
         ds.to_netcdf(path)
+
+    @staticmethod
+    def to_csv(observatory, data, path):
+        """It creates a CSV file following the OceanSites standard.
+
+        Parameters
+        ----------
+            observatory: str
+                EGIM observatory name.
+            instrument: str
+                Instrument name.
+            data: Pandas dataframe, WaterFrame
+                Data to be saved into a netCDF file.
+            path: str
+                Path to save the CSV file.
+        """
+        # Choose observatory metadata
+        if observatory == 'EMSODEV-EGIM-node00001':
+            metadata = EGIM.METADATA_00001
+
+        # Creation of WaterFrame
+        if type(data).__name__ == 'WaterFrame':
+            wf = data
+        else:
+            wf = EGIM.to_waterframe(data, metadata)
+
+        # Creation of QC Flags following OceanSites recomendation
+        for parameter in wf.parameters():
+            # Reset QC Flags to 0
+            wf.reset_flag(key=parameter, flag=0)
+            # Flat test
+            wf.flat_test(key=parameter, window=0, flag=4)
+            # Spike test
+            wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+            # Range test
+            wf.range_test(key=parameter, flag=4)
+            # Change flags from 0 to 1
+            wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+
+        # Metadata text creation
+        metadata_text = "# Global attributes;Value"
+        for key, value in metadata.items():
+            metadata += "# " + str(key) + ";" + str(value) + "\n"
+
+        # Creation of the csv file of the data
+        wf.data.to_csv(path=path, sep=";", header=True)
+
+        # Adding the metadata to the file
+        with open(path, 'r+') as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(metadata_text.rstrip('\r\n') + '\n\n\n\n' + content)
