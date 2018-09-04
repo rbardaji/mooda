@@ -13,9 +13,9 @@ class EGIM:
     METADATA_00001 = {'site_code': 'OBSEA',
                       'platform_code': 'prototype1',
                       'data_mode': 'D',
-                      'title': ('Test dataset from EMSODEV shallow water test',
+                      'title': ('Test dataset from EMSODEV shallow water test '
                                 'side'),
-                      'summary': ('Test dataset from EMSODEV shallow water',
+                      'summary': ('Test dataset from EMSODEV shallow water '
                                   'test side in the Mediterranean Sea'),
                       'naming_authority': 'UPC-CSIC',
                       'source': 'subsurface mooring',
@@ -43,22 +43,22 @@ class EGIM:
                       'publisher_name': '',
                       'publisher_email': '',
                       'publisher_url': '',
-                      'references': ('http://www.oceansites.org,',
+                      'references': ('http://www.oceansites.org, '
                                      'http://emso.eu'),
                       'data_assembly_center': '',
                       'update_interval': 'void',
-                      'license': ('Follows CLIVAR (Climate Variability and',
-                                  'Predictability) standards, cf.',
-                                  'http://www.clivar.org/data/data_policy.php',
-                                  'Data available free of charge. User',
-                                  'assumes all risk for use of data. Uer must',
-                                  'display citation in any publication or',
-                                  'product using data. User must contact PI',
+                      'license': ('Follows CLIVAR (Climate Variability and '
+                                  'Predictability) standards, cf. '
+                                  'http://www.clivar.org/data/data_policy.php '
+                                  'Data available free of charge. User '
+                                  'assumes all risk for use of data. Uer must '
+                                  'display citation in any publication or '
+                                  'product using data. User must contact PI '
                                   'prior to any commercial use of data.'),
-                      'citation': ('These data were collected and made freely',
+                      'citation': ('These data were collected and made freely '
                                    'available by the EMSODEV project.'),
-                      'acknowledgement': ('This work benefited from the H2020',
-                                          'INFRADEV-3-2015 EMSODEV Project',
+                      'acknowledgement': ('This work benefited from the H2020 '
+                                          'INFRADEV-3-2015 EMSODEV Project '
                                           'n°676555.'),
                       'date_created':
                       datetime.datetime.utcnow().isoformat()[:-6]+'Z',
@@ -92,9 +92,9 @@ class EGIM:
     METADATA_TEMP_SBE37 = {'standard_name': 'sea_water_temperature',
                            'units': 'degree_Celsius',
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
-                           'long_name': '	Temperature of the water column',
+                           'long_name': ' Temperature of the water column',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data',
+                           'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
                            'valid_min': '-5.f',
                            'valid_max': '45.f',
@@ -104,8 +104,8 @@ class EGIM:
                            'accuracy': '0.002f',
                            'precision': '0.002f',
                            'resolution': '0.002f',
-                           'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
+                           'cell_methods': ('TIME: mean DEPTH: point '
+                                            'LATITUDE: point LONGITUDE: '
                                             'point'),
                            'DM_indicator': 'D',
                            'reference_scale': 'ITS-90',
@@ -123,7 +123,7 @@ class EGIM:
                               'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                               'long_name': 'Temperature of the water column',
                               'QC_indicator': 'Good data',
-                              'processing_level': ('Ranges applied, bad data',
+                              'processing_level': ('Ranges applied, bad data '
                                                    'flagged'),
                               'valid_min': '-5.f',
                               'valid_max': '40.f',
@@ -133,13 +133,13 @@ class EGIM:
                               'accuracy': '0.03f',
                               'precision': '0.03f',
                               'resolution': '0.01f',
-                              'cell_methods': ('TIME: mean DEPTH: point',
-                                               'LATITUDE: point LONGITUDE:',
+                              'cell_methods': ('TIME: mean DEPTH: point '
+                                               'LATITUDE: point LONGITUDE: '
                                                'point'),
                               'DM_indicator': 'D',
                               'reference_scale': 'ITS-90',
                               'sensor_model': 'AADI-3005214831 DW4831',
-                              'sensor_manufactured': ('Aanderaa Data',
+                              'sensor_manufactured': ('Aanderaa Data '
                                                       'Instruments AS'),
                               'sensor_reference': '4381-606',
                               'sensor_serial_number': '606',
@@ -150,10 +150,10 @@ class EGIM:
 
     METADATA_TEMP_QC = {'long_name': 'quality flag for sea water temperature',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -162,7 +162,7 @@ class EGIM:
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                            'long_name': '	Salinity of the water column',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data',
+                           'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
                            'valid_min': '33.f',
                            'valid_max': '37.f',
@@ -172,8 +172,8 @@ class EGIM:
                            'accuracy': '',
                            'precision': '',
                            'resolution': '',
-                           'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
+                           'cell_methods': ('TIME: mean DEPTH: point '
+                                            'LATITUDE: point LONGITUDE: '
                                             'point'),
                            'DM_indicator': 'D',
                            'reference_scale': '',
@@ -189,10 +189,10 @@ class EGIM:
     METADATA_PSAL_QC = {'long_name': ('quality flag for sea water practical',
                                       'salinity'),
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -200,10 +200,10 @@ class EGIM:
                            'sea_water_electrical_conductivity',
                            'units': 'S/m',
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
-                           'long_name': ('Electrical conductivity of the',
+                           'long_name': ('Electrical conductivity of the '
                                          'water column'),
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data',
+                           'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
                            'valid_min': '0.f',
                            'valid_max': '7.f',
@@ -213,8 +213,8 @@ class EGIM:
                            'accuracy': '0.0003f',
                            'precision': '0.0003f',
                            'resolution': '0.0003f',
-                           'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
+                           'cell_methods': ('TIME: mean DEPTH: point '
+                                            'LATITUDE: point LONGITUDE: '
                                             'point'),
                            'DM_indicator': 'D',
                            'reference_scale': '',
@@ -227,13 +227,13 @@ class EGIM:
                            'sensor_orientation': 'downward',
                            }
 
-    METADATA_CNDC_QC = {'long_name': ('quality flag for sea water electrical',
+    METADATA_CNDC_QC = {'long_name': ('quality flag for sea water electrical '
                                       'conductivity'),
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -242,7 +242,7 @@ class EGIM:
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                            'long_name': 'Moored instrument depth',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data',
+                           'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
                            'valid_min': '0.f',
                            'valid_max': '7000.f',
@@ -252,8 +252,8 @@ class EGIM:
                            'accuracy': '',
                            'precision': '',
                            'resolution': '',
-                           'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
+                           'cell_methods': ('TIME: mean DEPTH: point '
+                                            'LATITUDE: point LONGITUDE: '
                                             'point'),
                            'DM_indicator': 'D',
                            'reference_scale': '',
@@ -268,10 +268,10 @@ class EGIM:
 
     METADATA_MPMN_QC = {'long_name': 'quality flag for instrument depth',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -280,7 +280,7 @@ class EGIM:
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                            'long_name': 'Sound velocity of the water column',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data',
+                           'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
                            'valid_min': '',
                            'valid_max': '',
@@ -290,8 +290,8 @@ class EGIM:
                            'accuracy': '',
                            'precision': '',
                            'resolution': '',
-                           'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
+                           'cell_methods': ('TIME: mean DEPTH: point '
+                                            'LATITUDE: point LONGITUDE: '
                                             'point'),
                            'DM_indicator': 'D',
                            'reference_scale': '',
@@ -304,13 +304,13 @@ class EGIM:
                            'sensor_orientation': 'downward',
                            }
 
-    METADATA_SVEL_QC = {'long_name': ('quality flag for sea water sound',
+    METADATA_SVEL_QC = {'long_name': ('quality flag for sea water sound '
                                       'velocity'),
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -319,7 +319,7 @@ class EGIM:
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                            'long_name': 'Pressure of water',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data',
+                           'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
                            'valid_min': '0.f',
                            'valid_max': '10000.f',
@@ -329,8 +329,8 @@ class EGIM:
                            'accuracy': '0.0011f',
                            'precision': '0.0011f',
                            'resolution': '0.0011f',
-                           'cell_methods': ('TIME: mean DEPTH: point',
-                                            'LATITUDE: point LONGITUDE:',
+                           'cell_methods': ('TIME: mean DEPTH: point '
+                                            'LATITUDE: point LONGITUDE: '
                                             'point'),
                            'DM_indicator': 'D',
                            'reference_scale': '',
@@ -345,10 +345,10 @@ class EGIM:
 
     METADATA_PRES_QC = {'long_name': 'quality flag for sea water pressure',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -357,7 +357,7 @@ class EGIM:
                             'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                             'long_name': 'Turbidity of water',
                             'QC_indicator': 'Good data',
-                            'processing_level': ('Ranges applied, bad data',
+                            'processing_level': ('Ranges applied, bad data '
                                                  'flagged'),
                             'valid_min': '',
                             'valid_max': '',
@@ -367,8 +367,8 @@ class EGIM:
                             'accuracy': '',
                             'precision': '',
                             'resolution': '',
-                            'cell_methods': ('TIME: mean DEPTH: point',
-                                             'LATITUDE: point LONGITUDE:',
+                            'cell_methods': ('TIME: mean DEPTH: point '
+                                             'LATITUDE: point LONGITUDE: '
                                              'point'),
                             'DM_indicator': 'D',
                             'reference_scale': '',
@@ -383,10 +383,10 @@ class EGIM:
 
     METADATA_TUR4_QC = {'long_name': 'quality flag for sea water turbidity',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -395,7 +395,7 @@ class EGIM:
                               'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                               'long_name': 'oxygen saturation of water',
                               'QC_indicator': 'Good data',
-                              'processing_level': ('Ranges applied, bad data',
+                              'processing_level': ('Ranges applied, bad data '
                                                    'flagged'),
                               'valid_min': '0.f',
                               'valid_max': '100.f',
@@ -405,13 +405,13 @@ class EGIM:
                               'accuracy': '5f',
                               'precision': '5f',
                               'resolution': '0.4f',
-                              'cell_methods': ('TIME: mean DEPTH: point',
-                                               'LATITUDE: point LONGITUDE:',
+                              'cell_methods': ('TIME: mean DEPTH: point '
+                                               'LATITUDE: point LONGITUDE: '
                                                'point'),
                               'DM_indicator': 'D',
                               'reference_scale': '',
                               'sensor_model': 'AADI-3005214831 DW4831',
-                              'sensor_manufactured': ('Aanderaa Data',
+                              'sensor_manufactured': ('Aanderaa Data '
                                                       'Instruments AS'),
                               'sensor_reference': '4381-606',
                               'sensor_serial_number': '606',
@@ -422,10 +422,10 @@ class EGIM:
 
     METADATA_OSAT_QC = {'long_name': 'quality flag for oxygen saturation',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 
@@ -434,7 +434,7 @@ class EGIM:
                               'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                               'long_name': 'moles_of_oxygen_per_unit_mass',
                               'QC_indicator': 'Good data',
-                              'processing_level': ('Ranges applied, bad data',
+                              'processing_level': ('Ranges applied, bad data '
                                                    'flagged'),
                               'valid_min': '0.f',
                               'valid_max': '500.f',
@@ -444,13 +444,13 @@ class EGIM:
                               'accuracy': '8f',
                               'precision': '8f',
                               'resolution': '2.5f',
-                              'cell_methods': ('TIME: mean DEPTH: point',
-                                               'LATITUDE: point LONGITUDE:',
+                              'cell_methods': ('TIME: mean DEPTH: point '
+                                               'LATITUDE: point LONGITUDE: '
                                                'point'),
                               'DM_indicator': 'D',
                               'reference_scale': '',
                               'sensor_model': 'AADI-3005214831 DW4831',
-                              'sensor_manufactured': ('Aanderaa Data',
+                              'sensor_manufactured': ('Aanderaa Data '
                                                       'Instruments AS'),
                               'sensor_reference': '4381-606',
                               'sensor_serial_number': '606',
@@ -461,10 +461,10 @@ class EGIM:
 
     METADATA_DOX2_QC = {'long_name': 'quality flag for dissolved oxygen',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
-                        'flag_meanings': ('unknown good_data',
-                                          'probably_good_data',
-                                          'potentially_correctable_bad_data',
-                                          'bad_data nominal_value',
+                        'flag_meanings': ('unknown good_data '
+                                          'probably_good_data '
+                                          'potentially_correctable_bad_data '
+                                          'bad_data nominal_value '
                                           'interpolated_value missing_value'),
                         }
 

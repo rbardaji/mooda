@@ -13,7 +13,7 @@ These are new features and improvements of note in each release.
 
 ## mooda v0.1.0 (Work in progress)
 
-* In mooda/\_\_init\_\_.py: 
+* In mooda/\_\_init\_\_.py:
   * It does not load plotmap.py if you do not have installed the basemap library. We added a warning message.
   * \_\_version\_\_ added.
 * In mooda/waterframe.py:
@@ -23,6 +23,7 @@ These are new features and improvements of note in each release.
   * max_diff(): New function. Calculation the maximum difference between values of two parameters.
 * In mooda/access/egim.py:
   * to_csv(): New function. It creates a CSV file following the OceanSites standard.
+  * metadata dictionaries: Fixed bug in the long strings of the dictionaries.
 
 ## oceanobs is now mooda - mooda v0.0.1 (July, 2018)
 

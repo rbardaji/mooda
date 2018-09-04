@@ -260,13 +260,13 @@ class WaterFrame:
             ax = df[key].plot.bar(ax=ax, legend=True)
         else:
             ax = df[key].plot.bar(ax=ax)
-             # Write axes
+            # Write axes
             try:
                 ax.set_ylabel(self.meaning[key]['units'])
             except KeyError:
                 print("Warning: We don't know the units of", key,
                       "Please, add info into self.meaning[", key, "['units']")
-            
+
             if average_time == 'A':
                 ax.set_xticklabels([format_year(x.get_text())
                                     for x in ax.get_xticklabels()])
