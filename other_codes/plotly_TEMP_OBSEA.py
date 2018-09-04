@@ -1,12 +1,12 @@
 """
-Script to create a plotly grapth. The graph contains the limelines of TEMP of
+Script to create a plotly graph. The graph contains the limelines of TEMP of
 different instrument of the EGIM deployed in OBSEA.
 """
 import plotly
 import plotly.graph_objs as go
 from mooda import WaterFrame
 
-# The files that conain TEMP are from CTD, Tsunameter and Oxymeter
+# The files that contain TEMP are from CTD, Tsunameter and Oxymeter
 path_location = r"WRITE YOUR PATH HERE"
 path_ctd = path_location + r"\OS_OBSEA_2016120120170426_R_37-14998.nc"
 path_oxymeter = path_location + r"\OS_OBSEA_2016120120170426_R_4381-606.nc"
@@ -39,7 +39,7 @@ print("Maximun difference:", val, "at", where)
 print("Resampling data from CTD")
 wf_ctd.resample("H")
 print("Done")
-print("Resampling data from Oxymenter")
+print("Resampling data from Oximenter")
 wf_oxymeter.resample("H")
 print("Done")
 
@@ -60,4 +60,4 @@ plotly.offline.plot(
     {
      "data": data,
      "layout": layout,
-    }, auto_open=True, filename=r"C:\Users\Raul\Google Drive\Work\EmsoDev\server\ejemplos web\megakit - mio\grapths\obsea\TEMP-OBSEA.html")
+    }, auto_open=True, filename=r"WRITE YOUR PATH\TEMP-OBSEA.html")
