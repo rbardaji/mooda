@@ -31,6 +31,13 @@ class WaterFrame:
         self.metadata = dict()
         self.meaning = dict()
 
+    def __repr__(self):
+        """
+        Return a string containing a printable representation of an object.
+        """
+        message = "Parameters: " + str(self.parameters())
+        return message
+
     def from_netcdf(self, path):
         """Load and decode a dataset from a NetCDF file. The compatible
         netCDF files are from the mooring-buoys of
@@ -258,7 +265,7 @@ class WaterFrame:
                 ax.set_ylabel(self.meaning[key]['units'])
             except KeyError:
                 print("Warning: We don't know the units of", key,
-                      "Please, add info into self.meaning[", key,"['units']")
+                      "Please, add info into self.meaning[", key, "['units']")
             
             if average_time == 'A':
                 ax.set_xticklabels([format_year(x.get_text())
@@ -844,3 +851,53 @@ class WaterFrame:
         if dropnan:
             self.data.dropna(inplace=True)
         return True
+
+    def corr(self, parameter1, parameter2, method='pearson', min_periods=1):
+        """
+        Compute pairwise correlation of data columns of parameter1 and
+        parameter2, excluding NA/null values.
+
+        Parameters
+        ----------
+            parameter1: str
+                Key name of the column 1 to correlate.
+            parameter2: str
+                Key name of the column 2 to correlate.
+            method: {‘pearson’, ‘kendall’, ‘spearman’}
+                pearson : standard correlation coefficient
+                kendall : Kendall Tau correlation coefficient
+                spearman : Spearman rank correlation
+            min_periods : int, optional
+                Minimum number of observations required per pair of columns to
+                have a valid result. Currently only available for pearson and
+                spearman correlation
+        Returns
+        -------
+            correlation_number: float
+        """
+        correlation_number = self.data[
+            parameter1].corr(self.data[parameter2], method=method,
+                             min_periods=min_periods)
+        return correlation_number
+
+    def max_diff(self, parameter1, parameter2):
+        """
+        Calculation the maximum difference between values of two parameters.
+
+        Parameters
+        ----------
+            parameter1: str
+                Key name of the column 1 to calculate the difference.
+            parameter2: str
+                Key name of the column 2 to calculate the difference.
+        Returns
+        -------
+            (where, value): Pandas DataFrame Index, float
+                It returns the position (index) and value of the maximum
+                difference.
+        """
+
+        where = (self.data[parameter1] - self.data[parameter2]).abs().idxmax()
+        value = (self.data[parameter1] - self.data[parameter2]).abs().max()
+
+        return (where, value)

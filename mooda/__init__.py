@@ -6,3 +6,4 @@ except ImportError:
           "use PlotMap.")
 
 name = "mooda"
+__version__ = "0.1.0"

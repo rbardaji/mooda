@@ -14,6 +14,16 @@ It creates the instance following variables:
 * WaterFrame.metadata: A dictionary that contains the metadata information of the time series.
 * WaterFrame.meaning: A dictionary that contains the meaning of the keys of data (i.e. "TEMP": "Sea water temperature").
 
+### repr
+
+(From mooda > v0.1.0).
+
+Returns a string containing a printable representation of an object.
+
+Returns | Description | Type
+--- | --- | ---
+message | Message with basic information about what contains the object. | str
+
 ### WaterFrame.from_netcdf(*path*)
 
 Load and decode a dataset from a netcdf file. The compatible netCDF files are from the mooring-buoys of [EMODNET](http://www.emodnet-physics.eu/Map/), [JERICO](http://www.jerico-ri.eu/data-access/), and all time series with [NetCDF](http://www.oceansites.org/data/) format.
@@ -282,6 +292,34 @@ Parameters | Description | Type
 parameters | Parameters to save in the WaterFrame. | list of str, str
 flags | QC Flag of the parameter to save. | list of int, int, None
 dropnan | Drop all lines of self.data that contain a nan in any of their columns. | Bool
+
+### WaterFrame.corr(*parameter1*, *parameter2*, *method='pearson'*, *min_periods=1*)
+
+Compute pairwise correlation of data columns of parameter1 and parameter2, excluding NA/null values.
+
+Parameters | Description | Type
+--- | --- | ---
+parameter1 | Key name of the column 1 to correlate. | str
+parameter2 | Key name of the column 2 to correlate. | str
+method | {‘pearson’, ‘kendall’, ‘spearman’} pearson : standard correlation coefficient, kendall : Kendall Tau correlation coefficient, spearman : Spearman rank correlation | str, optional
+min_periods | Minimum number of observations required per pair of columns to have a valid result. Currently only available for pearson and spearman correlation. | int, optional
+
+Returns | Description | Type
+--- | --- | ---
+correlation_number | correlation coefficient | float
+
+### max_diff(*parameter1*, *parameter2*)
+
+Calculation the maximum difference between values of two parameters.
+
+Parameters | Description | Type
+--- | --- | ---
+parameter1 | Key name of the column 1 to  calculate the difference. | str
+parameter2 | Key name of the column 2 to  calculate the difference. | str
+
+Returns | Description | Type
+--- | --- | ---
+(where, value) | The position (index) and value of the maximum difference. | (Pandas DataFrame Index, float)
 
 ## PlotMap
 
