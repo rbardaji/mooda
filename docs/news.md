@@ -21,9 +21,13 @@ These are new features and improvements of note in each release.
   * \_\_repr\_\_: New method. Return a string containing a printable representation of an object.
   * corr(): New function. Compute pairwise correlation of data columns, excluding NA/null values.
   * max_diff(): New function. Calculation the maximum difference between values of two parameters.
+  * mean(): New function. Calculation of the mean of the values of a parameter.
+  * max(): New function. Find the maximum value of a parameter.
+  * min(): New function. Find the minimum value of a parameter.
 * In mooda/access/egim.py:
   * to_csv(): New function. It creates a CSV file following the OceanSites standard.
-  * metadata dictionaries: Fixed bug in the long strings of the dictionaries.
+  * METADATA_*: Fixed bug in the long strings of the dictionaries.
+  * METADATA_DOX2_AADI4381: Changed long name.
 
 ## oceanobs is now mooda - mooda v0.0.1 (July, 2018)
 

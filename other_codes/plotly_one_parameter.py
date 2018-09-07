@@ -6,13 +6,14 @@ import plotly
 import plotly.graph_objs as go
 from mooda import WaterFrame
 
+
 # Path of files
 # Where the files are:
-path_location = r"C:\Users\rbard\Google Drive\Work\EmsoDev\server\ejemplos web\megakit - mio\data\obsea"
-path_data = path_location + r"\OS_OBSEA_2016120120170426_R_37-14998.nc"
+path_location = r"YOUR PATH LOCATION"
+path_data = path_location + r"\OS_OBSEA_2016120120170426_R_NTURTD-648.nc"
 # Where to save the result:
-save_location = r"C:\Users\rbard\Google Drive\Work\EmsoDev\server\ejemplos web\megakit - mio\graphs\obsea"
-save_start = r"\CTD-"
+save_location = r"YOUR PATH TO SAVE"
+save_start = r"\TUR-"
 end_save = r"-OBSEA.html"
 
 
@@ -37,13 +38,18 @@ for parameter in parameters:
     data = [go.Scatter(x=wf.data.index, y=wf.data[parameter])]
 
     # Edit the layout
-    layout = dict(title=wf.meaning[parameter]['long_name'],
+    title = wf.meaning[parameter]['long_name']
+    if isinstance(title, list):
+        title_ = ""
+        for part in title:
+            title_ += part + " "
+    else:
+        title_ = title + " "
+    title_ += "averaged hourly"
+    layout = dict(title=title_,
                   yaxis=dict(title=wf.meaning[parameter]['units']),
                   )
 
-    plotly.offline.plot(
-        {
-         "data": data,
-         "layout": layout,
-         }, auto_open=True, filename=save_location+save_start+parameter+end_save)
+    plotly.offline.plot({"data": data, "layout": layout, }, auto_open=True, 
+                        filename=save_location+save_start+parameter+end_save)
     print("Done")

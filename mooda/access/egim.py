@@ -432,7 +432,7 @@ class EGIM:
     METADATA_DOX2_AADI4381 = {'standard_name': 'dissolbed_oxygen',
                               'units': 'microMols / liter',
                               'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
-                              'long_name': 'moles_of_oxygen_per_unit_mass',
+                              'long_name': 'moles of oxygen per unit mass',
                               'QC_indicator': 'Good data',
                               'processing_level': ('Ranges applied, bad data '
                                                    'flagged'),

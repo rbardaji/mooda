@@ -901,3 +901,93 @@ class WaterFrame:
         value = (self.data[parameter1] - self.data[parameter2]).abs().max()
 
         return (where, value)
+
+    def datetime_intervals(self, parameter):
+        """
+        It returns the index (TIME) of intervals between NaNs.
+
+        Parameters
+        ----------
+            parameter: str
+                Parameter to check.
+        
+        Returns
+        -------
+            intervals: [(str, str)]
+                List of tuples with the start and end time of each interval of
+                data.
+        """
+        # Creation of a timeseries with the positions of null values
+        ts = self.data[parameter].isnull()
+
+        # Check where are the intervals
+        intervals = []
+        in_interval = False
+        for index, value in ts.items():
+            if in_interval is False and value is False:
+                in_interval = True
+                start = index.strftime('%Y-%m-%d %H:%M:%S')
+            if in_interval is True and value is True:
+                in_interval = False
+                end = index.strftime('%Y-%m-%d %H:%M:%S')
+                intervals.append((start, end))
+        
+        return intervals
+
+    def mean(self, parameter):
+        """
+        It returns the mean value of a parameter.
+
+        Parameters
+        ----------
+            parameter: str
+                Parameter to calculate the mean.
+    
+        Returns
+        -------
+            mean_value:
+                Mean of values of the parameter.
+        """
+
+        mean_value = self.data[parameter].mean()
+
+        return mean_value
+
+    def max(self, parameter):
+        """
+        It returns the max value of a parameter.
+        
+        Parameters
+        ----------
+            parameter: str
+                Parameter to calculate the mean.
+        
+        Returns
+        -------
+            (where, max_value): (str, float)
+                (Index of the max value of the parameter, Max values of the parameter)
+        """
+
+        where = self.data[parameter].idxmax()
+        max_value = self.data[parameter].max()
+
+        return (where, max_value)
+
+    def min(self, parameter):
+        """
+        It returns the mean value of a parameter.
+
+        Parameters
+        ----------
+            parameter: str
+                Parameter to calculate the mean.
+
+        Returns
+        -------
+            (where, min_value): (str, float)
+                (Index of the minimum value, Min values of the parameter).
+        """
+        where = self.data[parameter].idxmin()
+        min_value = self.data[parameter].min()
+
+        return (where, min_value)
