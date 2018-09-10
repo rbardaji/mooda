@@ -11,7 +11,7 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 
 These are new features and improvements of note in each release.
 
-## mooda v0.1.0 (Work in progress)
+## mooda v0.1.0 (2018-09-10)
 
 * In mooda/\_\_init\_\_.py:
   * It does not load plotmap.py if you do not have installed the basemap library. We added a warning message.
