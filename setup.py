@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 
 NAME = 'mooda'
-VERSION = '0.0.1'
+VERSION = '0.1.0'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 README_FILE = os.path.join(os.path.dirname(__file__), 'README.md')
 LONG_DESCRIPTION = """
@@ -19,9 +19,9 @@ quality control generation;
 specific data analysis tools for different scientific disciplines.
 The package is designed to be open, adaptable and scalable allowing future contributions from researchers and developers from all the marine science disciplines.
 
-This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
+This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development (EMSOdev - http://www.emsodev.eu/).
 
-Check the documentation on [mooda.readthedocs.io](http://mooda.readthedocs.io/).
+Check the documentation on http://mooda.readthedocs.io/.
 """
 CLASSIFIERS = ['Development Status :: 4 - Beta',
                'Environment :: X11 Applications :: Qt',
@@ -47,7 +47,6 @@ AUTHOR_EMAIL = 'rbardaji@gmail.com'
 LICENSE = 'MIT'
 PACKAGES = find_packages()
 requirements = ['requirements-waterframe.txt',
-                'requirements-app-mooda_gui.txt',
                 'requirements-access-egim.txt']
 INSTALL_REQUIRES = sorted(
     set(
