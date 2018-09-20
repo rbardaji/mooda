@@ -1,7 +1,7 @@
 ﻿
 # Version control
 
-Our last release is [mooda v0.0.1](https://github.com/rbardaji/mooda/releases). We use [SemVer](http://semver.org/) for versioning.
+Our last release is [mooda v0.1.0](https://github.com/rbardaji/mooda/releases). We use [SemVer](http://semver.org/) for versioning.
 
 Given a version number MAJOR.MINOR.PATCH, increment the:
 
@@ -10,6 +10,15 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 3. PATCH version when you make backwards-compatible bug fixes.
 
 These are new features and improvements of note in each release.
+
+## mooda v0.2.0 (On working)
+
+* In mooda/waterframe.py:
+  * constructor(): We added the function parameter "path".
+  * to_csv(): New function. It saves the current WaterFrame to a CSV.
+  * \_\_repr\_\_: We changed the output message.
+  * qc(): Now, you can enter the parameter key = "all" and it will apply the QC tests to all parameters.
+  * tsplot(): Input parameters changed.
 
 ## mooda v0.1.0 (2018-09-10)
 

@@ -18,24 +18,66 @@ class WaterFrame:
     metadata: A dictionary that contains the metadata information of the
     timeserie."""
 
-    def __init__(self):
+    def __init__(self, path=None):
         """It creates the instance following variables:
         data -- A pandas DataFrame that contains the measurement values of the
         time series.
         metadata -- A dictionary that contains the metadata information of the
         time series.
         meaning -- A dictionary that contains the meaning of the keys of data
-        (i.e. "TEMP": "Sea water temperature")"""
+        (i.e. "TEMP": "Sea water temperature")
+        
+        Parameters
+        ----------
+            path: str, optional
+                Create a WaterFrame with the data of the file of the path.
+        """
         # Instance variables
         self.data = pd.DataFrame()
         self.metadata = dict()
         self.meaning = dict()
 
+        if path:
+            parts = path.split(".")
+            if parts[-1] == "nc":
+                # It is a NetCDF file
+                self.from_netcdf(path)
+
     def __repr__(self):
         """
         Return a string containing a printable representation of an object.
         """
-        message = "Parameters: " + str(self.parameters())
+        parameters = "Parameters: {}".format((", ").join(self.parameters()))
+        memory_usage = self.memory_usage()
+        units = "Bytes"
+        if memory_usage > 1000000000:
+            memory_usage /= 1000000000
+            units = "GBytes"
+        elif memory_usage > 1000000:
+            memory_usage /= 1000000
+            units = "MBytes"
+        elif memory_usage > 1000:
+            memory_usage /= 1000
+            units = "KBytes"
+
+        size = "Memory usage: {:.2f} {}".format(memory_usage, units)
+
+        qc_percentage = "Percentage of data with QC Flag = 1:"
+        qc_values = self.info_qc()
+        for parameter in qc_values:
+            # Calculation of the total of the vales
+            total_values = 0
+            for qc_flags, counts in qc_values[parameter].items():
+                total_values += counts
+            # Calculation of the percentage
+            if 1.0 in qc_values[parameter]:
+                percentage = qc_values[parameter][1.0]/total_values*100    
+            else:
+                percentage = 0
+            qc_percentage += "\n - {}: {:.2f} %".format(parameter, percentage)
+
+        message = parameters + "\n" + size + "\n" + qc_percentage
+
         return message
 
     def from_netcdf(self, path):
@@ -152,14 +194,48 @@ class WaterFrame:
         """
         pickle.dump(self.__dict__, open(path, "wb"))
 
-    def tsplot(self, keys, rolling=None, ax=None, average_time=None,
-               secondary_y=False):
+    def to_csv(self, path):
+        """
+        It saves the Waterframe data and metadata into a CSV file.
+
+        Parameters
+        ----------
+            path: str
+                Path to save the csv file.
+        """
+        # Create the file
+        csv_file = open(path,'w')
+
+        # Save the metadata
+        csv_file.write("#Global attributes;Value\n")
+        for key, val in self.metadata.items():
+            if isinstance(val, list):
+                value = ''.join(val)
+            else:
+                value = val
+            csv_file.write("# ")
+            csv_file.write(key)
+            csv_file.write(';="')
+            csv_file.write(value)
+            csv_file.write('"\n')
+        
+        # Add three empty lines
+        csv_file.write("\n\n\n")
+
+        # Save the data
+        self.data.to_csv(csv_file, sep=";", header=True)
+
+        # Close the file
+        csv_file.close()
+
+    def tsplot(self, keys=None, rolling=None, ax=None, average_time=None,
+               secondary_y=False, color=None):
         """Plot timeseries.
 
         Parameters
         ----------
-            keys: list of str, str
-                keys of self.data to plot.
+            keys: list of str, str, optional (keys = None)
+                keys of self.data to plot. If keys is None, all parameters will be ploted.
             rolling: int, optional (rolling = None)
                 Size of the moving window. It is the number of observations
                 used for calculating the statistic.
@@ -171,22 +247,24 @@ class WaterFrame:
                 http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
             secondary_y: bool, optional (secondary_y = False)
                 Plot on the secondary y-axis.
+            color: str or list of str, optional (color = None)
+                Any matplotlib color. It will be applied to the traces.
         Returns
         -------
             ax: matplotlib.AxesSubplot
                 New axes of the plot.
         """
-        def make_plot(df_in, ax_in, key_in):
+        def make_plot(df_in, ax_in, key_in, color_in):
             # Calculation of the std and the mean
             roll = df_in[key_in].rolling(rolling, center=True)
             m = roll.agg(['mean', 'std'])
             # rename 'mean' column
             m.rename(columns={'mean': key_in}, inplace=True)
             ax_out = m[key_in].plot(ax=ax_in, secondary_y=secondary_y,
-                                    legend=True)
+                                    legend=True, color=color_in)
             ax_out.fill_between(m.index,
                                 m[key_in] - m['std'], m[key_in] + m['std'],
-                                alpha=.25)
+                                alpha=.25, color=color_in)
             # Write axes
             try:
                 ax_out.set_ylabel(self.meaning[key_in]['units'])
@@ -194,6 +272,10 @@ class WaterFrame:
                 warnings.warn("No units on y_label")
 
             return ax_out
+
+        # Check keys
+        if keys is None:
+            keys = self.parameters()
 
         # Extract data
         df = self.data[keys].dropna().reset_index().set_index('TIME')
@@ -218,10 +300,14 @@ class WaterFrame:
 
         if isinstance(keys, str):
             key = keys
-            ax = make_plot(df, ax, key)
+            ax = make_plot(df, ax, key, color)
         elif isinstance(keys, list):
-            for key in keys:
-                ax = make_plot(df, ax, key)
+            if color is None:
+                for key in keys:
+                    ax = make_plot(df, ax, key, color)
+            else:
+                for key, color_line in zip(keys, color):
+                    ax = make_plot(df, ax, key, color)
         return ax
 
     def barplot(self, key, ax=None, average_time=None):
@@ -287,6 +373,7 @@ class WaterFrame:
                     keys = ['VAVH', 'VAVH'] is not ok.
             ax: matplotlib.axes object, optional (ax = None)
                 It is used to add the plot to an input axes object.
+
         Returns
         -------
             ax: matplotlib.AxesSubplot
@@ -574,7 +661,7 @@ class WaterFrame:
         for i in range(10):
             self.data[key + '_QC'].replace(i, flag, inplace=True)
 
-    def qc(self, key, window=3, threshold=3, bad_flag=4, good_flag=1):
+    def qc(self, key="all", window=3, threshold=3, bad_flag=4, good_flag=1):
         """
         Auto QC process.
 
@@ -591,13 +678,37 @@ class WaterFrame:
                 Flag value to write in on the fail values.
             good_flag: int, optional (flag = 1)
                 Flag value to write in on the good values."""
-        self.range_test(key=key, flag=bad_flag)
-        self.spike_test(key=key, window=window, threshold=threshold,
-                        flag=bad_flag)
-        self.flat_test(key=key, window=window, flag=bad_flag)
-        self.flag2flag(key=key, original_flag=0, translated_flag=good_flag)
 
-        self.flag2flag(key=key)
+        def apply_qc(parameter_in):
+            self.reset_flag(key=parameter_in, flag=0)
+            self.range_test(key=parameter_in, flag=bad_flag)
+            self.spike_test(key=parameter_in, window=window, threshold=threshold,
+                            flag=bad_flag)
+            self.flat_test(key=parameter_in, window=window, flag=bad_flag)
+            self.flag2flag(key=parameter_in, original_flag=0,
+                           translated_flag=good_flag)
+
+        if key == "all":
+            for parameter in self.parameters():
+                apply_qc(parameter)
+        else:
+            apply_qc(key)
+
+    def info_qc(self):
+        """
+        It returns a dictionary with the count and percentage of the QC flag.
+
+        Return
+        ------
+            qc_dict: dict
+                {NAME OF THE PARAMETER: {QC FLAG: int}}
+        """
+        qc_dict = {}
+        for parameter in self.parameters():
+            info = self.data["{}_QC".format(parameter)].value_counts().to_dict()
+            qc_dict[parameter] = info
+        
+        return qc_dict
 
     def drop(self, keys, flags=None):
         """
@@ -735,6 +846,7 @@ class WaterFrame:
                 http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
             method: "mean", "max", "min", optional, (method = "mean")
                 Save the new value with the mean(), max() or min() function.
+        
         Returns
         -------
             True/False: bool
@@ -956,16 +1068,17 @@ class WaterFrame:
     def max(self, parameter):
         """
         It returns the max value of a parameter.
-        
+
         Parameters
         ----------
             parameter: str
                 Parameter to calculate the mean.
-        
+
         Returns
         -------
             (where, max_value): (str, float)
-                (Index of the max value of the parameter, Max values of the parameter)
+                (Index of the max value of the parameter, Max values of the
+                parameter)
         """
 
         where = self.data[parameter].idxmax()
