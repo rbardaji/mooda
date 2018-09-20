@@ -323,7 +323,7 @@ Returns | Description | Type
 --- | --- | ---
 correlation_number | correlation coefficient | float
 
-### max_diff(*parameter1*, *parameter2*)
+### WaterFrame.max_diff(*parameter1*, *parameter2*)
 
 Calculation the maximum difference between values of two parameters.
 
@@ -336,7 +336,7 @@ Returns | Description | Type
 --- | --- | ---
 (where, value) | The position (index) and value of the maximum difference. | (Pandas DataFrame Index, float)
 
-### max(*parameter*)
+### WaterFrame.max(*parameter*)
 
 It returns the max value of a parameter.
 
@@ -348,7 +348,7 @@ Returns | Description | Type
 --- | --- | ---
 (where, value) | The position (index) and value of the maximum value. | (Pandas DataFrame Index, float)
 
-### min(*parameter*)
+### WaterFrame.min(*parameter*)
 
 It returns the min value of a parameter.
 
@@ -360,7 +360,7 @@ Returns | Description | Type
 --- | --- | ---
 (where, value) | The position (index) and value of the minimum value. | (Pandas DataFrame Index, float)
 
-### mean(*parameter*)
+### WaterFrame.mean(*parameter*)
 
 It returns the mean value of a parameter.
 

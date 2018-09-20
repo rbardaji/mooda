@@ -1088,7 +1088,7 @@ class WaterFrame:
 
     def min(self, parameter):
         """
-        It returns the mean value of a parameter.
+        It returns the min value of a parameter.
 
         Parameters
         ----------
