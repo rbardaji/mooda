@@ -1024,7 +1024,7 @@ class WaterFrame:
         ----------
             parameter: str
                 Parameter to check.
-        
+
         Returns
         -------
             intervals: [(str, str)]
@@ -1045,7 +1045,7 @@ class WaterFrame:
                 in_interval = False
                 end = index.strftime('%Y-%m-%d %H:%M:%S')
                 intervals.append((start, end))
-        
+
         return intervals
 
     def mean(self, parameter):
