@@ -1,3 +1,4 @@
+import copy
 import pickle
 import sys
 import datetime
@@ -847,7 +848,7 @@ class WaterFrame:
                 http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
             method: "mean", "max", "min", optional, (method = "mean")
                 Save the new value with the mean(), max() or min() function.
-        
+
         Returns
         -------
             True/False: bool
@@ -1105,3 +1106,15 @@ class WaterFrame:
         min_value = self.data[parameter].min()
 
         return (where, min_value)
+
+    def copy(self):
+        """
+        It creates a copy of self
+
+        Returns
+        -------
+            c: WaterFrame
+                Copy of self.
+        """
+        c = copy.deepcopy(self)
+        return c
