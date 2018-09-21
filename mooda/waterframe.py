@@ -26,7 +26,7 @@ class WaterFrame:
         time series.
         meaning -- A dictionary that contains the meaning of the keys of data
         (i.e. "TEMP": "Sea water temperature")
-        
+
         Parameters
         ----------
             path: str, optional
@@ -71,7 +71,7 @@ class WaterFrame:
                 total_values += counts
             # Calculation of the percentage
             if 1.0 in qc_values[parameter]:
-                percentage = qc_values[parameter][1.0]/total_values*100    
+                percentage = qc_values[parameter][1.0]/total_values*100
             else:
                 percentage = 0
             qc_percentage += "\n - {}: {:.2f} %".format(parameter, percentage)
@@ -204,7 +204,7 @@ class WaterFrame:
                 Path to save the csv file.
         """
         # Create the file
-        csv_file = open(path,'w')
+        csv_file = open(path, 'w')
 
         # Save the metadata
         csv_file.write("#Global attributes;Value\n")
@@ -218,7 +218,7 @@ class WaterFrame:
             csv_file.write(';="')
             csv_file.write(value)
             csv_file.write('"\n')
-        
+
         # Add three empty lines
         csv_file.write("\n\n\n")
 
@@ -235,7 +235,8 @@ class WaterFrame:
         Parameters
         ----------
             keys: list of str, str, optional (keys = None)
-                keys of self.data to plot. If keys is None, all parameters will be ploted.
+                keys of self.data to plot. If keys is None, all parameters
+                will be ploted.
             rolling: int, optional (rolling = None)
                 Size of the moving window. It is the number of observations
                 used for calculating the statistic.
@@ -307,7 +308,7 @@ class WaterFrame:
                     ax = make_plot(df, ax, key, color)
             else:
                 for key, color_line in zip(keys, color):
-                    ax = make_plot(df, ax, key, color)
+                    ax = make_plot(df, ax, key, color_line)
         return ax
 
     def barplot(self, key, ax=None, average_time=None):
@@ -682,8 +683,8 @@ class WaterFrame:
         def apply_qc(parameter_in):
             self.reset_flag(key=parameter_in, flag=0)
             self.range_test(key=parameter_in, flag=bad_flag)
-            self.spike_test(key=parameter_in, window=window, threshold=threshold,
-                            flag=bad_flag)
+            self.spike_test(key=parameter_in, window=window,
+                            threshold=threshold, flag=bad_flag)
             self.flat_test(key=parameter_in, window=window, flag=bad_flag)
             self.flag2flag(key=parameter_in, original_flag=0,
                            translated_flag=good_flag)
@@ -705,9 +706,9 @@ class WaterFrame:
         """
         qc_dict = {}
         for parameter in self.parameters():
-            info = self.data["{}_QC".format(parameter)].value_counts().to_dict()
+            info = self.data[parameter+"_QC"].value_counts().to_dict()
             qc_dict[parameter] = info
-        
+
         return qc_dict
 
     def drop(self, keys, flags=None):
@@ -887,7 +888,7 @@ class WaterFrame:
         self.data.sort_index(inplace=True)
         datetime_start = datetime.datetime.strptime(start, '%Y%m%d%H%M%S')
         datetime_end = datetime.datetime.strptime(end, '%Y%m%d%H%M%S')
-            
+
         start_slice = self.data.index.searchsorted(datetime_start)
         end_slice = self.data.index.searchsorted(datetime_end)
         self.data = self.data.ix[start_slice:end_slice]
