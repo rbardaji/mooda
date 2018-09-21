@@ -4,6 +4,7 @@ from mooda.app.mooda_gui.widgets import MOODA
 
 
 def main():
+    print("Opening GUI. Please wait.")
     app = QApplication(sys.argv)
     md = MOODA()
     md.showMaximized()

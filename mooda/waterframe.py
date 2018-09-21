@@ -49,6 +49,8 @@ class WaterFrame:
         Return a string containing a printable representation of an object.
         """
         parameters = "Parameters: {}".format((", ").join(self.parameters()))
+        
+        # Memory use message
         memory_usage = self.memory_usage()
         units = "Bytes"
         if memory_usage > 1000000000:
@@ -60,24 +62,47 @@ class WaterFrame:
         elif memory_usage > 1000:
             memory_usage /= 1000
             units = "KBytes"
+        size_message = "Memory usage: {:.2f} {}".format(memory_usage, units)
 
-        size = "Memory usage: {:.2f} {}".format(memory_usage, units)
-
-        qc_percentage = "Percentage of data with QC Flag = 1:"
         qc_values = self.info_qc()
-        for parameter in qc_values:
-            # Calculation of the total of the vales
-            total_values = 0
-            for qc_flags, counts in qc_values[parameter].items():
-                total_values += counts
-            # Calculation of the percentage
-            if 1.0 in qc_values[parameter]:
-                percentage = qc_values[parameter][1.0]/total_values*100
-            else:
-                percentage = 0
-            qc_percentage += "\n - {}: {:.2f} %".format(parameter, percentage)
 
-        message = parameters + "\n" + size + "\n" + qc_percentage
+        # Parameters message
+        parameters = self.parameters()
+        if len(parameters) == 0:
+            parameters_message = "There is no data."
+        else:
+            parameters_message = "Parameters:"
+            for parameter in parameters:
+                parameters_message += "\n  - {}: {} ({})".format(
+                    parameter, self.meaning[parameter]["long_name"],
+                    self.meaning[parameter]["units"])
+
+                # Min, max and mean info
+                date_min, value_min = self.min(parameter)
+                date_max, value_max = self.max(parameter)
+                value_mean = self.mean(parameter)
+                parameters_message += "\n    - Min value: {:.3f}".format(value_min)
+                parameters_message += "\n    - Date min value: {}".format(
+                    date_min)
+                parameters_message += "\n    - Max value: {:.3f}".format(value_max)
+                parameters_message += "\n    - Date max value: {}".format(
+                    date_max)
+                parameters_message += "\n    - Mean value: {:.3f}".format(
+                    value_mean)
+
+                # Percentage of data with QC Flag = 1
+                # Calculation of the total of the vales
+                total_values = 0
+                for _qc_flags, counts in qc_values[parameter].items():
+                    total_values += counts
+                # Calculation of the percentage
+                percentage = 0
+                if 1.0 in qc_values[parameter]:
+                    percentage = qc_values[parameter][1.0]/total_values*100
+                parameters_message += "\n    - Values with QC = 1: {:.3f} %".format(
+                    percentage)
+
+        message = size_message + "\n" + parameters_message
 
         return message
 
@@ -1056,7 +1081,7 @@ class WaterFrame:
         ----------
             parameter: str
                 Parameter to calculate the mean.
-    
+
         Returns
         -------
             mean_value:

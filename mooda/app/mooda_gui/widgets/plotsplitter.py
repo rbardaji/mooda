@@ -1,13 +1,13 @@
 from PyQt5.QtWidgets import (QWidget, QLabel, QListWidget, QPushButton,
                              QVBoxLayout, QSplitter, QGroupBox, QRadioButton,
-                             QAbstractItemView)
+                             QAbstractItemView, QPlainTextEdit)
 from PyQt5.QtCore import pyqtSignal, Qt
 from mooda import WaterFrame
 from mooda.app.mooda_gui.widgets import (DropWidget, QCWidget, RenameWidget,
-                                        ResampleWidget, SliceWidget,
-                                        ScatterMatrixPlotWidget, QCPlotWidget,
-                                        TSPlotWidget, QCBarPlotWidget,
-                                        SpectrogramPlotWidget)
+                                         ResampleWidget, SliceWidget,
+                                         ScatterMatrixPlotWidget, QCPlotWidget,
+                                         TSPlotWidget, QCBarPlotWidget,
+                                         SpectrogramPlotWidget)
 
 
 class PlotSplitter(QSplitter):
@@ -41,10 +41,14 @@ class PlotSplitter(QSplitter):
         self.graphList = QListWidget(self)
         self.graphList.itemClicked.connect(self.graphClick)
 
+        # PlainTextEdit
+        self.otherInfoPlainText = QPlainTextEdit(self)
+
         # Labels
         metadataLabel = QLabel("Metadata")
         dataLabel = QLabel("Data")
         graphLabel = QLabel("Graph")
+        infoLabel = QLabel("Other information")
 
         # DropWidget
         self.dropWidget = DropWidget()
@@ -128,6 +132,8 @@ class PlotSplitter(QSplitter):
         vMetadata = QVBoxLayout()
         vMetadata.addWidget(metadataLabel)
         vMetadata.addWidget(self.metadataList)
+        vMetadata.addWidget(infoLabel)
+        vMetadata.addWidget(self.otherInfoPlainText)
         vMetadata.addWidget(hideMetadataButton)
         self.vMetadataWidget.setLayout(vMetadata)
 
@@ -490,8 +496,6 @@ class PlotSplitter(QSplitter):
                 self.wf.range_test(key=key_in, flag=int(listQC[1]))
                 self.msg2Statusbar.emit("Ready")
             if listQC[2]:
-                print(listQC[2])
-                print(listQC[5])
                 # Flat test
                 self.msg2Statusbar.emit(
                     "Applying flat test to"
@@ -511,7 +515,7 @@ class PlotSplitter(QSplitter):
         self.msg2Statusbar.emit("Creating QC flags")
 
         if listQC[8] == 'all':
-            for key in self.wf.data.keys():
+            for key in self.wf.parameters():
                 doIt(key_in=key)
         else:
             for i in range(8, len(listQC)):

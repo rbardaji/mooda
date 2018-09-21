@@ -20,6 +20,8 @@ These are new features and improvements of note in each release.
   * qc(): Now, you can enter the parameter key = "all" and it will apply the QC tests to all parameters.
   * tsplot(): Input parameters changed.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
+* In mooda/app/mooda_gui/plotsplitter.py:
+  * initUI(): We added a PlainTextEditor to show other information about the WaterFrame.
 
 ## mooda v0.1.0 (2018-09-10)
 
