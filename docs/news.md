@@ -19,6 +19,7 @@ These are new features and improvements of note in each release.
   * \_\_repr\_\_: We changed the output message.
   * qc(): Now, you can enter the parameter key = "all" and it will apply the QC tests to all parameters.
   * tsplot(): Input parameters changed.
+  * hist(): New function. It creates a histogram plot.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame.

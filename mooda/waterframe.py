@@ -404,13 +404,15 @@ class WaterFrame:
                 https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.hist.html
         Returns
         -------
-            ax: matplotlib.AxesSubplot or numpy.ndarray of them
+            axes: matplotlib.AxesSubplot or numpy.ndarray of them
                 New axes of the plot.
         """
         if parameter is None:
             parameter = self.parameters()
-        
+
         axes = self.data.hist(column=parameter, **kwds)
+
+        return axes
 
     def scatter_matrix(self, keys, ax=None):
         """
