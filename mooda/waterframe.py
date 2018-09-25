@@ -386,7 +386,7 @@ class WaterFrame:
 
         return ax
 
-    def hist(self, parameter=None, **kwds):
+    def hist(self, parameter=None, mean_line=False, **kwds):
         """Make a histogram of the WaterFrame's.
 
         A histogram is a representation of the distribution of data.
@@ -398,6 +398,8 @@ class WaterFrame:
             parameter: str, list of str, optional (parameter=None)
                 keys of self.data to plot. If parameter=None, it will plot all
                 parameters.
+            mean_line: bool, optional (mean_line=False)
+                 It draws a line representing the average of the dataset.
             **kwds:
                 All other plotting keyword arguments to be passed to
                 DataFrame.hist().
@@ -410,7 +412,21 @@ class WaterFrame:
         if parameter is None:
             parameter = self.parameters()
 
+        if isinstance(parameter, str):
+            parameter = [parameter]
+
         axes = self.data.hist(column=parameter, **kwds)
+        
+        # Creation of the mean line
+        if mean_line is True:
+            parameter_counter = 0
+            for irow in range(len(axes)):
+                for icol in range(len(axes[irow])):
+                    if parameter_counter < len(parameter):
+                        x_mean = self.mean(parameter[parameter_counter])
+                        axes[irow, icol].axvline(x_mean, color='k', linestyle='dashed', linewidth=1)
+
+                    parameter_counter += 1
 
         return axes
 
