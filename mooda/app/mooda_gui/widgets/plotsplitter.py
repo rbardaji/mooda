@@ -284,6 +284,8 @@ class PlotSplitter(QSplitter):
                 self.msg2TextArea.emit("Working with file {}".format(path))
                 # Add metadata information into metadataList
                 self.addMetadata(self.wf.metadata)
+                # Add other information
+                self.otherInfoPlainText.setPlainText(repr(self.wf))
                 # Add data information into dataList
                 self.addData(self.wf.data)
                 # Plot QC

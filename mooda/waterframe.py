@@ -386,6 +386,32 @@ class WaterFrame:
 
         return ax
 
+    def hist(self, parameter=None, **kwds):
+        """Make a histogram of the WaterFrame's.
+
+        A histogram is a representation of the distribution of data.
+        This function calls DataFrame.hist(), on each parameter of the
+        WaterFrame, resulting in one histogram per parameter.
+
+        Parameters
+        ----------
+            parameter: str, list of str, optional (parameter=None)
+                keys of self.data to plot. If parameter=None, it will plot all
+                parameters.
+            **kwds:
+                All other plotting keyword arguments to be passed to
+                DataFrame.hist().
+                https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.hist.html
+        Returns
+        -------
+            ax: matplotlib.AxesSubplot or numpy.ndarray of them
+                New axes of the plot.
+        """
+        if parameter is None:
+            parameter = self.parameters()
+        
+        axes = self.data.hist(column=parameter, **kwds)
+
     def scatter_matrix(self, keys, ax=None):
         """
         Draw a matrix of scatter plots.
