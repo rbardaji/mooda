@@ -5,6 +5,7 @@ import requests
 from mooda import WaterFrame
 import pandas as pd
 import xarray as xr
+import warnings
 
 
 class EGIM:
@@ -70,6 +71,74 @@ class EGIM:
                       'contributor_name': 'EMSODEV project',
                       'contributor_role': 'consortium',
                       'contributor_email': ''}
+
+    METADATA_AZORES = {'site_code': 'Azores',
+                       'platform_code': 'EMSO-Azores',
+                       'data_mode': 'D',
+                       'title': 'Data from EGIM in the EMSO Site Azores',
+                       'summary': ('This dataset contains pressure data '
+                                   'acquired between July 2017 and August '
+                                   '2018 on EMSO-Azores observatory by the '
+                                   'EGIM. The pressure is one of the 7 core '
+                                   'parameters monitored by the EGIM, EMSO '
+                                   'Generic Instrumental Module. The EGIM '
+                                   'prototype was deployed at Lucky Strike '
+                                   'hydrothermal vent site, 25 m south west of'
+                                   ' the active edifice Tour Eiffel, to '
+                                   'monitor local hydrodynamic variability and'
+                                   ' complement the data obtained by the '
+                                   'numerous sensors set on this site: '
+                                   'oceanographic mooring deployed south of '
+                                   'the vent field, the multidisciplinary '
+                                   'Seamon East node, autonomous current '
+                                   'meters, array of temperature probes.'),
+                       'naming_authority': '',
+                       'source': 'subsurface mooring',
+                       'institution': 'Ifremer, CNRS, IPGP',
+                       'project': 'EMSODEV',
+                       'keywords_vocabulary': 'GCMD Science Keywords',
+                       'comment': 'Test data',
+                       'geospatial_lat_min': '37.289433',
+                       'geospatial_lat_max': '37.289433',
+                       'geospatial_lat_units': 'degree_north',
+                       'geospatial_lon_min': '-32.277567',
+                       'geospatial_lon_mX': '-32.277567',
+                       'geospatial_lon_units': 'degree_east',
+                       'geospatial_vertical_min': '17.841',
+                       'geospatial_vertical_max': '19.879',
+                       'geospatial_vertical_positive': 'down',
+                       'geospatial_vertical_units': 'meter',
+                       'time_coverage_start': '2017-07-01T00:00:00Z',
+                       'time_coverage_end': '2018-08-31T00:00:00Z',
+                       'time_coverage_duration': '',
+                       'time_coverage_resolution': 'PT30S',
+                       'cmd_data_type': 'Station',
+                       'data_type': 'OceanSITES time-series data',
+                       'format_version': '1.3',
+                       'publisher_name': '',
+                       'publisher_email': '',
+                       'publisher_url': '',
+                       'references': ('http://www.oceansites.org, '
+                                      'http://emso.eu'),
+                       'data_assembly_center': '',
+                       'update_interval': 'void',
+                       'license': ('https://creativecommons.org/'
+                                   'licenses/by/4.0/'),
+                       'citation': ('These data were collected and made freely'
+                                    ' available by the EMSODEV project.'),
+                       'acknowledgement': ('This work benefited from the H2020'
+                                           ' INFRADEV-3-2015 EMSODEV Project '
+                                           'n°676555.'),
+                       'date_created':
+                       datetime.datetime.utcnow().isoformat()[:-6]+'Z',
+                       'date_modified':
+                       datetime.datetime.utcnow().isoformat()[:-6]+'Z',
+                       'history': 'Data collected and processed with MOODA',
+                       'processing_level': 'Ranges applied, bad data flagged',
+                       'QC_indicator': 'excellent',
+                       'contributor_name': 'EMSODEV project',
+                       'contributor_role': 'consortium',
+                       'contributor_email': ''}
 
     METADATA_ADCP_21582 = {'sensor_model': 'TELEDYNE RDI Workhorse monitor',
                            'sensor_manufactured': 'TELEDYNE RD INSTRUMENTS',
@@ -160,7 +229,7 @@ class EGIM:
     METADATA_PSAL_SBE37 = {'standard_name': 'sea_water_practical_salinity',
                            'units': 'PSU',
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
-                           'long_name': '	Salinity of the water column',
+                           'long_name': 'Salinity of the water column',
                            'QC_indicator': 'Good data',
                            'processing_level': ('Ranges applied, bad data '
                                                 'flagged'),
@@ -1121,3 +1190,132 @@ class EGIM:
             content = f.read()
             f.seek(0, 0)
             f.write(metadata_text.rstrip('\r\n') + '\n\n\n\n' + content)
+
+    @staticmethod
+    def from_raw_csv(observatory, path, qc_tests=False):
+        """ It opens a csv file that contains data from an EGIM instrument.
+
+        Parameters
+        ----------
+            observatory: str
+                Name of the observatory. For now, only "EMSO-Azores" is
+                possible.
+                Write "EMSO-Azores" if the node is "EMSO-Azores" and source
+                files are from: www.seanoe.org
+            path: str
+                Path where the file is.
+            qc_tests: bool (optional)
+                It indicates if QC test should be passed.
+
+        Returns
+        -------
+            wf: WaterFrame
+        """
+        # Creation of a WaterFrame
+        wf = WaterFrame()
+
+        # The arguments of pandas.read_csv could change depending on the
+        # source.
+        sep = ","  # Delimiter to use.
+        header = None  # Row number(s) to use as the column names, and the
+        # start of the data.
+        skiprows = None  # Line numbers to skip (0-indexed) or number of
+        # lines to skip (int) at the start of the file.
+        if observatory == "EMSO-Azores":
+            sep = ";"
+            header = 1
+            skiprows = [2]
+            format_time = '%d/%m/%Y %H:%M:%S'
+
+            # Add metadata info
+            wf.metadata = EGIM.METADATA_AZORES.copy()
+        else:
+            warnings.warn("EGIM cannot open the CSV because it does not" + \
+                          " know the observatory.")
+            return
+        # Load data from CSV into a DataFrame
+        df = pd.read_csv(path, sep=sep, header=header, skiprows=skiprows)
+        columns = df.columns.tolist()  # get the columns
+        cols_to_use = columns[:len(columns)-1]  # drop the last one
+        df = pd.read_csv(path, sep=sep, header=header, skiprows=skiprows,
+                         usecols=cols_to_use)
+
+        # Create the time index
+        df['TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'],
+                                    format=format_time)
+        df.set_index(pd.DatetimeIndex(df['TIME']), inplace=True)
+        df.drop(['DATE', 'TIME'], inplace=True, axis=1)
+
+        # Add QC columns
+        for parameter in df.keys():
+            df["{}_QC".format(parameter)] = 0
+
+        # Add DataFrame into the WaterFrame
+        wf.data = df.copy()
+
+        # Change column names and add meanings
+        for parameter in wf.parameters():
+            if parameter == "TEMPERATURE":
+                info = {'long_name': EGIM.METADATA_TEMP_SBE37['long_name'],
+                        'units': EGIM.METADATA_TEMP_SBE37['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("TEMPERATURE", "TEMP")
+            elif parameter == "CONDUCTIVITY":
+                info = {'long_name': EGIM.METADATA_CNDC_SBE37['long_name'],
+                        'units': EGIM.METADATA_CNDC_SBE37['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("CONDUCTIVITY", "CNDC")
+            elif parameter == "PRESSION":
+                info = {'long_name': EGIM.METADATA_MPMN_SBE37['long_name'],
+                        'units': EGIM.METADATA_MPMN_SBE37['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("PRESSION", "MPMN")
+            elif parameter == "SALINITY":
+                info = {'long_name': EGIM.METADATA_PSAL_SBE37['long_name'],
+                        'units': EGIM.METADATA_PSAL_SBE37['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("SALINITY", "PSAL")
+            elif parameter == "SOUND SPEED":
+                info = {'long_name': EGIM.METADATA_SVEL_SBE37['long_name'],
+                        'units': EGIM.METADATA_SVEL_SBE37['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("SOUND SPEED", "SVEL")
+            elif parameter == "OXYGEN":
+                info = {'long_name': EGIM.METADATA_DOX2_AADI4381['long_name'],
+                        'units': EGIM.METADATA_DOX2_AADI4381['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("OXYGEN", "DOX2")
+            elif parameter == "SATURATION":
+                info = {'long_name': EGIM.METADATA_OSAT_AADI4381['long_name'],
+                        'units': EGIM.METADATA_OSAT_AADI4381['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("SATURATION", "OSAT")
+            elif parameter == "NTU_SIGNAL_2":
+                info = {'long_name': EGIM.METADATA_TUR4_NTURTD['long_name'],
+                        'units': EGIM.METADATA_TUR4_NTURTD['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("NTU_SIGNAL_2", "TUR4")
+            elif parameter == "PRESSURE":
+                info = {'long_name': EGIM.METADATA_PRES_SBE54['long_name'],
+                        'units': EGIM.METADATA_PRES_SBE54['units']}
+                wf.meaning[parameter] = info.copy()
+                wf.rename("PRESSURE", "PRES")
+            else:
+                # Delete the parameter
+                wf.drop(parameter)
+
+        # Creation of QC Flags following OceanSites recomendation
+        if qc_tests:
+            for parameter in wf.parameters():
+                # Reset QC Flags to 0
+                wf.reset_flag(key=parameter, flag=0)
+                # Flat test
+                wf.flat_test(key=parameter, window=0, flag=4)
+                # Spike test
+                wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+                # Range test
+                wf.range_test(key=parameter, flag=4)
+                # Change flags from 0 to 1
+                wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+
+        return wf

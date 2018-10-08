@@ -20,9 +20,12 @@ These are new features and improvements of note in each release.
   * qc(): Now, you can enter the parameter key = "all" and it will apply the QC tests to all parameters.
   * tsplot(): Input parameters changed.
   * hist(): New function. It creates a histogram plot.
+  * rename(): Now it works even if the WaterFrame parameter has no meaning.
+  * slice_time(): Now the input parameters are optional.
+  * concat(): Bug solved when dataframes contains duplicated indexes.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
-  * initUI(): We added a PlainTextEditor to show other information about the WaterFrame.
+  * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
 
 ## mooda v0.1.0 (2018-09-10)
 

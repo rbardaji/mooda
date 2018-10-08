@@ -3,11 +3,13 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QListWidget, QPushButton,
                              QAbstractItemView, QPlainTextEdit)
 from PyQt5.QtCore import pyqtSignal, Qt
 from mooda import WaterFrame
+from mooda.access import EGIM
 from mooda.app.mooda_gui.widgets import (DropWidget, QCWidget, RenameWidget,
                                          ResampleWidget, SliceWidget,
                                          ScatterMatrixPlotWidget, QCPlotWidget,
                                          TSPlotWidget, QCBarPlotWidget,
                                          SpectrogramPlotWidget)
+from mooda.app.mooda_gui.widgets.histoplotwidget import HistoPlotWidget
 
 
 class PlotSplitter(QSplitter):
@@ -34,7 +36,6 @@ class PlotSplitter(QSplitter):
         """UI creator"""
 
         # Lists
-        self.metadataList = QListWidget(self)
         self.dataList = QListWidget(self)
         self.dataList.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.dataList.itemClicked.connect(self.dataListClick)
@@ -43,6 +44,7 @@ class PlotSplitter(QSplitter):
 
         # PlainTextEdit
         self.otherInfoPlainText = QPlainTextEdit(self)
+        self.metadataPlainText = QPlainTextEdit(self)
 
         # Labels
         metadataLabel = QLabel("Metadata")
@@ -59,12 +61,14 @@ class PlotSplitter(QSplitter):
         plotGroupBox = QGroupBox("Plot properties", self)
         vPlotGroupBox = QVBoxLayout()
         # - RadioButton
-        self.autoPlotRadioButton = QRadioButton("Auto plot", self)
+        self.autoPlotRadioButton = QRadioButton("Time series plot", self)
         self.autoPlotRadioButton.setChecked(True)
-        self.multipleParameterRadioButton = QRadioButton("Click to plot", self)
+        self.multipleParameterRadioButton = QRadioButton("Multiparameter", self)
         self.correlationRadioButton = QRadioButton("Correlation", self)
+        self.histogramRadioButton = QRadioButton("Histogram", self)
         self.parameterQCRadioButton = QRadioButton("QC of the parameter", self)
         vPlotGroupBox.addWidget(self.autoPlotRadioButton)
+        vPlotGroupBox.addWidget(self.histogramRadioButton)
         vPlotGroupBox.addWidget(self.multipleParameterRadioButton)
         vPlotGroupBox.addWidget(self.correlationRadioButton)
         vPlotGroupBox.addWidget(self.parameterQCRadioButton)
@@ -131,7 +135,7 @@ class PlotSplitter(QSplitter):
         # - Metadata -
         vMetadata = QVBoxLayout()
         vMetadata.addWidget(metadataLabel)
-        vMetadata.addWidget(self.metadataList)
+        vMetadata.addWidget(self.metadataPlainText)
         vMetadata.addWidget(infoLabel)
         vMetadata.addWidget(self.otherInfoPlainText)
         vMetadata.addWidget(hideMetadataButton)
@@ -154,7 +158,8 @@ class PlotSplitter(QSplitter):
         self.addWidget(self.vDataSplitter)
 
     def dataListClick(self):
-        if self.autoPlotRadioButton.isChecked():
+        if (self.autoPlotRadioButton.isChecked() or 
+        self.histogramRadioButton.isChecked()):
             self.addPlot()
 
     def addPlot(self):
@@ -183,6 +188,9 @@ class PlotSplitter(QSplitter):
         # Create name of the plot
         name = '_'.join(keys)
 
+        if self.histogramRadioButton.isChecked():
+            name = "hist_" + name
+
         # Check if plot is done
         new = True
         for plotWidget in self.plotWidgetList:
@@ -198,7 +206,10 @@ class PlotSplitter(QSplitter):
             if len(keys) == 1 and "_QC" in keys[0]:
                 plotWidget = QCPlotWidget(wf=self.wf, key=keys[0])
             else:
-                plotWidget = TSPlotWidget(wf=self.wf, keys=keys)
+                if self.histogramRadioButton.isChecked():
+                    plotWidget = HistoPlotWidget(wf=self.wf, keys=keys)
+                else:
+                    plotWidget = TSPlotWidget(wf=self.wf, keys=keys)
                 plotWidget.msg2Statusbar[str].connect(self.msg2Statusbar.emit)
             self.addWidget(plotWidget)
             # Add the widget to the list
@@ -275,6 +286,12 @@ class PlotSplitter(QSplitter):
                 ok = wf_new.from_netcdf(path)
             elif extension == "pkl":
                 ok = wf_new.from_pickle(path)
+            elif extension == "csv":
+                try:
+                    wf_new = EGIM.from_raw_csv("EMSO-Azores", path)
+                    ok = True
+                except:
+                    ok = False
             if ok:
                 # Check if we want actual data
                 if not concat:
@@ -317,18 +334,18 @@ class PlotSplitter(QSplitter):
 
     def addMetadata(self, metadataDict):
         """
-        Add Metadata information into self.metadataList
+        Add Metadata information into self.metadataPlainText
         :param metadataDict: WaterFrame Metadata Dictionary
         """
         # Clear the list
-        self.metadataList.clear()
+        self.metadataPlainText.clear()
 
         items = []
         msg = "\nMetadata:"
         for key, value in metadataDict.items():
             items.append("{}: {}".format(key, value))
             msg += "\n- {}: {}".format(key, value)
-        self.metadataList.addItems(items)
+        self.metadataPlainText.setPlainText(msg[11:])
         # Send a message to the text area
         self.msg2TextArea.emit(msg)
 
@@ -403,7 +420,17 @@ class PlotSplitter(QSplitter):
         :return: Bool
         """
         self.msg2Statusbar.emit("Saving data")
-        ok = self.wf.to_pickle(path)
+        extension = path.split(".")[-1]
+        # Init ok
+        ok = False
+        wf_new = WaterFrame()
+        if extension == "nc":
+            pass
+        elif extension == "pkl":
+            ok = self.wf.to_pickle(path)
+        elif extension == "csv":
+            ok = self.wf.to_csv(path)
+
         if ok:
             self.msg2TextArea.emit("Data saved on file {}".format(path))
             self.msg2Statusbar.emit("Ready")

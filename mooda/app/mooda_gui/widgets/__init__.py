@@ -13,4 +13,5 @@ from mooda.app.mooda_gui.widgets.spectrogramplotwidget \
 from mooda.app.mooda_gui.widgets.textframe import TextFrame
 from mooda.app.mooda_gui.widgets.plotsplitter import PlotSplitter
 from mooda.app.mooda_gui.widgets.egimdownloaderframe import EgimDownloaderFrame
+from mooda.app.mooda_gui.widgets.histoplotwidget import HistoPlotWidget
 from mooda.app.mooda_gui.widgets.mainwindow import MOODA

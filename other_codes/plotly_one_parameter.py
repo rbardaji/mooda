@@ -5,22 +5,28 @@ different instrument of the EGIM deployed in OBSEA.
 import plotly
 import plotly.graph_objs as go
 from mooda import WaterFrame
+from mooda.access import EGIM
 
 
 # Path of files
 # Where the files are:
-path_location = r"YOUR PATH LOCATION"
-path_data = path_location + r"\OS_OBSEA_2016120120170426_R_NTURTD-648.nc"
+path_location = r"C:\Users\rbard\Desktop\Azores EGIM Data"
+path_data = path_location + r"\turbidity.csv"
+path_data = r"C:\Users\rbard\Desktop\Azores EGIM Data\Oximeter.csv"
 # Where to save the result:
-save_location = r"YOUR PATH TO SAVE"
-save_start = r"\TUR-"
-end_save = r"-OBSEA.html"
+save_location = r"C:\Users\rbard\Google Drive\Work\EmsoDev\server\www\html\graphs\azores"
+save_start = r"\OXI-"
+end_save = r"-AZORES.html"
 
 
 # Load data into a WaterFrame
 print("Loading data")
-wf = WaterFrame()
-wf.from_netcdf(path_data)
+if path_data[-1] == 'c':
+    wf = WaterFrame()
+    wf.from_netcdf(path_data)
+elif path_data[-1] == 'v':
+    print(path_data)
+    wf = EGIM.from_raw_csv(observatory="EMSO-Azores", path=path_data)
 print("Done")
 print(wf)
 
@@ -31,6 +37,8 @@ parameters = wf.parameters()
 print("Resampling data")
 wf.resample("H")
 print("Done")
+
+wf.slice_time(start="20170725000000", end="20180811000000")
 
 for parameter in parameters:
     print("Creation of", parameter, "graph")
@@ -50,6 +58,6 @@ for parameter in parameters:
                   yaxis=dict(title=wf.meaning[parameter]['units']),
                   )
 
-    plotly.offline.plot({"data": data, "layout": layout, }, auto_open=True, 
+    plotly.offline.plot({"data": data, "layout": layout, }, auto_open=True,
                         filename=save_location+save_start+parameter+end_save)
     print("Done")

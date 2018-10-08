@@ -70,6 +70,10 @@ Parameters | Description | Type
 --- | --- | ---
 path | Path to save the CSV file. | string
 
+Parameters | Description | Type
+--- | --- | ---
+True/False | It indicates if the process was successful | bool
+
 ### WaterFrame.tsplot(*keys*=*None*, *rolling*=*None*, *ax*=*None*, *average_time*=*None*, *secondary_y*=*False*, *color*=*None*)
 
 Plot time series.
@@ -286,9 +290,9 @@ Returns | Description | Type
 --- | --- | ---
 True/False | It indicates if the process was successfully. | bool
 
-### WaterFrame.slice_time(*start*, *end*)
+### WaterFrame.slice_time(*start*=*None*, *end*=*None*)
 
-Delete data outside the time interval.
+Delete data outside the time interval. If start or end is None, the slice will be from the beginning or to the final of the time series.
 
 Parameters | Description | Type
 --- | --- | ---

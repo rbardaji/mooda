@@ -223,7 +223,7 @@ class MOODA(QMainWindow):
             # Open the save file dialog
             fileName, _ = QFileDialog.getOpenFileName(
                 caption="Open data file", directory="",
-                filter="NETcdf (*.nc);;Pickle (*.pkl)")
+                filter="NetCDF (*.nc);;CSV (*.csv);;Pickle (*.pkl)")
 
         # Send the path to the PlotFrame to be opened
         if fileName:
@@ -249,6 +249,6 @@ class MOODA(QMainWindow):
         # Open the save file dialog
         fileName, _ = QFileDialog.getSaveFileName(
             caption="Open data file", directory="",
-            filter="Pickle (*.pkl)")
+            filter="Pickle (*.pkl);;CSV (*.csv)")
         if fileName:
             self.plotArea.saveData(fileName)

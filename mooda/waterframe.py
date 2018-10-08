@@ -49,7 +49,7 @@ class WaterFrame:
         Return a string containing a printable representation of an object.
         """
         parameters = "Parameters: {}".format((", ").join(self.parameters()))
-        
+
         # Memory use message
         memory_usage = self.memory_usage()
         units = "Bytes"
@@ -73,18 +73,24 @@ class WaterFrame:
         else:
             parameters_message = "Parameters:"
             for parameter in parameters:
-                parameters_message += "\n  - {}: {} ({})".format(
-                    parameter, self.meaning[parameter]["long_name"],
-                    self.meaning[parameter]["units"])
+                try:
+                    parameters_message += "\n  - {}: {} ({})".format(
+                        parameter, self.meaning[parameter]["long_name"],
+                        self.meaning[parameter]["units"])
+                except KeyError:
+                    parameters_message += \
+                        "\n  - {}: Parameter without meaning".format(parameter)
 
                 # Min, max and mean info
                 date_min, value_min = self.min(parameter)
                 date_max, value_max = self.max(parameter)
                 value_mean = self.mean(parameter)
-                parameters_message += "\n    - Min value: {:.3f}".format(value_min)
+                parameters_message += "\n    - Min value: {:.3f}".format(
+                    value_min)
                 parameters_message += "\n    - Date min value: {}".format(
                     date_min)
-                parameters_message += "\n    - Max value: {:.3f}".format(value_max)
+                parameters_message += "\n    - Max value: {:.3f}".format(
+                    value_max)
                 parameters_message += "\n    - Date max value: {}".format(
                     date_max)
                 parameters_message += "\n    - Mean value: {:.3f}".format(
@@ -99,8 +105,8 @@ class WaterFrame:
                 percentage = 0
                 if 1.0 in qc_values[parameter]:
                     percentage = qc_values[parameter][1.0]/total_values*100
-                parameters_message += "\n    - Values with QC = 1: {:.3f} %".format(
-                    percentage)
+                parameters_message += \
+                    "\n    - Values with QC = 1: {:.3f} %".format(percentage)
 
         message = size_message + "\n" + parameters_message
 
@@ -228,6 +234,11 @@ class WaterFrame:
         ----------
             path: str
                 Path to save the csv file.
+        
+        Returns
+        -------
+            True/False: bool
+                It indicates if the process was successful
         """
         # Create the file
         csv_file = open(path, 'w')
@@ -253,6 +264,8 @@ class WaterFrame:
 
         # Close the file
         csv_file.close()
+
+        return True
 
     def tsplot(self, keys=None, rolling=None, ax=None, average_time=None,
                secondary_y=False, color=None):
@@ -416,17 +429,35 @@ class WaterFrame:
             parameter = [parameter]
 
         axes = self.data.hist(column=parameter, **kwds)
-        
-        # Creation of the mean line
-        if mean_line is True:
+        parameter_counter = 0
+        try:
+            for ax in axes:
+                ax.set_xlabel("Values")
+                ax.set_ylabel("Frequency")
+                if mean_line is True:
+                    if parameter_counter < len(parameter):
+                        x_mean = self.mean(parameter[parameter_counter])
+                        ax.axvline(x_mean, color='k',
+                                   linestyle='dashed',
+                                   linewidth=1)
+
+                        parameter_counter += 1
+        except AttributeError:
+            
+            # Creation of the mean line
             parameter_counter = 0
             for irow in range(len(axes)):
                 for icol in range(len(axes[irow])):
                     if parameter_counter < len(parameter):
-                        x_mean = self.mean(parameter[parameter_counter])
-                        axes[irow, icol].axvline(x_mean, color='k', linestyle='dashed', linewidth=1)
+                        axes[irow, icol].set_xlabel("Values")
+                        axes[irow, icol].set_ylabel("Frequency")
+                        if mean_line is True:
+                            x_mean = self.mean(axes[irow, icol].get_title())
+                            axes[irow, icol].axvline(x_mean, color='k',
+                                                    linestyle='dashed',
+                                                    linewidth=1)
+                        parameter_counter += 1
 
-                    parameter_counter += 1
 
         return axes
 
@@ -838,11 +869,15 @@ class WaterFrame:
             old_name: str
                 key name to change.
             new_name: str
-                New name of the key."""
+                New name of the key.
+        """
         self.data.rename(columns={old_name: new_name}, inplace=True)
         self.data.rename(columns={old_name+'_QC': new_name+'_QC'},
                          inplace=True)
-        self.meaning[new_name] = self.meaning.pop(old_name)
+        try:
+            self.meaning[new_name] = self.meaning.pop(old_name)
+        except KeyError:
+            warnings.warn("Parameter without meaning")
 
     def concat(self, waterframe):
         """
@@ -883,9 +918,16 @@ class WaterFrame:
                                       "{}(NEW{})".format(key, copy_number))
                     keys_new += ['{}(SN{})'.format(key, copy_number)]
 
+            # Delete duplicated indexes
+            self.data = self.data.loc[
+                ~self.data.index.duplicated(keep='first')]
+            waterframe.data = waterframe.data.loc[
+                ~waterframe.data.index.duplicated(keep='first')]
+
             # Concat dataframes
             frames = [self.data, waterframe.data]
             self.data = pd.concat(frames, axis=1)
+
             # Merge dictionaries
             self.meaning = {**self.meaning, **waterframe.meaning}
             # Merge of metadata
@@ -939,15 +981,15 @@ class WaterFrame:
         else:
             return False
 
-    def slice_time(self, start, end):
+    def slice_time(self, start=None, end=None):
         """
         Delete data outside the time interval.
 
         Parameters
         ----------
-            start: str, timestamp
+            start: str, timestamp, optional (start=None)
                 Start time interval with format 'YYYYMMDDhhmmss' or timestamp.
-            end: str, timestamp
+            end: str, timestamp, optional (end=None)
                 End time interval with format 'YYYYMMDDhhmmss' or timestamp.
         """
         if isinstance(self.data.index, pd.core.index.MultiIndex):
@@ -956,12 +998,23 @@ class WaterFrame:
             self.data.set_index('TIME', inplace=True)
 
         self.data.sort_index(inplace=True)
-        datetime_start = datetime.datetime.strptime(start, '%Y%m%d%H%M%S')
-        datetime_end = datetime.datetime.strptime(end, '%Y%m%d%H%M%S')
 
-        start_slice = self.data.index.searchsorted(datetime_start)
-        end_slice = self.data.index.searchsorted(datetime_end)
-        self.data = self.data.ix[start_slice:end_slice]
+        if start is None:
+            datetime_end = datetime.datetime.strptime(end, '%Y%m%d%H%M%S')
+            end_slice = self.data.index.searchsorted(datetime_end)
+            self.data = self.data.ix[:end_slice]
+
+        if end is None:
+            datetime_start = datetime.datetime.strptime(start, '%Y%m%d%H%M%S')
+            start_slice = self.data.index.searchsorted(datetime_start)
+            self.data = self.data.ix[start_slice:]
+
+        if start is not None and end is not None:
+            datetime_start = datetime.datetime.strptime(start, '%Y%m%d%H%M%S')
+            start_slice = self.data.index.searchsorted(datetime_start)
+            datetime_end = datetime.datetime.strptime(end, '%Y%m%d%H%M%S')
+            end_slice = self.data.index.searchsorted(datetime_end)
+            self.data = self.data.ix[start_slice:end_slice]
 
     def clear(self):
         """
