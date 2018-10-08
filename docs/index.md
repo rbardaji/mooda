@@ -1,3 +1,5 @@
+![EMSO ERIC LOGO](http://193.144.35.225/img/logo/logo-EMSO-ERIC-dark.png)
+
 # MOODA - Module for Ocean Observatory Data Analysis
 
 Mooda is a python package designed mainly for oceanographers and marine science students. It is based on a power scripting system for:
@@ -9,8 +11,6 @@ Mooda is a python package designed mainly for oceanographers and marine science 
 * specific data analysis tools for different scientific disciplines.
 
 The package is designed to be open, adaptable and scalable allowing future contributions from researchers and developers from all the marine science disciplines.
-
-![EMSO ERIC LOGO](http://193.144.35.225/img/logo/logo-EMSO-ERIC-dark.png)
 
 This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
 
