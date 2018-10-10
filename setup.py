@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 
 NAME = 'mooda'
-VERSION = '0.1.0'
+VERSION = '0.2.0-alpha'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 README_FILE = os.path.join(os.path.dirname(__file__), 'README.md')
 LONG_DESCRIPTION = """
@@ -23,7 +23,7 @@ This work is performed in the framework of the European Multidisciplinary Seaflo
 
 Check the documentation on http://mooda.readthedocs.io/.
 """
-CLASSIFIERS = ['Development Status :: 4 - Beta',
+CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Environment :: X11 Applications :: Qt',
                'Environment :: Console',
                'Natural Language :: English',

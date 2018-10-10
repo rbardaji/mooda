@@ -223,8 +223,14 @@ class WaterFrame:
         ----------
             path: str
                 Path to save the pickle file.
+        
+        Returns
+            True: bool
+                If the file is created, it returns True.
         """
         pickle.dump(self.__dict__, open(path, "wb"))
+        
+        return True
 
     def to_csv(self, path):
         """
@@ -454,8 +460,8 @@ class WaterFrame:
                         if mean_line is True:
                             x_mean = self.mean(axes[irow, icol].get_title())
                             axes[irow, icol].axvline(x_mean, color='k',
-                                                    linestyle='dashed',
-                                                    linewidth=1)
+                                                     linestyle='dashed',
+                                                     linewidth=1)
                         parameter_counter += 1
 
 
@@ -1053,14 +1059,14 @@ class WaterFrame:
 
         return parameter_list
 
-    def use_only(self, parameters, flags=None, dropnan=False):
+    def use_only(self, parameters=None, flags=None, dropnan=False):
         """
         Drop all parameters not presented in the input list with QC flags
         different than given in the input flags.
 
         Parameters
         ----------
-            parameters: list of str, str
+            parameters: list of str, str, optional (parameters = None)
                 Parameter to save in the WaterFrame.
             flags: list of int, int, None, optional (flags = None)
                 QC Flag of the parameter to save.
@@ -1068,6 +1074,9 @@ class WaterFrame:
                 Drop all lines of self.data that contain a nan in any of their
                 columns.
         """
+
+        if parameters is None:
+            parameters = self.parameters()
 
         if isinstance(parameters, str):
             parameters = [parameters]
@@ -1240,3 +1249,58 @@ class WaterFrame:
         """
         c = copy.deepcopy(self)
         return c
+
+    def info_metadata(self, keys=None):
+        """
+        It returns a string with the metadata information.
+
+        Parameters
+        ----------
+            keys: string or list of strings (optional)
+                The return message will contain the information of the input keys.
+                If keys is None, all keys will be added to the return message.
+        
+        Returns
+        -------
+            message: sting
+                Message with the metadata information.
+        """
+
+        if keys is None:
+            keys = self.metadata.keys()
+
+        message = ""
+        for key, value in self.metadata.items():
+            if key in keys and value.strip() != "":
+                message += "  - {}: {}\n".format(key, value)
+
+        return message[:-1]
+
+    def info_meaning(self, keys=None):
+        """
+        It returns a string with the meanings information.
+
+        Parameters
+        ----------
+            keys: string or list of strings (optional)
+                The return message will contain the information of the input keys.
+                If keys is None, all keys will be added to the return message.
+        
+        Returns
+        -------
+            message: sting
+                Message with the meanings information.
+        """
+
+        if keys is None:
+            keys = self.meaning.keys()
+
+        message = ""
+        for key, meaning_dict in self.meaning.items():
+            if key in keys:
+                message += "  - {}\n".format(key)
+                for meaning_key, meaning_value in meaning_dict.items():
+                    if meaning_value.strip() != "":
+                        message += "    - {}: {}\n".format(meaning_key, meaning_value)
+
+        return message[:-1]

@@ -62,6 +62,10 @@ Parameters | Description | Type
 --- | --- | ---
 path | Path to save the pickle file. | string
 
+Returns | Description | Type
+--- | --- | ---
+True | Operation successfully completed. | bool
+
 ### WaterFrame.to_csv(*path*)
 
 It saves the WaterFrame data and metadata into a CSV file.
@@ -319,13 +323,13 @@ Returns | Description | Type
 --- | --- | ---
 parameter_list | Parameters used in the WaterFrame. | list of str
 
-### WaterFrame.use_only(*parameters*, *flags*=*None*, *dropnan*=*False*)
+### WaterFrame.use_only(*parameters*=None, *flags*=*None*, *dropnan*=*False*)
 
 Drop all parameters not presented in the input list with QC flags different than given in the input flags.
 
 Parameters | Description | Type
 --- | --- | ---
-parameters | Parameters to save in the WaterFrame. | list of str, str
+parameters | Parameters to save in the WaterFrame. If parameters is None, all parameters will be used.| list of str, str, None
 flags | QC Flag of the parameter to save. | list of int, int, None
 dropnan | Drop all lines of self.data that contain a nan in any of their columns. | Bool
 

@@ -22,7 +22,9 @@ These are new features and improvements of note in each release.
   * hist(): New function. It creates a histogram plot.
   * rename(): Now it works even if the WaterFrame parameter has no meaning.
   * slice_time(): Now the input parameters are optional.
-  * concat(): Bug solved when dataframes contains duplicated indexes.
+  * concat(): Bug solved when data frames contains duplicated indexes.
+  * use_only(): The argument "parameters" is now optional.
+  * to_pickle(): Now it returns True if the file was created.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
