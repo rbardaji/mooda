@@ -255,8 +255,7 @@ class EGIM:
                            'sensor_orientation': 'downward',
                            }
 
-    METADATA_PSAL_QC = {'long_name': ('quality flag for sea water practical',
-                                      'salinity'),
+    METADATA_PSAL_QC = {'long_name': 'quality flag for sea water practical salinity',
                         'flag_values': '0, 1, 2, 3, 4, 7, 8, 9',
                         'flag_meanings': ('unknown good_data '
                                           'probably_good_data '
@@ -269,11 +268,9 @@ class EGIM:
                            'sea_water_electrical_conductivity',
                            'units': 'S/m',
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
-                           'long_name': ('Electrical conductivity of the '
-                                         'water column'),
+                           'long_name': 'Electrical conductivity of the water column',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data '
-                                                'flagged'),
+                           'processing_level': 'Ranges applied, bad data flagged',
                            'valid_min': '0.f',
                            'valid_max': '7.f',
                            'ancillary_variables': 'CNDC_QC',
@@ -349,8 +346,7 @@ class EGIM:
                            'coordinates': 'TIME DEPTH LATITUDE LONGITUDE',
                            'long_name': 'Sound velocity of the water column',
                            'QC_indicator': 'Good data',
-                           'processing_level': ('Ranges applied, bad data '
-                                                'flagged'),
+                           'processing_level': 'Ranges applied, bad data flagged',
                            'valid_min': '',
                            'valid_max': '',
                            'ancillary_variables': 'SVEL_QC',
@@ -1044,7 +1040,8 @@ class EGIM:
         return wf
 
     @staticmethod
-    def to_netcdf(observatory, instrument, data, path):
+    def to_netcdf(observatory, instrument, data, path,  qc_tests=True,
+                  only_qc1=False):
         """It creates a netCDF file following the OceanSites standard.
 
         Parameters
@@ -1057,6 +1054,10 @@ class EGIM:
                 Data to be saved into a netCDF file.
             path: str
                 Path to save the netCDF file.
+            qc_tests: bool (optional, qc_tests=True)
+                It indicates if QC test should be passed.
+            only_qc1: bool (optional, only_qc1=True)
+                It indicates to save only values with QC = 1.
         """
         # Choose observatory metadata
         if observatory == 'EMSODEV-EGIM-node00001':
@@ -1068,18 +1069,22 @@ class EGIM:
         else:
             wf = EGIM.to_waterframe(data, metadata)
 
-        # Creation of QC Flags following OceanSites recomendation
-        for parameter in wf.parameters():
-            # Reset QC Flags to 0
-            wf.reset_flag(key=parameter, flag=0)
-            # Flat test
-            wf.flat_test(key=parameter, window=0, flag=4)
-            # Spike test
-            wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
-            # Range test
-            wf.range_test(key=parameter, flag=4)
-            # Change flags from 0 to 1
-            wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+        if qc_tests:
+            # Creation of QC Flags following OceanSites recomendation
+            for parameter in wf.parameters():
+                # Reset QC Flags to 0
+                wf.reset_flag(key=parameter, flag=0)
+                # Flat test
+                wf.flat_test(key=parameter, window=0, flag=4)
+                # Spike test
+                wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+                # Range test
+                wf.range_test(key=parameter, flag=4)
+                # Change flags from 0 to 1
+                wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+        if only_qc1:
+            wf.use_only(flags=1)
+
         # Creation of an xarray dataset
         ds = xr.Dataset(data_vars=wf.data, attrs=metadata)
 
@@ -1140,7 +1145,7 @@ class EGIM:
         ds.to_netcdf(path)
 
     @staticmethod
-    def to_csv(observatory, data, path):
+    def to_csv(observatory, data, path, qc_tests=True, only_qc1=False):
         """It creates a CSV file following the OceanSites standard.
 
         Parameters
@@ -1153,6 +1158,10 @@ class EGIM:
                 Data to be saved into a netCDF file.
             path: str
                 Path to save the CSV file.
+            qc_tests: bool (optional, qc_tests=True)
+                It indicates if QC test should be passed.
+            only_qc1: bool (optional, only_qc1=True)
+                It indicates to save only values with QC = 1
         """
         # Choose observatory metadata
         if observatory == 'EMSODEV-EGIM-node00001':
@@ -1164,26 +1173,29 @@ class EGIM:
         else:
             wf = EGIM.to_waterframe(data, metadata)
 
-        # Creation of QC Flags following OceanSites recomendation
-        for parameter in wf.parameters():
-            # Reset QC Flags to 0
-            wf.reset_flag(key=parameter, flag=0)
-            # Flat test
-            wf.flat_test(key=parameter, window=0, flag=4)
-            # Spike test
-            wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
-            # Range test
-            wf.range_test(key=parameter, flag=4)
-            # Change flags from 0 to 1
-            wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+        if qc_tests:
+            # Creation of QC Flags following OceanSites recomendation
+            for parameter in wf.parameters():
+                # Reset QC Flags to 0
+                wf.reset_flag(key=parameter, flag=0)
+                # Flat test
+                wf.flat_test(key=parameter, window=0, flag=4)
+                # Spike test
+                wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+                # Range test
+                wf.range_test(key=parameter, flag=4)
+                # Change flags from 0 to 1
+                wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+        if only_qc1:
+            wf.use_only(flags=1)
 
         # Metadata text creation
         metadata_text = "# Global attributes;Value"
         for key, value in metadata.items():
-            metadata += "# " + str(key) + ";" + str(value) + "\n"
+            metadata_text += "# " + str(key) + ";" + str(value) + "\n"
 
         # Creation of the csv file of the data
-        wf.data.to_csv(path=path, sep=";", header=True)
+        wf.data.to_csv(path, sep=";", header=True)
 
         # Adding the metadata to the file
         with open(path, 'r+') as f:
@@ -1230,8 +1242,7 @@ class EGIM:
             # Add metadata info
             wf.metadata = EGIM.METADATA_AZORES.copy()
         else:
-            warnings.warn("EGIM cannot open the CSV because it does not" + \
-                          " know the observatory.")
+            warnings.warn("EGIM cannot open the CSV because it does not know the observatory.")
             return
         # Load data from CSV into a DataFrame
         df = pd.read_csv(path, sep=sep, header=header, skiprows=skiprows)

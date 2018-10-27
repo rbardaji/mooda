@@ -550,7 +550,9 @@ Returns | Description | Type
 --- | --- | ---
 wf |  Data and metadata formated in a WaterFrame Object. | WaterFrame
 
-### EGIM.to_netcdf(*observatory*, *instrument*, *data*, *path*)
+### EGIM.to_netcdf(*observatory*, *instrument*, *data*, *path*, *qc_tests*=*True*, *only_qc*=*True*)
+
+From mooda v0.2.0.
 
 It creates a netCDF file following the [OceanSites](http://archimer.ifremer.fr/doc/00250/36149/34703.pdf) standard.
 
@@ -560,10 +562,12 @@ observatory | EGIM observatory name. | str
 instrument | Instrument name. | str
 data | Data to be saved into a netCDF file. | Pandas dataframe, WaterFrame
 path | Path to save the netCDF file | str
+qc_tests | It indicates if QC test should be passed. | bool
+only_qc | It indicates to save only values with QC = 1. | bool
 
-### EGIM.to_csv(*observatory*, *data*, *path*)
+### EGIM.to_csv(*observatory*, *data*, *path*, *qc_tests*=*True*, *only_qc*=*True*)
 
-From mooda v0.1.0.
+From mooda v0.2.0.
 
 It creates a csv file following the OceanSites standard.
 
@@ -572,3 +576,5 @@ Parameters | Description | Type
 observatory | EGIM observatory name. | str
 data | Data to be saved into a netCDF file. | Pandas dataframe, WaterFrame
 path | Path to save the csv file | str
+qc_tests | It indicates if QC test should be passed. | bool
+only_qc | It indicates to save only values with QC = 1. | bool

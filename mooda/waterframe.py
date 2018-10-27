@@ -464,7 +464,6 @@ class WaterFrame:
                                                      linewidth=1)
                         parameter_counter += 1
 
-
         return axes
 
     def scatter_matrix(self, keys, ax=None):

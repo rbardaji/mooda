@@ -28,6 +28,10 @@ These are new features and improvements of note in each release.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
+* In requirements-waterframe.txt: netcdf4 added.
+* In mooda/access/egim.py:
+  * to_netcdf(): New optional input parameters added.
+  * to_csv(): New optional input parameters added.
 
 ## mooda v0.1.0 (2018-09-10)
 
