@@ -605,6 +605,49 @@ class WaterFrame:
         # Creation of figure
         return plt.pcolormesh(time, wavelength, values)
 
+    def profileplot(self, parameter_y, parameter_x=None, ax=None,):
+        """
+        It creates a graph where y-axes is depth.
+
+        Parameters
+        ----------
+            parameter_y: str
+                ----
+            parameters_x: list of str, str (optional, 
+            parameters_x = None)
+                ----
+            ax: matplotlib.axes object, optional (ax = None)
+                It is used to add the plot to an input axes object.
+        Returns
+        -------
+            ax_out: matplotlib.AxesSubplot
+                New axes of the plot.
+        """
+        # Check the type of parameter_x
+        if isinstance(parameter_x, str):
+            parameter_x = [parameter_x]
+
+        # Extract data
+        parameter_y = [parameter_y]
+        keys = parameter_y + parameter_x
+        df = self.data[keys].dropna().reset_index().set_index('TIME')
+        df.index.rename("Date", inplace=True)
+
+        ax_out = df.plot(x=parameter_x, y=parameter_y[0], ax=ax)
+
+        if len(parameter_x) == 1:
+            ax_out.set_xlabel("{} ({})".format(self.meaning[parameter_x[0]]['long_name'],
+                                               self.meaning[parameter_x[0]]['units']))
+        ax_out.set_ylabel("{} ({})".format(self.meaning[parameter_y[0]]['long_name'],
+                                           self.meaning[parameter_y[0]]['units']))
+
+        ax_out.invert_yaxis()
+        ax_out.ticklabel_format(useOffset=False)
+        ax_out.legend().set_visible(False)
+        ax_out.set_title('Profile Plot')
+
+        return ax_out
+
     def spike_test(self, key, window=0, threshold=3, flag=4):
         """
         It detects spikes in a timeserie.
