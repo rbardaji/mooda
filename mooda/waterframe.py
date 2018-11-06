@@ -118,13 +118,16 @@ class WaterFrame:
         netCDF files are from the mooring-buoys of
         [EMODNET](http://www.emodnet-physics.eu/Map/),
         [JERICO](http://www.jerico-ri.eu/data-access/),
+        [EMSO](http://emso.eu)
         and time series with [NetCDF](http://www.oceansites.org/data/)
         format.
 
         Parameters
         ----------
-            path: str
-                Path to a netCDF file.
+            path: str, obj
+                Path to a netCDF file or an OpenDAP URL.
+                File-like objects are opened with scipy.io.netcdf
+                 (onlynetCDF3 supported).
         Returns
         -------
             True/False: Bool
@@ -450,7 +453,7 @@ class WaterFrame:
 
                         parameter_counter += 1
         except AttributeError:
-            
+
             # Creation of the mean line
             parameter_counter = 0
             for irow in range(len(axes)):
@@ -608,15 +611,16 @@ class WaterFrame:
 
     def profileplot(self, parameter_y, parameter_x=None, ax=None,):
         """
-        It creates a graph where y-axes is depth.
+        It creates a graph a profile plot.
+        Y-axes suppose to be a depth related parameter.
 
         Parameters
         ----------
             parameter_y: str
-                ----
+                y-axes parameter.
             parameters_x: list of str, str (optional, 
             parameters_x = None)
-                ----
+                x-axes parameter.
             ax: matplotlib.axes object, optional (ax = None)
                 It is used to add the plot to an input axes object.
         Returns

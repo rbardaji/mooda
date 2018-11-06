@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 
 NAME = 'mooda'
-VERSION = '0.2.0-alpha'
+VERSION = '0.2.0-alpha.1'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 README_FILE = os.path.join(os.path.dirname(__file__), 'README.md')
 LONG_DESCRIPTION = """

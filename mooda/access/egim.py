@@ -1042,7 +1042,7 @@ class EGIM:
     @staticmethod
     def to_netcdf(observatory, instrument, data, path,  qc_tests=True,
                   only_qc1=False):
-        """It creates a netCDF file following the OceanSites standard.
+        """It creates a netCDF3 file following the OceanSites standard.
 
         Parameters
         ----------
@@ -1142,7 +1142,7 @@ class EGIM:
             ds[key].attrs = attr
 
         # Creation of the nc file
-        ds.to_netcdf(path)
+        ds.to_netcdf(path, format="NETCDF3_64BIT")
 
     @staticmethod
     def to_csv(observatory, data, path, qc_tests=True, only_qc1=False):

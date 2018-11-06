@@ -32,11 +32,11 @@ message | Message with basic information about what contains the object. | str
 
 ### WaterFrame.from_netcdf(*path*)
 
-Load and decode a dataset from a netcdf file. The compatible netCDF files are from the mooring-buoys of [EMODNET](http://www.emodnet-physics.eu/Map/), [JERICO](http://www.jerico-ri.eu/data-access/), and all time series with [NetCDF](http://www.oceansites.org/data/) format.
+Load and decode a dataset from a netcdf file. The compatible netCDF files are from the mooring-buoys of [EMODNET](http://www.emodnet-physics.eu/Map/), [JERICO](http://www.jerico-ri.eu/data-access/), [EMSO](http://emso.eu), and all time series with [NetCDF](http://www.oceansites.org/data/) format.
 
 Parameters | Description | Type
 --- | --- | ---
-path | Path to a [NetCDF](http://www.oceansites.org/data/) file. | string
+path | Path to a netCDF file or an OpenDAP URL. File-like objects are opened with scipy.io.netcdf (onlynetCDF3 supported). | string or obj
 
 Returns | Description | Type
 --- | --- | ---
@@ -160,6 +160,20 @@ It plots the spectrometer of the acoustic data.
 Returns | Description | Type
 --- | --- | ---
 ax | New axes of the plot. | matplotlib.AxesSubplot
+
+### WaterFrame.profileplot(*parameter_y*, *parameter_x*=*None*, *ax*=*None*)
+
+It creates a graph a profile plot. Y-axes suppose to be a depth related parameter.
+
+Parameters | Description | Type
+--- | --- | ---
+parameter_y | Y-axes parameter. | str
+parameters_x | X-axes parameter. | list of str, str
+ax | It is used to add the plot to an input axes object. | matplotlib.axes
+
+Returns | Description | Type
+--- | --- | ---
+ax_out | New axes of the plot. | matplotlib.AxesSubplot
 
 ### WaterFrame.hist(*parameter*=*None*, *mean_line*=*False*, *\*\*kwds*)
 
