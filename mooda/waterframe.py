@@ -1,4 +1,5 @@
 import copy
+import io
 import pickle
 import sys
 import datetime
@@ -166,7 +167,7 @@ class WaterFrame:
             return ds_out
 
         # Check if path contanins a ".nc" file and then, complete the process
-        if '.nc' in path:
+        if (isinstance(path, str) and '.nc' in path) or isinstance(path, io.BytesIO):
             # Convert the nc to a xarray dataset
             ds = xr.open_dataset(path)
             # Save metadata
@@ -223,13 +224,13 @@ class WaterFrame:
         ----------
             path: str
                 Path to save the pickle file.
-        
+
         Returns
             True: bool
                 If the file is created, it returns True.
         """
         pickle.dump(self.__dict__, open(path, "wb"))
-        
+
         return True
 
     def to_csv(self, path):
@@ -240,7 +241,7 @@ class WaterFrame:
         ----------
             path: str
                 Path to save the csv file.
-        
+
         Returns
         -------
             True/False: bool
