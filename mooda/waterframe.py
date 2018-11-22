@@ -199,6 +199,22 @@ class WaterFrame:
         else:
             return False
 
+    def to_netcdf(self, path):
+        """
+        It creates a netCDF3 file.
+
+        Parameters
+        ----------
+            path: str,
+                Path to a netCDF file to save.
+        """
+        # Creation of an xarray dataset
+        ds = xr.Dataset(data_vars=self.data, attrs=self.metadata)
+        for key in self.parameters():
+            ds[key].attrs = self.meaning[key]
+        # Creation of the nc file
+        ds.to_netcdf(path, format="NETCDF3_64BIT")
+
     def from_pickle(self, path):
         """
         Load and decode a WaterFrame object from a pickle file.
@@ -618,7 +634,7 @@ class WaterFrame:
         ----------
             parameter_y: str
                 y-axes parameter.
-            parameters_x: list of str, str (optional, 
+            parameters_x: list of str, str (optional,
             parameters_x = None)
                 x-axes parameter.
             ax: matplotlib.axes object, optional (ax = None)
@@ -1306,7 +1322,7 @@ class WaterFrame:
             keys: string or list of strings (optional)
                 The return message will contain the information of the input keys.
                 If keys is None, all keys will be added to the return message.
-        
+
         Returns
         -------
             message: sting
