@@ -3,11 +3,10 @@ site_url: https://mooda.readthedocs.io
 site_description: Project documentation with of MOODA
 site_author: Raul Bardaji Benach
 
-nav:
+pages:
     - Home: index.md
     - Installation: installation.md
-    - Examples:
-        - QC with pickle file: ./examples/qc_temp_pickle.md
+    - Examples: ./examples/index_examples.md
     - Package overview: package.md
     - API reference: api.md
     - Github structure: github_struct.md
