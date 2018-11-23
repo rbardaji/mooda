@@ -42,6 +42,18 @@ Returns | Description | Type
 --- | --- | ---
 True/False | It indicates if the procedure was successful. | bool
 
+### WaterFrame.to_netcdf(*path*)
+
+Write WaterFrame contents to a netCDF3-64bits file.
+
+Parameters | Description | Type
+--- | --- | ---
+path | Path of the netCDF file. | str
+
+Returns | Description | Type
+--- | --- | ---
+True/False | It indicates if the procedure was successful. | bool
+
 ### WaterFrame.from_pickle(*path*)
 
 Load and decode a WaterFrame object from a pickle file.

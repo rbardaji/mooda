@@ -207,6 +207,11 @@ class WaterFrame:
         ----------
             path: str,
                 Path to a netCDF file to save.
+        
+        Returns
+        -------
+            True: bool
+                It indicates that the process was successfully completed.
         """
         # Creation of an xarray dataset
         ds = xr.Dataset(data_vars=self.data, attrs=self.metadata)
@@ -214,6 +219,8 @@ class WaterFrame:
             ds[key].attrs = self.meaning[key]
         # Creation of the nc file
         ds.to_netcdf(path, format="NETCDF3_64BIT")
+
+        return True
 
     def from_pickle(self, path):
         """
