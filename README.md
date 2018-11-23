@@ -1,47 +1,32 @@
-# MOODA - Module for Ocean Observatory Data Analysis
+![mooda header](docs/img/logos/Mooda-documentation-header.png)
 
 Mooda is a python package designed mainly for oceanographers and marine science students. It is based on a power scripting system for:
 
-* direct data access;
-* data filtering methods;
-* complex visualization tools;
-* quality control generation;
-* specific data analysis tools for different scientific disciplines.
+* open and analyze data files from scientific instrumentation and platforms
+* generate data quality control
+* make plots that are commonly used in the oceanographic community
+* make data files in netCDF and CSV format
 
-The package is designed to be open, adaptable and scalable allowing future contributions from researchers and developers from all the marine science disciplines.
+# Why to use mooda and how it works
 
-This work is performed in the framework of the European Multidisciplinary Seafloor and Water-Column Observatory development ([EMSOdev](http://www.emsodev.eu/)).
+In an oceanographic data file, metadata (the definition of data) is almost as relevant as the data. Without them, you do not know what the data means.
 
-Check the documentation on [mooda.readthedocs.io](http://mooda.readthedocs.io/).
+There are libraries, such as pandas, that allow you to manipulate the data quickly, but they do not give you the possibility to save the metadata.
 
-## Why use *mooda*
+With mooda, we work with WaterFrames. A WaterFrame object contains a pandas DataFrame and two dictionaries. With a WaterFrame you can open data files; data is stored into the DataFrame, and the metadata is stored into the dictionaries. With a WaterFrame, you can use the power of a pandas DataFrame without loose all the metadata information. Additionally, mooda helps to open and analyze raw data from scientific instruments and data from oceanographic platforms.
 
-The main problem when analyzing marine data from different research infrastructures is th lack of a unique data format and nomenclature. Regardless of the type of file i.e., CSV, NetCDF, HDF, XML, names that describe measurements (vocabularies) may vary depending on the provider/source. Although there is some effort to produce and provide documentation with standard vocabulary, until now, no consensus has been reached concerning the use of a common nomenclature to describe the measurements. For example, water temperature values can be listed as ‘TEMP,’ ‘temp,’ ‘sea_temp,’ or ‘temperature.’
+# Where to get it
 
-Another problem with the marine data is the Quality Control (QC). Some platforms offer to download a processed data set with QC Flags, but others, like [EMSODev](http://www.emsodev.eu), only give the option to download raw data. In some occasions, for an environmental scientist, it is hard to discriminate if data is adequate for a particular study.
+Binary installers for the latest released version are available at the [Python package index](https://pypi.org/project/mooda/)
 
-*Mooda* offers the possibility to read data in different formats and vocabularies. Source data are translated into an internal format, a WaterFrame. Thus, all data analysis functions can be used independently of the data source format.
+```cmd
+pip install mooda
+```
 
-## Compatible data input
+# License
 
-For the moment, the compatible source data can be from the following observatories:
+[MIT](LICENSE)
 
-* [EMSO](http://www.emso-eu.org/) Generic Instrument Module ([EGIM](http://www.emsodev.eu));
-* [JERICO](http://www.jerico-ri.eu/data-access/) in NetCDF;
-* Mooring time series from [EMODNET-physics](http://www.emodnet-physics.eu/Map/) in NetCDF.
+# Documentation
 
-## No knowledge of Python is needed
-
-*Mooda* can be executed through a graphical interface with which a large part of the implemented functions can be performed.
-
-![MOODA screenshot](/docs/img/home/mooda_screenshot.png)
-
-## More information
-
-* [Git Repository Structure](/docs/github_struct.md): Describes the git repository structure and branching model used for the mooda project.
-* [Package Overview](/docs/package.md): The Python package is located in the [mooda folder](/mooda). This document describes how the python modules within the package have been structured.
-* [Installation](/docs/installation.md): Step by step manual of the installation of mooda. The document contains an installation guide for people without python knowledge but also for people who have already used python before.
-* [API reference](/docs/api.md): Explanation of the modules and functions of the package.
-* [Examples](/docs/examples/index_examples.md): Set of examples to use mooda by writing python code or running MOODA.
-* [Version log](/docs/news.md)
-* [License](LICENSE)
+Work in progress
