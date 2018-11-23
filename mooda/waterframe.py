@@ -207,7 +207,7 @@ class WaterFrame:
         ----------
             path: str,
                 Path to a netCDF file to save.
-        
+
         Returns
         -------
             True: bool
@@ -1374,3 +1374,9 @@ class WaterFrame:
                         message += "    - {}: {}\n".format(meaning_key, meaning_value)
 
         return message[:-1]
+
+    def __setitem__(self, key, data):
+        self.data[key] = data
+
+    def __getitem__(self, key):
+        return self.data[key]
