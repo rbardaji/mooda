@@ -1,1 +1,10 @@
+nav:
+    - Home: index.md
+    - Installation: index.md
+    - Examples: index.md
+    - Package overview: index.md
+    - API reference: index.md
+    - Github structure: index.md
+    - News: index.md
+
 theme: jekyll-theme-slate
