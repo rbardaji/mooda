@@ -29,4 +29,4 @@ pip install mooda
 
 # Documentation
 
-Work in progress
+The official documentation is hosted here, on the [docs directory](docs/index_docs.md).
