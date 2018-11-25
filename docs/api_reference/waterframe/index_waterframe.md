@@ -1,7 +1,5 @@
 # WaterFrame
 
-Index:
-
 Magic attributes:
 * [Constructor](__init__.md)
 * [repr](__repr__.md)
