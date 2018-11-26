@@ -1,6 +1,6 @@
 # Api reference
 
-Index:
+Analysis:
 
 * [WaterFrame](waterframe/index_waterframe.md)
 * [PlotMap](plotmap/index_plotmap.md)
