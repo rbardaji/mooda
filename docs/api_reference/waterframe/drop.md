@@ -10,3 +10,5 @@ flags | Number of flag to drop. It can be None, int or a list of int. If it is N
 Returns | Description | Type
 --- | --- | ---
 True/False | It indicates if the process was successfully. | bool
+
+Return to the [WaterFrame Index](index_waterframe.md).

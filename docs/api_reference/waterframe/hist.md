@@ -14,3 +14,5 @@ mean_line | It draws a line representing the average of the dataset. | bool
 Returns | Description | Type
 --- | --- | ---
 axes | New axes of the plot. | matplotlib.AxesSubplot or numpy.ndarray of them
+
+Return to the [WaterFrame Index](index_waterframe.md).

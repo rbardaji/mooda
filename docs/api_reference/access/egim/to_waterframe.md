@@ -10,3 +10,5 @@ metadata | Dictionary with metadata information. | dict
 Returns | Description | Type
 --- | --- | ---
 wf |  Data and metadata formated in a WaterFrame Object. | WaterFrame
+
+Return to the [EGIM Index](index_egim.md).

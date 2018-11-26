@@ -10,3 +10,5 @@ parameter2 | Key name of the column 2 to calculate the difference. | str
 Returns | Description | Type
 --- | --- | ---
 (where, value) | The position (index) and value of the maximum difference. | (Pandas DataFrame Index, float)
+
+Return to the [WaterFrame Index](index_waterframe.md).

@@ -9,3 +9,5 @@ window | Size of the moving window of values to calculate the mean. If it is 0, 
 threshold | Flag value to write in on the fail values. | int
 bad_flag | key of self.data to apply the test. | str
 good_flag | Flag value to write in on the good values. | int
+
+Return to the [WaterFrame Index](index_waterframe.md).

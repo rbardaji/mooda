@@ -12,3 +12,5 @@ hour_minute | Hour and Minute of an Acoustic file. The Hour Minute format is HHM
 Returns | Description | Type
 --- | --- | ---
 (statusCode, text) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), text of the acoustic file) | (int, str)
+
+Return to the [EGIM Index](index_egim.md).

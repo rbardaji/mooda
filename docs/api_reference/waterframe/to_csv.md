@@ -9,3 +9,5 @@ path | Path to save the CSV file. | string
 Parameters | Description | Type
 --- | --- | ---
 True/False | It indicates if the process was successful | bool
+
+Return to the [WaterFrame Index](index_waterframe.md).

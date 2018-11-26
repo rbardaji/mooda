@@ -12,3 +12,5 @@ min_periods | Minimum number of observations required per pair of columns to hav
 Returns | Description | Type
 --- | --- | ---
 correlation_number | correlation coefficient | float
+
+Return to the [WaterFrame Index](index_waterframe.md).

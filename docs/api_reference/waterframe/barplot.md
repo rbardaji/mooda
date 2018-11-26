@@ -11,3 +11,5 @@ average_time | It calculates an average value of a time interval. You can find a
 Returns | Description | Type
 --- | --- | ---
 ax | New axes of the plot. | matplotlib.AxesSubplot
+
+Return to the [WaterFrame Index](index_waterframe.md).

@@ -10,3 +10,5 @@ instrument | Instrument name. | str
 Returns | Description | Type
 --- | --- | ---
 (statusCode, data) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list with dict of dates) | (int, list of dict{})
+
+Return to the [EGIM Index](index_egim.md).

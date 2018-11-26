@@ -6,3 +6,5 @@ Parameters | Description | Type
 --- | --- | ---
 login | Login of the EMSODEV DMP API. | str
 password | Password of the EMSODEV DMP API. | str
+
+Return to the [EGIM Index](index_egim.md).

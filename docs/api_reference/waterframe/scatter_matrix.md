@@ -15,3 +15,5 @@ Keys must contain different words. Example:
 Returns | Description | Type
 --- | --- | ---
 ax | New axes of the plot. | matplotlib.AxesSubplot
+
+Return to the [WaterFrame Index](index_waterframe.md).

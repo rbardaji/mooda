@@ -6,3 +6,5 @@ Parameters | Description | Type
 --- | --- | ---
 start | Start time interval with format 'YYYYMMDDhhmmss' or timestamp. | str, timestamp
 end | Start time interval with format 'YYYYMMDDhhmmss' or timestamp. | str, timestamp
+
+Return to the [WaterFrame Index](index_waterframe.md).

@@ -9,3 +9,5 @@ lat | Latitude. | float
 label_color | Color of the point. | str
 label | Text to write in the point. | str
 label_color | Color of the label. | str
+
+Return to the [PlotMap Index](index_plotmap.md).

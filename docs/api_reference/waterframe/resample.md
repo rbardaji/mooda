@@ -10,3 +10,5 @@ method | Save the new value with the mean(), max() or min() function. | "mean", 
 Returns | Description | Type
 --- | --- | ---
 True/False | It indicates if the process was successfully. | bool
+
+Return to the [WaterFrame Index](index_waterframe.md).

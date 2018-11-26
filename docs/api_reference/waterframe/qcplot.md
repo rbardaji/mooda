@@ -10,3 +10,5 @@ ax | It is used to add the plot to an input axes object. | matplotlib.axes
 Returns | Description | Type
 --- | --- | ---
 ax | New axes of the plot. | matplotlib.AxesSubplot
+
+Return to the [WaterFrame Index](index_waterframe.md).

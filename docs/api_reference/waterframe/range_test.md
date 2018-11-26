@@ -10,3 +10,5 @@ flag | Flag value to write in on the fail values. | int
 Returns | Description | Type
 --- | --- | ---
  True/False | It indicates if the process was successfully. | bool
+
+Return to the [WaterFrame Index](index_waterframe.md).

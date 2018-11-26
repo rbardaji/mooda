@@ -14,3 +14,5 @@ limit | The last x-measurements. | str
 Returns | Description | Type
 --- | --- | ---
 (statusCode, data) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list of DataFrame) | (int, list with dict of parameters)
+
+Return to the [EGIM Index](index_egim.md).

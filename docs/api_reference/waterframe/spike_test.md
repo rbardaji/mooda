@@ -12,3 +12,5 @@ flag | Flag value to write in on the fail values. | int
 Returns | Description | Type
 --- | --- | ---
 outlier_idx | Array with the flags result of the test. | numpy array
+
+Return to the [WaterFrame Index](index_waterframe.md).

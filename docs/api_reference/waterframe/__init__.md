@@ -11,3 +11,5 @@ If there is a path to a NetCDF file, it loads the data from the file.
 Parameters | Description | Type
 --- | --- | ---
 path | Path to a [NetCDF](http://www.oceansites.org/data/) file. | string
+
+Return to the [WaterFrame Index](index_waterframe.md).
