@@ -17,11 +17,13 @@ With mooda, we work with WaterFrames. A WaterFrame object contains a pandas Data
 
 # Where to get it
 
-Binary installers for the latest released version are available at the [Python package index](https://pypi.org/project/mooda/)
+Binary installers for the latest released stable version are available at the [Python package index](https://pypi.org/project/mooda/)
 
 ```cmd
 pip install mooda
 ```
+
+See more [instructions](docs/installation/installation.md) for installation from sources or non-PyPi releases.
 
 # License
 
