@@ -19,8 +19,8 @@ State: Work in progress.
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
 * In requirements-waterframe.txt: netcdf4 added.
 * In mooda/access/egim.py:
-  * to_netcdf(): New optional input parameters added.
-  * to_csv(): New optional input parameters added.
+  * to_netcdf(): New optional input parameters added. Return True if operation successful.
+  * to_csv(): New optional input parameters added. Return True if operation successful.
   
   Return to the [Versions Index](index_versions.md).
   

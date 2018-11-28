@@ -1058,6 +1058,12 @@ class EGIM:
                 It indicates if QC test should be passed.
             only_qc1: bool (optional, only_qc1=True)
                 It indicates to save only values with QC = 1.
+        
+        Returns
+        -------
+            True: bool
+                Operation successful.
+        
         """
         # Choose observatory metadata
         if observatory == 'EMSODEV-EGIM-node00001':
@@ -1144,6 +1150,8 @@ class EGIM:
         # Creation of the nc file
         ds.to_netcdf(path, format="NETCDF3_64BIT")
 
+        return True
+
     @staticmethod
     def to_csv(observatory, data, path, qc_tests=True, only_qc1=False):
         """It creates a CSV file following the OceanSites standard.
@@ -1162,6 +1170,11 @@ class EGIM:
                 It indicates if QC test should be passed.
             only_qc1: bool (optional, only_qc1=True)
                 It indicates to save only values with QC = 1
+
+        Returns
+        -------
+            True: bool
+                Operation successful.
         """
         # Choose observatory metadata
         if observatory == 'EMSODEV-EGIM-node00001':
@@ -1202,6 +1215,8 @@ class EGIM:
             content = f.read()
             f.seek(0, 0)
             f.write(metadata_text.rstrip('\r\n') + '\n\n\n\n' + content)
+
+        return True
 
     @staticmethod
     def from_raw_csv(observatory, path, qc_tests=False):
