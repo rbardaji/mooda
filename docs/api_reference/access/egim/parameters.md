@@ -1,6 +1,6 @@
-# EGIM.metadata(*observatory*, *instrument*)
+# EGIM.parameters(*observatory*, *instrument*)
 
-Get EGIM observatory instrument resource.
+Get the list of EGIM parameters for a specific EGIM instrument of an EGIM Observatory.
 
 Parameters | Description | Type
 --- | --- | ---
@@ -9,6 +9,6 @@ instrument | Instrument name. | str
 
 Returns | Description | Type
 --- | --- | ---
-(statusCode, metadataList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list with dictionaries of metadata) | (int, list of dict{{"instrumentName": "string", "metadataList": [{"metadata": "string","validityDate": "string"}]}})
+(statusCode, parameterList) | ([Status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), list of dict of parameters) | (int, list of dict{"name": "string", "uom": "string"})
 
 Return to the [EGIM Index](index_egim.md).
