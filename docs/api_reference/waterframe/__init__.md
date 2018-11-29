@@ -1,4 +1,4 @@
-# WaterFrame.\_\_init\_\_(*path*=*None*)
+# WaterFrame.\_\_init\_\_(*path*=*None*, *df*=*None*, *metadata*=*None*, *meaning*=*None*)
 
 It creates the following instance variables:
 
@@ -11,5 +11,8 @@ If there is a path to a NetCDF file, it loads the data from the file.
 Parameters | Description | Type
 --- | --- | ---
 path | Path to a [NetCDF](http://www.oceansites.org/data/) file. | string
+df | DataFrame. | pandas DataFrame
+metadata | Metadata dictionary. | dict
+meaning | Meaning dictionary. | dict
 
 Return to the [WaterFrame Index](index_waterframe.md).

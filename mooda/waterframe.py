@@ -20,7 +20,7 @@ class WaterFrame:
     metadata: A dictionary that contains the metadata information of the
     timeserie."""
 
-    def __init__(self, path=None):
+    def __init__(self, path=None, df=None, metadata=None, meaning=None):
         """It creates the instance following variables:
         data -- A pandas DataFrame that contains the measurement values of the
         time series.
@@ -33,12 +33,24 @@ class WaterFrame:
         ----------
             path: str, optional
                 Create a WaterFrame with the data of the file of the path.
+            df: pandas Dataframe
+                pandas DataFrame
+            metadata: dict
+                Metadata dictionary
+            meaning: dict
+                Meaning dictionary
         """
         # Instance variables
         self.data = pd.DataFrame()
         self.metadata = dict()
         self.meaning = dict()
 
+        if metadata is not None:
+            self.metadata = metadata
+        if meaning is not None:
+            self.meaning = meaning
+        if df is not None:
+            self.from_dataframe(df)
         if path:
             parts = path.split(".")
             if parts[-1] == "nc":
@@ -256,6 +268,43 @@ class WaterFrame:
                 If the file is created, it returns True.
         """
         pickle.dump(self.__dict__, open(path, "wb"))
+
+        return True
+
+    def from_dataframe(self, df, metadata=None, meaning=None):
+        """
+        It creates save the input pandas DataFrame into the WaterFrame.
+
+        Parameters
+        ----------
+            df: pandas DataFrame
+                pandas DataFrame
+            metadata : dict
+                Metadata information.
+            meaning: dict
+                Parameter meanings.
+
+        Return
+        ------
+            True: bool
+                Operation successful.
+        """
+        # Save metadata
+        if metadata is not None:
+            self.metadata = metadata
+
+        # Save meaning
+        if meaning is not None:
+            self.meaning = meaning
+
+        # Save df
+        self.data = df.copy()
+        # Adding QC keys
+        df_keys = list(df.keys())
+        wf_keys = list(self.data.keys())
+        for key in df_keys:
+            if "{}_QC".format(key) not in wf_keys:
+                self.data["{}_QC".format(key)] = 0
 
         return True
 
@@ -1355,7 +1404,7 @@ class WaterFrame:
             keys: string or list of strings (optional)
                 The return message will contain the information of the input keys.
                 If keys is None, all keys will be added to the return message.
-        
+
         Returns
         -------
             message: sting

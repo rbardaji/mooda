@@ -9,6 +9,7 @@ Open files:
 
 * [from_netcdf](from_netcdf.md)
 * [from_pickle](from_pickle.md)
+* [from_dataframe](from_dataframe.md)
 
 Save files:
 
