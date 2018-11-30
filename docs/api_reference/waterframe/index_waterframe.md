@@ -55,5 +55,7 @@ Info:
 * [max](max.md)
 * [min](min.md)
 * [mean](mean.md)
+* [info_metadata](info_metadata.md)
+* [info_meaning](info_meaning.md)
 
 Return to the [API Reference Index](../index_api_reference.md).

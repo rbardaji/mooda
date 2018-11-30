@@ -1418,7 +1418,7 @@ class WaterFrame:
 
         Returns
         -------
-            message: sting
+            message: string
                 Message with the metadata information.
         """
 
@@ -1444,7 +1444,7 @@ class WaterFrame:
 
         Returns
         -------
-            message: sting
+            message: string
                 Message with the meanings information.
         """
 
