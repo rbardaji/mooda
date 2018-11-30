@@ -10,7 +10,7 @@ If there is a path to a NetCDF file, it loads the data from the file.
 
 Parameters | Description | Type
 --- | --- | ---
-path | Path to a [NetCDF](http://www.oceansites.org/data/) file. | string
+path | Path to a [NetCDF](http://www.oceansites.org/data/) file. The file must be a NetCDF or a CSV. | string
 df | DataFrame. | pandas DataFrame
 metadata | Metadata dictionary. | dict
 meaning | Meaning dictionary. | dict

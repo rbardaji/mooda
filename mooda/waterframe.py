@@ -33,6 +33,7 @@ class WaterFrame:
         ----------
             path: str, optional
                 Create a WaterFrame with the data of the file of the path.
+                The file must be a NetCDF or a CSV.
             df: pandas Dataframe
                 pandas DataFrame
             metadata: dict
@@ -56,6 +57,9 @@ class WaterFrame:
             if parts[-1] == "nc":
                 # It is a NetCDF file
                 self.from_netcdf(path)
+            if parts[-1] == "csv":
+                # It is a CSV file
+                self.from_csv(path)
 
     def __repr__(self):
         """
@@ -204,7 +208,7 @@ class WaterFrame:
             self.data = ds.to_dataframe()
 
             # Set index
-            self.data = self.data.reset_index().set_index('TIME')
+            # self.data = self.data.reset_index().set_index('TIME')
             # self.data.sort_index()
 
             return True
@@ -231,6 +235,39 @@ class WaterFrame:
             ds[key].attrs = self.meaning[key]
         # Creation of the nc file
         ds.to_netcdf(path, format="NETCDF3_64BIT")
+
+        return True
+
+    def from_csv(self, path, metadata=None, meaning=None, **kwds):
+        """
+        It reads data from a CSV vile.
+
+        It uses the pandas.read_csv(). All parameters of read_csv() can be input here.
+
+        Parameters
+        ----------
+            path: str
+                Path of the CSV file.
+            metadata: dict
+                Metadata dictionary.
+            meaning: dict
+                Meaning dictionary.
+            **kwds: arguments
+                All arguments of pandas.read_csv()
+
+        Return
+        ------
+            True: bool
+                Operation successful.
+        """
+        if metadata is not None:
+            self.metadata = metadata
+        if meaning is not None:
+            self.meaning = meaning
+
+        df = pd.read_csv(path, **kwds)
+
+        self.from_dataframe(df)
 
         return True
 

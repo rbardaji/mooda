@@ -15,7 +15,8 @@ State: Work in progress.
   * use_only(): The argument "parameters" is now optional.
   * to_pickle(): Now it returns True if the file was created.
   * from_dataframe(): It save a pandas DataFrame into the WaterFrame.
-  * \_\_inti\_\_(): We added new arguments.
+  * \_\_init\_\_(): We added new arguments. We added the option to read csv files.
+  * from_netcdf(): We do not set index any more.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
