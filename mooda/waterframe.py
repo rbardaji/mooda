@@ -1032,12 +1032,19 @@ class WaterFrame:
                 key name to change.
             new_name: str
                 New name of the key.
+
+        Returns
+        -------
+            True: bool
+                The operation is successful.
+
         """
         self.data.rename(columns={old_name: new_name}, inplace=True)
         self.data.rename(columns={old_name+'_QC': new_name+'_QC'},
                          inplace=True)
         try:
             self.meaning[new_name] = self.meaning.pop(old_name)
+            return True
         except KeyError:
             warnings.warn("Parameter without meaning")
 
@@ -1153,6 +1160,14 @@ class WaterFrame:
                 Start time interval with format 'YYYYMMDDhhmmss' or timestamp.
             end: str, timestamp, optional (end=None)
                 End time interval with format 'YYYYMMDDhhmmss' or timestamp.
+        
+                Returns
+
+        Returns
+        -------
+            True: bool
+                The operation is successful.
+
         """
         if isinstance(self.data.index, pd.core.index.MultiIndex):
             # Sometimes, you have multiindex TIME and DEPTH
@@ -1177,6 +1192,8 @@ class WaterFrame:
             datetime_end = datetime.datetime.strptime(end, '%Y%m%d%H%M%S')
             end_slice = self.data.index.searchsorted(datetime_end)
             self.data = self.data.ix[start_slice:end_slice]
+
+        return True
 
     def clear(self):
         """
@@ -1229,6 +1246,12 @@ class WaterFrame:
             dropnan: Bool, optional (dropnan = False)
                 Drop all lines of self.data that contain a nan in any of their
                 columns.
+
+        Returns
+        -------
+            True/False: bool
+                The operations is successful.
+
         """
 
         if parameters is None:
@@ -1236,6 +1259,12 @@ class WaterFrame:
 
         if isinstance(parameters, str):
             parameters = [parameters]
+
+        # Check if parameters exist
+        for parameter in parameters:
+            if parameter not in self.parameters():
+                    warnings.warn("Parameter not found.")
+                    return False
 
         # Calculation of parameters to drop
         drop_parameters = [drop_param for drop_param in self.parameters()
@@ -1251,6 +1280,7 @@ class WaterFrame:
             self.drop(keys=parameters, flags=drop_flags)
         if dropnan:
             self.data.dropna(inplace=True)
+
         return True
 
     def corr(self, parameter1, parameter2, method='pearson', min_periods=1):

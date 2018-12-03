@@ -18,6 +18,7 @@ Save files:
 
 * [to_pickle](to_pickle.md)
 * [to_csv](to_csv.md)
+* [copy](copy.md)
 
 Plots:
 

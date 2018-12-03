@@ -17,6 +17,12 @@ State: Work in progress.
   * from_dataframe(): It save a pandas DataFrame into the WaterFrame.
   * \_\_init\_\_(): We added new arguments. We added the option to read csv files.
   * from_netcdf(): We do not set index any more.
+  * copy(): It returns a copy of self.
+  * \_\_getitem\_\_(): Magic function implemented.
+  * \_\_setitem\_\_(): Magic function implemented.
+  * rename(): It returns True if the operation is successful.
+  * slice_time(): It returns True if the operation is successful.
+  * use_only(): It returns True if the operation is successful. It raises a warning if parameters are not in self.parameters()
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.

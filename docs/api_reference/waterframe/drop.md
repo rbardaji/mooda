@@ -1,6 +1,6 @@
 # WaterFrame.drop(*keys*, *flags*=*None*)
 
-Remove required keys (and associated QC keys) from self.data requested axis removed.
+Remove input keys (and associated QC keys) from self.data.
 
 Parameters | Description | Type
 --- | --- | ---
