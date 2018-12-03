@@ -1,6 +1,6 @@
 # WaterFrame.max(*parameter*)
 
-It returns the max value of a parameter.
+It returns the max value of a parameter and the index of the value.
 
 Parameters | Description | Type
 --- | --- | ---

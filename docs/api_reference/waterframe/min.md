@@ -1,6 +1,6 @@
 # WaterFrame.min(*parameter*)
 
-It returns the min value of a parameter.
+It returns the min value of a parameter and the index of the value.
 
 Parameters | Description | Type
 --- | --- | ---

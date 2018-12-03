@@ -1462,7 +1462,25 @@ class WaterFrame:
         return message[:-1]
 
     def __setitem__(self, key, data):
-        self.data[key] = data
+        """
+        Set the value of *data* at *key* of *WaterFrame.data*.
+
+        Parameters
+        ----------
+        key: string or list of string
+            Key of DataFrame *WaterFrame.data*.
+        data: any
+            Values to be placed into WaterFrame.data[key].
+            self.data[key] = data
+        """
 
     def __getitem__(self, key):
+        """
+        Get the values of *WaterFrame.data[key]*.
+        
+        Parameters
+        ----------
+        key: string or list of string
+            Key of DataFrame *WaterFrame.data*.
+        """
         return self.data[key]

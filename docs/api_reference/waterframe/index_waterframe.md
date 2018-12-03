@@ -4,6 +4,8 @@ Magic attributes:
 
 * [Constructor](__init__.md)
 * [repr](__repr__.md)
+* [getitem](__getitem__.md)
+* [setitem](__setittme.md)
 
 Open files:
 
