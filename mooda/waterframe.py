@@ -762,13 +762,14 @@ class WaterFrame:
 
         return ax_out
 
-    def spike_test(self, key, window=0, threshold=3, flag=4):
+    def spike_test(self, parameters, window=0, threshold=3, flag=4):
         """
-        It detects spikes in a timeserie.
+        It checks if there is any spike in the time series.
 
         Parameters
         ----------
-            key: str
+            parameters: string or list of strings, optional
+            (parameters = None)
                 key of self.data to apply the test.
             window: int, optional (window = 0)
                 Size of the moving window of values to calculate the mean.
@@ -777,27 +778,38 @@ class WaterFrame:
                 The z-score at which the algorithm signals.
             flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
+
         Returns
         -------
-            outlier_idx: numpy array
-                Array with the flags result of the test."""
+            True/False: bool
+                It indicates if the process is (not) successful.
+        """
 
-        # Auto calculation of window
-        if window == 0:
-            window = int(len(self.data[key])/100)
-            if window < 3:
-                window = 3
-            elif window > 100:
-                window = 100
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
+        else:
+            return False
 
-        signals = self.data[
-            key].rolling(window=window,
-                         center=True).mean().fillna(method='bfill')
-        difference = np.abs(self.data[key] - signals)
-        outlier_idx = difference > threshold
-        self.data.ix[outlier_idx, key+'_QC'] = flag
+        for parameter in parameters:
+            # Auto calculation of window
+            if window == 0:
+                window = int(len(self.data[parameter])/100)
+                if window < 3:
+                    window = 3
+                elif window > 100:
+                    window = 100
 
-        return outlier_idx
+            signals = self.data[
+                parameter].rolling(window=window, center=True).mean().fillna(method='bfill')
+            difference = np.abs(self.data[parameter] - signals)
+            outlier_idx = difference > threshold
+            self.data.ix[outlier_idx, parameter + '_QC'] = flag
+
+        return True
 
     def range_test(self, parameters, flag=4, limits=None):
         """
@@ -867,7 +879,7 @@ class WaterFrame:
             pass
         else:
             return False
-        
+
         for parameter in parameters:
             if limits:
                 self.data.ix[self.data[parameter] < limits[0], parameter + '_QC'] = flag
@@ -879,23 +891,26 @@ class WaterFrame:
                 return False
         return True
 
-    def flat_test(self, key, window=1, flag=4):
+    def flat_test(self, parameters, window=1, flag=4):
         """
-        It detects no changes in values of time-series.
+        It detects if there are equal consecutive values in the time series.
 
         Parameters
         ----------
-            key: str
+            parameters: string or list of strings, optional
+            (parameters = None)
                 key of self.data to apply the test.
             window: int, optional (window = 1)
                 Size of the moving window of values to calculate the mean.
                 If it is 0, the function calculates the optimal window.
             flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
+        
         Returns
         -------
-            signals: numpy array
-                Array with the flags result of the test."""
+            True/False: bool
+                It indicates if the process is (not) successful.
+        """
         if window == 0:
             window = 1
         if window > 0:

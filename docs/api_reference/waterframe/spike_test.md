@@ -1,16 +1,23 @@
-# WaterFrame.spike_test(*key*, *window*=*0*, *threshold*=*3*, *flag*=*4*)
+# WaterFrame.spike_test(*parameters*, *window*=*0*, *threshold*=*3*, *flag*=*4*)
 
-It detects spikes in a time series.
+It checks if there is any spike in the time series.
 
-Parameters | Description | Type
---- | --- | ---
-key | key of self.data to apply the test. | str
-window | Size of the moving window of values to calculate the mean.If it is 0, the function calculates the optimal window. | int
-threshold | The z-score at which the algorithm signals. | int
-flag | Flag value to write in on the fail values. | int
+## Parameters
 
-Returns | Description | Type
---- | --- | ---
-outlier_idx | Array with the flags result of the test. | numpy array
+    parameters: string or list of strings, optional
+    (parameters = None)
+        key of self.data to apply the test.
+    window: int, optional (window = 0)
+        Size of the moving window of values to calculate the mean.
+        If it is 0, the function calculates the optimal window.
+    threshold: int, optional (threshold = 3)
+        The z-score at which the algorithm signals.
+    flag: int, optional (flag = 4)
+        Flag value to write in on the fail values.
+
+## Returns
+
+    True/False: bool
+        It indicates if the process is (not) successful.
 
 Return to the [WaterFrame Index](index_waterframe.md).
