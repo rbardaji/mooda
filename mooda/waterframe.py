@@ -762,7 +762,7 @@ class WaterFrame:
 
         return ax_out
 
-    def spike_test(self, parameters, window=0, threshold=3, flag=4):
+    def spike_test(self, parameters=None, window=0, threshold=3, flag=4):
         """
         It checks if there is any spike in the time series.
 
@@ -811,7 +811,7 @@ class WaterFrame:
 
         return True
 
-    def range_test(self, parameters, flag=4, limits=None):
+    def range_test(self, parameters=None, flag=4, limits=None):
         """
         Check if the values of a parameter are out of range.
 
@@ -891,7 +891,7 @@ class WaterFrame:
                 return False
         return True
 
-    def flat_test(self, parameters, window=1, flag=4):
+    def flat_test(self, parameters=None, window=1, flag=4):
         """
         It detects if there are equal consecutive values in the time series.
 

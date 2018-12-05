@@ -1,15 +1,20 @@
-# WaterFrame.flat_test(*key*, *window*=*3*, *flag*=*4*)
+# WaterFrame.flat_test(*parameters*=*None*, *window*=*3*, *flag*=*4*)
 
-It detects no changes in values of time-series.
+It detects if there are equal consecutive values in the time series.
 
-Parameters | Description | Type
---- | --- | ---
-key | key of self.data to apply the test. | str
-window | Size of the moving window of values to calculate the mean.If it is 0, the function calculates the optimal window. | int
-flag | Flag value to write in on the fail values. | int
+## Parameters
 
-Returns | Description | Type
---- | --- | ---
-outlier_idx | Array with the flags result of the test. | numpy array
+    parameters: string or list of strings, optional (parameters = None)
+        key of self.data to apply the test.
+    window: int, optional (window = 1)
+        Size of the moving window of values to calculate the mean.
+        If it is 0, the function calculates the optimal window.
+    flag: int, optional (flag = 4)
+        Flag value to write in on the fail values.
+
+## Returns
+
+    True/False: bool
+        It indicates if the process is (not) successful.
 
 Return to the [WaterFrame Index](index_waterframe.md).
