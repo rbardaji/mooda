@@ -4,7 +4,7 @@ Check if the values of a parameter are out of range.
 
 ## Parameters
 
-    parameter: str
+    parameters: string or list of strings, optional (parameters = None)
         key of self.data to apply the test.
     flag: int, optional (flag = 4)
         Flag value to write in on the fail values.
@@ -14,6 +14,6 @@ Check if the values of a parameter are out of range.
 ## Returns
 
     True/False: bool
-        It indicates if the process was successfully.
+        It indicates if the process is (not) successful.
 
 Return to the [WaterFrame Index](index_waterframe.md).

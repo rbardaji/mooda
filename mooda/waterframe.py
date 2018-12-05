@@ -799,13 +799,14 @@ class WaterFrame:
 
         return outlier_idx
 
-    def range_test(self, parameter, flag=4, limits=None):
+    def range_test(self, parameters, flag=4, limits=None):
         """
         Check if the values of a parameter are out of range.
 
         Parameters
         ----------
-            parameter: str
+            parameters: string or list of strings, optional
+            (parameters = None)
                 key of self.data to apply the test.
             flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
@@ -815,7 +816,7 @@ class WaterFrame:
         Returns
         -------
             True/False: bool
-                It indicates if the process was successfully.
+                It indicates if the process is (not) successful.
         """
         ranges = {
             'ATMP': [600, 1500],  # atmospheric pressure at altitude
@@ -858,16 +859,25 @@ class WaterFrame:
             'WSPD': [0, 50],  # Horizontal wind speed
         }
 
-        if limits:
-            self.data.ix[self.data[parameter] < limits[0], parameter + '_QC'] = flag
-            self.data.ix[self.data[parameter] > limits[1], parameter + '_QC'] = flag
-            return True
-        elif parameter in ranges.keys():
-            self.data.ix[self.data[parameter] < ranges[parameter][0], parameter + '_QC'] = flag
-            self.data.ix[self.data[parameter] > ranges[parameter][1], parameter + '_QC'] = flag
-            return True
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
         else:
             return False
+        
+        for parameter in parameters:
+            if limits:
+                self.data.ix[self.data[parameter] < limits[0], parameter + '_QC'] = flag
+                self.data.ix[self.data[parameter] > limits[1], parameter + '_QC'] = flag
+            elif parameter in ranges.keys():
+                self.data.ix[self.data[parameter] < ranges[parameter][0], parameter + '_QC'] = flag
+                self.data.ix[self.data[parameter] > ranges[parameter][1], parameter + '_QC'] = flag
+            else:
+                return False
+        return True
 
     def flat_test(self, key, window=1, flag=4):
         """
@@ -945,7 +955,7 @@ class WaterFrame:
             pass
         else:
             return False
-        
+
         for parameter in parameters:
             if parameter in self.parameters():
                 self.data[parameter + '_QC'] = flag

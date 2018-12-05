@@ -24,7 +24,7 @@ State: Work in progress.
   * slice_time(): It returns True if the operation is successful.
   * use_only(): It returns True if the operation is successful. It raises a warning if parameters are not in self.parameters().
   * concat(): It returns True if the operation is successful.
-  * range_test(): limits argument added. It returns True if the operation is successful.
+  * range_test(): limits argument added. It returns True if the operation is successful. Argument changed from key to parameters.
   * reset_flags(): It returns True if the operation is successful. Argument changed from key to parameters.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
