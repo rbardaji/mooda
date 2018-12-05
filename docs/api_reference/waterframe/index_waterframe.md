@@ -2,7 +2,7 @@
 
 Magic attributes:
 
-* [Constructor](__init__.md)
+* [constructor](__init__.md)
 * [repr](__repr__.md)
 * [getitem](__getitem__.md)
 * [setitem](__setittme.md)
@@ -35,6 +35,7 @@ QC management:
 
 * [spike_test](spike_test.md)
 * [range_test](range_test.md)
+* [flat_test](flat_test.md)
 * [flag2flag](flag2flag.md)
 * [reset_flag](reset_flag.md)
 * [qc](qc.md)

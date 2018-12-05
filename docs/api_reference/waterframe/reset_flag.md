@@ -1,10 +1,17 @@
-# WaterFrame.reset_flag(*key*, *flag*=*0*)
+# WaterFrame.reset_flag(*parameters*, *flag*=*0*)
 
-It changes all the flags of the key to the input flag value.
+It sets the flag values of the parameter to "flag".
 
-Parameters | Description | Type
---- | --- | ---
-key | key of self.data to apply the test. | str
-flag | Flag value to write. | int
+## Parameters
+
+    parameters: string, list of strings optional  (parameter = None)
+        key of self.data to apply the test.
+    flag: int, optional (flag = 0)
+        Flag value to write.
+
+## Returns
+
+    True/False: bool
+        The operation is (not) successful. If it returns False, check the name of the parameter.
 
 Return to the [WaterFrame Index](index_waterframe.md).

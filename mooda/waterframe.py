@@ -799,19 +799,24 @@ class WaterFrame:
 
         return outlier_idx
 
-    def range_test(self, key, flag=4):
+    def range_test(self, parameter, flag=4, limits=None):
         """
-        Check impossible values of a parameter.
+        Check if the values of a parameter are out of range.
+
         Parameters
         ----------
-            key: str
+            parameter: str
                 key of self.data to apply the test.
             flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
+            limits: tuple, optional (range = None)
+                (Min value, max value) of the range of correct values.
+
         Returns
         -------
             True/False: bool
-                It indicates if the process was successfully."""
+                It indicates if the process was successfully.
+        """
         ranges = {
             'ATMP': [600, 1500],  # atmospheric pressure at altitude
             'ATMS': [0, 2000],  # Atmospheric pressure at sea level
@@ -853,9 +858,13 @@ class WaterFrame:
             'WSPD': [0, 50],  # Horizontal wind speed
         }
 
-        if key in ranges.keys():
-            self.data.ix[self.data[key] < ranges[key][0], key+'_QC'] = flag
-            self.data.ix[self.data[key] > ranges[key][1], key + '_QC'] = flag
+        if limits:
+            self.data.ix[self.data[parameter] < limits[0], parameter + '_QC'] = flag
+            self.data.ix[self.data[parameter] > limits[1], parameter + '_QC'] = flag
+            return True
+        elif parameter in ranges.keys():
+            self.data.ix[self.data[parameter] < ranges[parameter][0], parameter + '_QC'] = flag
+            self.data.ix[self.data[parameter] > ranges[parameter][1], parameter + '_QC'] = flag
             return True
         else:
             return False
@@ -911,19 +920,38 @@ class WaterFrame:
         self.data[key+'_QC'].replace(original_flag, translated_flag,
                                      inplace=True)
 
-    def reset_flag(self, key, flag=0):
+    def reset_flag(self, parameters=None, flag=0):
         """
-        It changes all the flags of the key to the input flag value.
+        It sets the flag values of the parameter to "flag".
 
         Parameters
         ----------
-            key: str
+            parameters: string, list of strings optional 
+            (parameters = None)
                 key of self.data to apply the test.
             flag: int, optional (flag = 0)
                 Flag value to write.
+
+        Returns
+        -------
+            True/False: bool
+                The operation is (not) successful.
         """
-        for i in range(10):
-            self.data[key + '_QC'].replace(i, flag, inplace=True)
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
+        else:
+            return False
+        
+        for parameter in parameters:
+            if parameter in self.parameters():
+                self.data[parameter + '_QC'] = flag
+            else:
+                return False
+        return True
 
     def qc(self, key="all", window=3, threshold=3, bad_flag=4, good_flag=1):
         """
@@ -1058,6 +1086,11 @@ class WaterFrame:
         ----------
             waterframe: WaterFrame
                 WaterFrame object to concat to self
+
+        Returns
+        -------
+            True: bool
+                The operation is successful.
         """
         if self.data.index.size > 0:
             # Check if keys of waterframes contain the same name
@@ -1114,6 +1147,8 @@ class WaterFrame:
             self.data = waterframe.data.copy()
             self.meaning = waterframe.meaning.copy()
             self.metadata = waterframe.metadata.copy()
+
+        return True
 
     def resample(self, rule, method='mean'):
         """
