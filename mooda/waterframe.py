@@ -949,7 +949,7 @@ class WaterFrame:
         Returns
         -------
             True/False: bool
-                The operation is (not) successful.    
+                The operation is (not) successful.
         """
         if parameters is None:
             parameters = self.parameters()
