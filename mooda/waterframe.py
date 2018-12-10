@@ -891,7 +891,7 @@ class WaterFrame:
                 return False
         return True
 
-    def flat_test(self, parameters=None, window=1, flag=4):
+    def flat_test(self, parameters=None, window=2, flag=4):
         """
         It detects if there are equal consecutive values in the time series.
 
@@ -905,45 +905,66 @@ class WaterFrame:
                 If it is 0, the function calculates the optimal window.
             flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
-        
+
         Returns
         -------
             True/False: bool
                 It indicates if the process is (not) successful.
         """
-        if window == 0:
-            window = 1
-        if window > 0:
-            signals = []
-            for i in range(len(self.data[key])):
-                try:
-                    if self.data[key][i] - self.data[key][i-window] == 0:
-                        signals.append(True)
-                    else:
-                        signals.append(False)
-                except IndexError:
-                    signals.append(False)
-
-            self.data.ix[signals, key + '_QC'] = flag
-
-            return signals
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
         else:
             return False
 
-    def flag2flag(self, key, original_flag=0, translated_flag=1):
+        if window == 0:
+            window = 2
+        if window > 0:
+            df = self.data.rolling(window).std()
+
+        for parameter in parameters:
+            if '_QC' in parameter:
+                return False
+            else:
+                self.data.ix[df[parameter] == 0, parameter + '_QC'] = flag
+                return True
+
+    def flag2flag(self, parameters=None, original_flag=0, translated_flag=1):
         """
         It changes the flags of the key, from original_flag to translated_flag.
 
         Parameters
         ----------
-            key: str
-                key of self.data to apply the test.
+            parameters: string, list of strings optional
+            (parameters = None)
+                Key of self.data to apply the test.
             original_flag: int, optional (original_flag = 0)
                 Flag number to translate.
             translated_flag: int, optional (translated_flag = 1)
-                Translation of the original flag number."""
-        self.data[key+'_QC'].replace(original_flag, translated_flag,
-                                     inplace=True)
+                Translation of the original flag number.
+
+        Returns
+        -------
+            True/False: bool
+                The operation is (not) successful.    
+        """
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
+        else:
+            return False
+
+        for parameter in parameters:
+            if '_QC' in parameter:
+                return False
+            self.data[parameter+'_QC'].replace(original_flag, translated_flag,
+                                               inplace=True)
 
     def reset_flag(self, parameters=None, flag=0):
         """
@@ -951,9 +972,9 @@ class WaterFrame:
 
         Parameters
         ----------
-            parameters: string, list of strings optional 
+            parameters: string, list of strings optional
             (parameters = None)
-                key of self.data to apply the test.
+                Key of self.data to apply the test.
             flag: int, optional (flag = 0)
                 Flag value to write.
 
@@ -978,14 +999,15 @@ class WaterFrame:
                 return False
         return True
 
-    def qc(self, key="all", window=3, threshold=3, bad_flag=4, good_flag=1):
+    def qc(self, parameters=None, window=0, threshold=3, bad_flag=4, good_flag=1):
         """
         Auto QC process.
 
         Parameters
         ----------
-            key: str
-                key of self.data to apply the test.
+            parameters: string, list of strings optional
+            (parameters = None)
+                Key of self.data to apply the test.
             window: int, optional (window = 0)
                 Size of the moving window of values to calculate the mean.
                 If it is 0, the function calculates the optimal window.
@@ -994,22 +1016,30 @@ class WaterFrame:
             bad_flag: int, optional (flag = 4)
                 Flag value to write in on the fail values.
             good_flag: int, optional (flag = 1)
-                Flag value to write in on the good values."""
+                Flag value to write in on the good values.
 
-        def apply_qc(parameter_in):
-            self.reset_flag(key=parameter_in, flag=0)
-            self.range_test(key=parameter_in, flag=bad_flag)
-            self.spike_test(key=parameter_in, window=window,
-                            threshold=threshold, flag=bad_flag)
-            self.flat_test(key=parameter_in, window=window, flag=bad_flag)
-            self.flag2flag(key=parameter_in, original_flag=0,
-                           translated_flag=good_flag)
+        Returns
+        -------
+            True/False: bool
+                The operation is (not) successful.
+        """
 
-        if key == "all":
-            for parameter in self.parameters():
-                apply_qc(parameter)
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
         else:
-            apply_qc(key)
+            return False
+
+        self.reset_flag(parameters)
+        self.range_test(parameters, flag=bad_flag)
+        self.spike_test(parameters, window=window, threshold=threshold, flag=bad_flag)
+        self.flat_test(parameters, window=window, flag=bad_flag)
+        answer = self.flag2flag(parameters, translated_flag=good_flag)
+
+        return answer
 
     def info_qc(self):
         """
@@ -1220,8 +1250,6 @@ class WaterFrame:
                 Start time interval with format 'YYYYMMDDhhmmss' or timestamp.
             end: str, timestamp, optional (end=None)
                 End time interval with format 'YYYYMMDDhhmmss' or timestamp.
-        
-                Returns
 
         Returns
         -------
@@ -1561,13 +1589,13 @@ class WaterFrame:
             Key of DataFrame *WaterFrame.data*.
         data: any
             Values to be placed into WaterFrame.data[key].
-            self.data[key] = data
         """
+        self.data[key] = data
 
     def __getitem__(self, key):
         """
         Get the values of *WaterFrame.data[key]*.
-        
+
         Parameters
         ----------
         key: string or list of string
