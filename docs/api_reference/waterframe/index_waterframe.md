@@ -22,6 +22,7 @@ Save files:
 
 Plots:
 
+* [plot](plot.md)
 * [tsplot](tsplot.md)
 * [barplot](barplot.md)
 * [scatter_matrix](scatter_matrix.md)
