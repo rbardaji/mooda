@@ -2,18 +2,19 @@
 
 Draw a matrix of scatter plots.
 
-Parameters | Description | Type
---- | --- | ---
-key | keys of self.data to plot. | list of str
-ax | It is used to add the plot to an input axes object. | matplotlib.axes
+## Parameters
 
-Keys must contain different words. Example:
+    key: list of string
+        keys of self.data to plot.
+        Keys must contain different words.
+        ex:
+            keys = ['VAVH', 'VCMX'] is ok.
+            keys = ['VAVH', 'VAVH'] is not ok.
+    ax: matplotlib.axes object, optional (ax = None)
+        It is used to add the plot to an input axes object.
 
-* keys = ['VAVH', 'VCMX'] is ok.
-* keys = ['VAVH', 'VAVH'] is not ok.
+## Returns
 
-Returns | Description | Type
---- | --- | ---
-ax | New axes of the plot. | matplotlib.AxesSubplot
-
-Return to the [WaterFrame Index](index_waterframe.md).
+    ax: matplotlib.AxesSubplot or False
+        New axes of the plot.
+        It returns False if operation is not successful.

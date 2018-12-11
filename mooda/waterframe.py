@@ -596,16 +596,22 @@ class WaterFrame:
 
         Returns
         -------
-            ax: matplotlib.AxesSubplot
+            ax: matplotlib.AxesSubplot or False
                 New axes of the plot.
+                It returns False if operation is not successful.
         """
-        # Remove duplicate keys
-        keys = list(set(keys))
-        if len(keys) > 1:
-            # Extract data
-            df = self.data[keys]
-            ax = pd.plotting.scatter_matrix(df, diagonal='kde', ax=ax)
-            return ax
+        if isinstance(keys, list):
+            # Remove duplicate keys
+            keys = list(set(keys))
+            if len(keys) > 1:
+                # Extract data
+                df = self.data[keys]
+                ax = pd.plotting.scatter_matrix(df, diagonal='kde', ax=ax)
+                return ax
+            else:
+                return False
+        else:
+            return False
 
     def qcplot(self, key, ax=None):
         """

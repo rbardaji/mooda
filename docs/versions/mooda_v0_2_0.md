@@ -30,6 +30,7 @@ State: Work in progress.
   * flag2flag(): It returns True if the operation is successful. Argument changed from key to parameters.
   * qc(): It returns True if the operation is successful. Argument changed from key to parameters. We changed all the function code.
   * plot(): New method.
+  * scatter_matrix(): It returns False if operation was not successful.
 * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
