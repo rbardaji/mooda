@@ -613,74 +613,98 @@ class WaterFrame:
         else:
             return False
 
-    def qcplot(self, key, ax=None):
+    def qcplot(self, parameters=None, ax=None):
         """
         Plot the timeserie with dots of different colours according to the QC
         Flag.
 
         Parameters
         ----------
-            key: str
-                key of self.data to plot.
+            parameters: string or list of strings, optional
+            (parameters = None)
+                key of self.data to apply the test.
             ax: matplotlib.axes object, optional (ax = None)
                 It is used to add the plot to an input axes object.
         Returns
         -------
-            ax: matplotlib.AxesSubplot
-                New axes of the plot.
+            ax: matplotlib.AxesSubplot or False
+                New axes of the plot. It returns False if the operation was
+                not successful.
         """
-        # Extract data
-        df = self.data[
-            [key, key+'_QC']].dropna().reset_index().set_index('TIME')
-        df.index.rename("Date", inplace=True)
-        # Sometimes Depth is on the df
-        if "DEPTH" in df.keys():
-            del df['DEPTH']
-        # Create a dataframe divided with flags
-        for flag in range(0, 10):
-            df_ = pd.DataFrame()
-            df_['{}'.format(flag)] = df.ix[df[key+'_QC'] == flag, key]
-            if df_.index.size > 0:
-                # Change line style -> Maybe not necessary
-                '''
-                if flag == 1:
-                    line = '-'
-                else:
-                    line = ""
-                '''
-                line = ""
-                ax = df_.plot(ax=ax, marker='.', linestyle=line)
-        ax.set_ylabel(self.meaning[key]['units'])
-        ax.legend(title="QC Flags")
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
+        else:
+            return False
+
+        for parameter in parameters:
+            if "_QC" in parameter:
+                return False
+            else:
+                # Extract data
+                df = self.data[
+                    [parameter, parameter+'_QC']].dropna().reset_index().set_index('TIME')
+                df.index.rename("Date", inplace=True)
+                # Sometimes Depth is on the df
+                if "DEPTH" in df.keys():
+                    del df['DEPTH']
+                # Create a dataframe divided with flags
+                for flag in range(0, 10):
+                    df_ = pd.DataFrame()
+                    df_['{}'.format(flag)] = df.ix[df[parameter+'_QC'] == flag, parameter]
+                    if df_.index.size > 0:
+                        # Change line style -> Maybe not necessary
+                        '''
+                        if flag == 1:
+                            line = '-'
+                        else:
+                            line = ""
+                        '''
+                        line = ""
+                        ax = df_.plot(ax=ax, marker='.', linestyle=line)
+                ax.set_ylabel(self.meaning[parameter]['units'])
+                ax.legend(title="QC Flags")
 
         return ax
 
-    def qcbarplot(self, key="all", ax=None):
+    def qcbarplot(self, parameters=None, ax=None):
         """
         Bar plot with the count of values with a  '_QC' in the keys of
         self.data.
 
         Parameters
         ----------
-            key: str or list of str, optional (key = "all")
-                keys of self.data to plot.
+            parameters: string or list of strings, optional
+            (parameters = None)
+                key of self.data to apply the test.
             ax: matplotlib.axes object, optional (ax = None)
                 It is used to add the plot to an input axes object.
         Returns
         -------
-            ax: matplotlib.AxesSubplot
-                New axes of the plot.
+            ax: matplotlib.AxesSubplot or False
+                New axes of the plot. It returns False if the operation was
+                not successful.
         """
-        if key == "all":
-            # Creation of dataframe with the count information
-            key_list = []
-            values_list = []
-            for key_qc in self.data.keys():
-                if 'TIME' in key_qc:
-                    continue
-                if '_QC' in key_qc:
-                    key_list.append(key_qc[:-3])
-                    values_list.append(pd.value_counts(self.data[key_qc]))
+        if parameters is None:
+            parameters = self.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
+        else:
+            return False
+
+        key_list = []
+        values_list = []
+        for parameter in parameters:
+            if "_QC" in parameter:
+                return False
+            else:
+                key_list.append(parameter)
+                values_list.append(pd.value_counts(self.data[parameter+"_QC"]))
 
             df = pd.DataFrame(values_list, key_list)
             # Creation of the plot
@@ -688,15 +712,6 @@ class WaterFrame:
             # Set labels
             ax.set_ylabel("Number of measurements")
             ax.legend(title="QC Flags")
-        else:
-            # Obtain the key with QC
-            key_qc = key + "_QC"
-            # Create the graph
-            ax = pd.value_counts(
-                self.data[key_qc]).sort_index().plot.bar(ax=ax)
-            # Set labels
-            ax.set_ylabel("Number of measurements")
-            ax.set_xlabel("QC flag")
 
         return ax
 
