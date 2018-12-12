@@ -1,6 +1,6 @@
 # mooda v0.2.0
 
-State: Work in progress.
+Released: December 12, 2018
 
 * In mooda/waterframe.py:
   * constructor(): We added the function parameter "path".

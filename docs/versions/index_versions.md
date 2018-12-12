@@ -1,6 +1,6 @@
 # Version control
 
-Our last release is [mooda v0.2.0-alpha.1](https://github.com/rbardaji/mooda/releases) but in PyPi, we have the [mooda v0.1.0](https://pypi.org/project/mooda/).
+Our last release is [mooda v0.2.1](https://github.com/rbardaji/mooda/releases). In PyPi, we have the [mooda v0.2.1](https://pypi.org/project/mooda/).
 
 We use [SemVer](http://semver.org/) for versioning. Given a version number MAJOR.MINOR.PATCH, increment the:
 
@@ -12,6 +12,7 @@ These are new features and improvements of note in each release.
 
 Versions:
 
+* [mooda v0.2.1](mooda_v0_2_1.md)
 * [mooda v0.2.0](mooda_v0_2_0.md)
 * [mooda v0.1.0](mooda_v0_1_0.md)
 * [mooda v0.0.1](mooda_v0_0_1.md)
