@@ -4,13 +4,13 @@ from setuptools import find_packages
 
 
 NAME = 'mooda'
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
-LONG_DESCRIPTION = """
+LONG_DESCRIPTION = ("""
 MOODA - Module for Ocean Observatory Data Analysis
 
 Mooda is a python package designed mainly for oceanographers and marine science students. It is"""
-""" based on a power scripting system for:
+                    """based on a power scripting system for:
 
 * open and analyze data files from scientific instrumentation and platforms
 * generate data quality control
@@ -18,7 +18,7 @@ Mooda is a python package designed mainly for oceanographers and marine science 
 * make data files in netCDF and CSV format
 
 Check the documentation on https://github.com/rbardaji/mooda.
-"""
+""")
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Environment :: Console',
                'Natural Language :: English',

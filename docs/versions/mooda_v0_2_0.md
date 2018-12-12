@@ -33,7 +33,7 @@ State: Work in progress.
   * scatter_matrix(): It returns False if operation was not successful.
   * qcplot(): Argument changed from key to parameters. It returns False if operation was not successful.
   * qcbarplot(): Argument changed from key to parameters. It returns False if operation was not successful.
-  * In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
+* In mooda/\_\_init\_\_: The warning is not a print now. We use the library warnings.
 * In mooda/app/mooda_gui/plotsplitter.py:
   * initUI(): We added a PlainTextEditor to show other information about the WaterFrame. We changed the metadata view to a PlainTextEditor.
 * In requirements-waterframe.txt: netcdf4 added.
