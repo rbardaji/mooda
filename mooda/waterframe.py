@@ -1,3 +1,4 @@
+# pylint: disable=C0103
 import copy
 import io
 import pickle
@@ -657,12 +658,6 @@ class WaterFrame:
                     df_['{}'.format(flag)] = df.ix[df[parameter+'_QC'] == flag, parameter]
                     if df_.index.size > 0:
                         # Change line style -> Maybe not necessary
-                        '''
-                        if flag == 1:
-                            line = '-'
-                        else:
-                            line = ""
-                        '''
                         line = ""
                         ax = df_.plot(ax=ax, marker='.', linestyle=line)
                 ax.set_ylabel(self.meaning[parameter]['units'])
@@ -696,9 +691,9 @@ class WaterFrame:
             pass
         else:
             return False
-
-        key_list = []
-        values_list = []
+        
+        key_list = []  # List of parameter names
+        values_list = []  # List of counters of each flag
         for parameter in parameters:
             if "_QC" in parameter:
                 return False
@@ -706,12 +701,21 @@ class WaterFrame:
                 key_list.append(parameter)
                 values_list.append(pd.value_counts(self.data[parameter+"_QC"]))
 
+            # Obtain the different values of QC
+            qc_values = []
+            for value in values_list:
+                for key in value.keys():
+                    if key not in qc_values:
+                        qc_values.append(key)
+
+            # Creation of a dataframe with the count info
             df = pd.DataFrame(values_list, key_list)
             # Creation of the plot
-            ax = df.sort_index().plot.bar(ax=ax)
+            ax = df.sort_index().plot.bar(ax=ax, legend=False)
             # Set labels
-            ax.set_ylabel("Number of measurements")
-            ax.legend(title="QC Flags")
+        ax.set_ylabel("Number of measurements")
+        # TODO: Bug on labels
+        ax.legend(title="QC Flags", labels=qc_values)
 
         return ax
 
@@ -1372,8 +1376,8 @@ class WaterFrame:
         # Check if parameters exist
         for parameter in parameters:
             if parameter not in self.parameters():
-                    warnings.warn("Parameter not found.")
-                    return False
+                warnings.warn("Parameter not found.")
+                return False
 
         # Calculation of parameters to drop
         drop_parameters = [drop_param for drop_param in self.parameters()

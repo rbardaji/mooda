@@ -12,6 +12,7 @@ These are new features and improvements of note in each release.
 
 Versions:
 
+* [mooda v0.2.2](mooda_v0.2.2.md)
 * [mooda v0.2.1](mooda_v0_2_1.md)
 * [mooda v0.2.0](mooda_v0_2_0.md)
 * [mooda v0.1.0](mooda_v0_1_0.md)
