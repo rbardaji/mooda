@@ -691,7 +691,7 @@ class WaterFrame:
             pass
         else:
             return False
-        
+
         key_list = []  # List of parameter names
         values_list = []  # List of counters of each flag
         for parameter in parameters:
@@ -714,7 +714,7 @@ class WaterFrame:
             ax = df.sort_index().plot.bar(ax=ax, legend=False)
             # Set labels
         ax.set_ylabel("Number of measurements")
-        # TODO: Bug on labels
+        #  TODO: Bug on labels
         ax.legend(title="QC Flags", labels=qc_values)
 
         return ax

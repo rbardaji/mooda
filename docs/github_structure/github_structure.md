@@ -26,7 +26,7 @@ Most of the files that are in the root contain specific code for the configurati
 The directories contain the following information:
 
 * [docs](https://github.com/rbardaji/mooda/tree/master/docs): It contains the mooda documentation.
-* [mooda](https://github.com/rbardaji/mooda): **It contains the mooda python package.**
+* [mooda](https://github.com/rbardaji/mooda/tree/master/mooda): **It contains the mooda python package.**
 * [other_codes](https://github.com/rbardaji/mooda/tree/master/other_codes): It contains a set of python scripts that uses the mooda package.
 
 Return to the [Docs Index](../index_docs.md).

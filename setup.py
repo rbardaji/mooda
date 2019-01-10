@@ -1,3 +1,5 @@
+"""Module to install mooda"""
+
 import os
 from distutils.core import setup
 from setuptools import find_packages
@@ -38,13 +40,13 @@ AUTHOR = 'Raul Bardaji Benach'
 AUTHOR_EMAIL = 'rbardaji@gmail.com'
 LICENSE = 'MIT'
 PACKAGES = find_packages()
-requirements = ['requirements-waterframe.txt',
+REQUIREMENTS = ['requirements-waterframe.txt',
                 'requirements-access-egim.txt']
 INSTALL_REQUIRES = sorted(
     set(
         line.partition('#')[0].strip()
         for file in (os.path.join(os.path.dirname(__file__), file)
-                     for file in requirements)
+                     for file in REQUIREMENTS)
         for line in open(file)) - {''})
 
 setup(name=NAME,
