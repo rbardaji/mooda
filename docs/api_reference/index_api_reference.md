@@ -8,5 +8,6 @@ Analysis:
 Access:
 
 * [EGIM](access/egim/index_egim.md)
+* [Pangea](access/pangea/index_pangea.md)
 
 Return to the [Docs Index](../index_docs.md).
