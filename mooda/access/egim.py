@@ -1,11 +1,13 @@
+""" Module to access to the Data Management Portal of EMSO Eric"""
+# pylint: disable=C0302
 import ast
 import datetime
 from io import StringIO
+import warnings
 import requests
-from mooda import WaterFrame
 import pandas as pd
 import xarray as xr
-import warnings
+from mooda import WaterFrame
 
 
 class EGIM:
@@ -560,16 +562,16 @@ class EGIM:
                 observatories).
         """
         try:
-            r = requests.get('http://api.emsodev.eu/observatories',
-                             auth=(self.login, self.password))
+            response = requests.get('http://api.emsodev.eu/observatories',
+                                    auth=(self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
-            answer = r.json()
-            observatoryList = [observatory['name'] for observatory in answer]
-            return r.status_code, observatoryList
+        if response.status_code == 200:
+            answer = response.json()
+            observatory_list = [observatory['name'] for observatory in answer]
+            return response.status_code, observatory_list
         else:
-            return r.status_code, None
+            return response.status_code, None
 
     def instruments(self, observatory):
         """
@@ -589,17 +591,17 @@ class EGIM:
                 available instruments)
         """
         try:
-            r = requests.get(
+            response = requests.get(
                 'http://api.emsodev.eu/observatories/{}/instruments'.format(
                     observatory), auth=(self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
-            answer = r.json()
-            instrumentList = answer['instruments']
-            return r.status_code, instrumentList
+        if response.status_code == 200:
+            answer = response.json()
+            instrument_list = answer['instruments']
+            return response.status_code, instrument_list
         else:
-            return r.status_code, None
+            return response.status_code, None
 
     def metadata(self, observatory, instrument):
         """
@@ -621,13 +623,13 @@ class EGIM:
                 metadata).
         """
         try:
-            r = requests.get(
+            response = requests.get(
                 'http://api.emsodev.eu/observatories/{}/instruments/{}'.format(
                     observatory, instrument), auth=(self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
-            answer = r.json()
+        if response.status_code == 200:
+            answer = response.json()
             # The DMP API do not response with a JSON well formated.
             # We are going to fix their error with the following lines.
             metadata_dict = dict(answer['metadataList'][0])
@@ -638,9 +640,9 @@ class EGIM:
             metadata_dict = metadata_dict.split(", 'InstrumentPosition'")[0]
             metadata_dict += "}"
             metadata_dict = ast.literal_eval(metadata_dict)
-            return r.status_code, metadata_dict
+            return response.status_code, metadata_dict
         else:
-            return r.status_code, None
+            return response.status_code, None
 
     def parameters(self, observatory, instrument):
         """
@@ -661,21 +663,21 @@ class EGIM:
                 (Status code answer of the API, list of dict of parameters)
         """
         try:
-            r = requests.get(
+            response = requests.get(
                 'http://api.emsodev.eu/observatories/{}/instruments/{}/'
                 'parameters'.format(observatory, instrument),
                 auth=(self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
-            answer = r.json()
-            parameterList = answer['parameters']
-            return r.status_code, parameterList
+        if response.status_code == 200:
+            answer = response.json()
+            parameter_list = answer['parameters']
+            return response.status_code, parameter_list
         else:
-            return r.status_code, None
+            return response.status_code, None
 
-    def observation(self, observatory, instrument, parameter, startDate=None,
-                    endDate=None, limit=None):
+    def observation(self, observatory, instrument, parameter, start_date=None,
+                    end_date=None, limit=None):
         """
         Gets the time-series of a specific EGIM parameter in a certain time
         range or  the last X (limit) values for an EGIM instrument of an EGIM
@@ -689,11 +691,11 @@ class EGIM:
                 Instrument name.
             parameter: str
                 Parameter name.
-            startDate: str, optional (startDate = None)
+            start_date: str, optional (start_date = None)
                 Beginning date for the time series range. The date format is
                 dd/MM/yyyy.
                 If the start time is not supplied, we are going to use 'limit'.
-            endDate: str
+            end_date: str
                 End date for the time series range. The date format is
                 dd/MM/yyyy.
                 If the end time is not supplied, the current time will be used.
@@ -716,37 +718,37 @@ class EGIM:
                     '/{}/instruments/{}/parameters/{}/limit/{}'.format(
                         observatory, instrument, parameter, limit)
         else:
-            if startDate and endDate:
+            if start_date and end_date:
                 query = 'http://api.emsodev.eu/observatories' + \
                         '/{}/instruments'.format(observatory) + \
                         '/{}/parameters/{}?startDate={}&endDate={}'.\
-                    format(instrument, parameter, startDate,
-                           endDate)
-            elif startDate:
+                    format(instrument, parameter, start_date,
+                           end_date)
+            elif start_date:
                 query = 'http://api.emsodev.eu/observatories' + \
                         '/{}/instruments/{}/parameters/{}?startDate={}'.\
-                        format(observatory, instrument, parameter, startDate)
+                        format(observatory, instrument, parameter, start_date)
         try:
-            r = requests.get(query, auth=(self.login, self.password))
+            response = requests.get(query, auth=(self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
-            answer = r.json()
+        if response.status_code == 200:
+            answer = response.json()
             observations = []
             for observation in answer['observations']:
                 observations.append((observation['phenomenonTime'],
                                      observation['value']))
             # Format data
-            df = pd.DataFrame({parameter: [x[1] for x in observations],
+            df = pd.DataFrame({parameter: [x[1] for x in observations],  # pylint: disable: C0103
                                'time': [x[0] for x in observations]})
             # Changing the time values to a datatime
             df['time'] = pd.to_datetime(df['time'], unit='s')
             df.rename(columns={"time": "TIME"}, inplace=True)
             df.set_index('TIME', inplace=True)
 
-            return r.status_code, df
+            return response.status_code, df
         else:
-            return r.status_code, None
+            return response.status_code, None
 
     def acoustic_date(self, observatory, instrument):
         """
@@ -765,18 +767,18 @@ class EGIM:
                 (Status code answer of the API, list with dict of dates)
         """
         try:
-            r = requests.get('http://api.emsodev.eu/observatories' +
-                             '/{}/instruments/{}/acousticfiledate'.format(
-                                 observatory, instrument),
-                             auth=(self.login, self.password))
+            response = requests.get('http://api.emsodev.eu/observatories' +
+                                    '/{}/instruments/{}/acousticfiledate'.format(
+                                        observatory, instrument),
+                                    auth=(self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
-            answer = r.json()
+        if response.status_code == 200:
+            answer = response.json()
             dateList = answer['acousticObservationDate']
-            return r.status_code, dateList
+            return response.status_code, dateList
         else:
-            return r.status_code, None
+            return response.status_code, None
 
     def acoustic_observation(self, observatory, instrument, date, hour_minute):
         """
@@ -1058,12 +1060,12 @@ class EGIM:
                 It indicates if QC test should be passed.
             only_qc1: bool (optional, only_qc1=True)
                 It indicates to save only values with QC = 1.
-        
+
         Returns
         -------
             True: bool
                 Operation successful.
-        
+
         """
         # Choose observatory metadata
         if observatory == 'EMSODEV-EGIM-node00001':
@@ -1332,16 +1334,15 @@ class EGIM:
 
         # Creation of QC Flags following OceanSites recomendation
         if qc_tests:
-            for parameter in wf.parameters():
-                # Reset QC Flags to 0
-                wf.reset_flag(key=parameter, flag=0)
-                # Flat test
-                wf.flat_test(key=parameter, window=0, flag=4)
-                # Spike test
-                wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
-                # Range test
-                wf.range_test(key=parameter, flag=4)
-                # Change flags from 0 to 1
-                wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+            # Reset QC Flags to 0
+            wf.reset_flag(flag=0)
+            # Flat test
+            wf.flat_test(window=0, flag=4)
+            # Spike test
+            wf.spike_test(window=0, threshold=3, flag=4)
+            # Range test
+            wf.range_test(flag=4)
+            # Change flags from 0 to 1
+            wf.flag2flag(original_flag=0, translated_flag=1)
 
         return wf

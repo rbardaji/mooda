@@ -1,3 +1,4 @@
+"""It just contains the WaterFrame class"""
 # pylint: disable=C0103
 import copy
 import io
@@ -7,8 +8,8 @@ import datetime
 import warnings
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import xarray as xr
+import pandas as pd
 
 
 class WaterFrame:
@@ -86,7 +87,7 @@ class WaterFrame:
 
         # Parameters message
         parameters = self.parameters()
-        if len(parameters) == 0:
+        if not parameters:
             parameters_message = "There is no data."
         else:
             parameters_message = "Parameters:"
