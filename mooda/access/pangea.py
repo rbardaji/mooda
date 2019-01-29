@@ -107,7 +107,10 @@ class Pangea:
                 try:
                     unit = xml_parameter.find('md:unit', namespace).text
                 except AttributeError:
-                    warnings.warn(f"Parameter {name} without units")
+                    if name == "DATE/TIME":
+                        pass
+                    else:
+                        warnings.warn(f"Parameter {name} without units")
                     unit = None
                 # Parameter id
                 try:
@@ -282,12 +285,15 @@ class Pangea:
                           ' will not contain a time index.')
 
         # Set meaning
-        meaning_pangea = metadata_pangea['parameters']
+        meaning_pangea = metadata_pangea['parameters'].copy()
         # Add "long_name" to the dictionary if it does not exist
         for meaning in meaning_pangea:
             keys = meaning_pangea[meaning].keys()
             if "long_name" not in keys and "name" in keys:
                 meaning_pangea[meaning]["long_name"] = meaning_pangea[meaning]["name"]
+        # Delete 'parameters' and 'events' from the metadata
+        del metadata_pangea['parameters']
+        del metadata_pangea['events']
 
         wf_pangea = WaterFrame(df=data_pangea, metadata=metadata_pangea, meaning=meaning_pangea)
 

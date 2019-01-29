@@ -231,10 +231,19 @@ class WaterFrame:
             True: bool
                 It indicates that the process was successfully completed.
         """
+        # Sometimes the metadata contains a list of str
+        # It can crash the creation of the NetCDF3_64Bits.
+        # We are going to change the list of str to str
+        metadata_netcdf = self.metadata.copy()
+        for key, value in metadata_netcdf.items():
+            if isinstance(value, list):
+                metadata_netcdf[key] = ', '.join(value)
+
         # Creation of an xarray dataset
-        ds = xr.Dataset(data_vars=self.data, attrs=self.metadata)
+        ds = xr.Dataset(data_vars=self.data, attrs=metadata_netcdf)
         for key in self.parameters():
             ds[key].attrs = self.meaning[key]
+
         # Creation of the nc file
         ds.to_netcdf(path, format="NETCDF3_64BIT")
 
@@ -368,7 +377,12 @@ class WaterFrame:
         csv_file.write("#Global attributes;Value\n")
         for key, val in self.metadata.items():
             if isinstance(val, list):
-                value = ''.join(val)
+                try:
+                    value = ', '.join(val)
+                except TypeError:
+                    # It happens with data from Pangea
+                    # with the "event" key, that it is a list of dict
+                    value = ""
             else:
                 value = val
             csv_file.write("# ")
