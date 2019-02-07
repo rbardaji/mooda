@@ -1,4 +1,4 @@
-# mooda v0.2.2
+# mooda v0.3.0
 
 State: Work in progress.
 
@@ -7,6 +7,11 @@ In waterframe.py:
 * qcbarplot(): Legend changed.
 * to_csv(): We have changed the way to save the metadata within the file. We have added an exception that was produced with the Pangea metadata.
 * to_netcdf(): Some metadata contains lists of str. This is not compatible with the NETCDF3_64BITS format. We have changed the phrase lists by separate sentences by ",".
+
+In access/egim.py
+
+* to_netcdf(): Fixed bug creating QC Flags.
+* to_csv(): Fixed bug creating QC Flags.
 
 In access/pangea.py: New access module to download data from wwww.pangea.de
 

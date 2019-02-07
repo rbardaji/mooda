@@ -1081,15 +1081,15 @@ class EGIM:
             # Creation of QC Flags following OceanSites recomendation
             for parameter in wf.parameters():
                 # Reset QC Flags to 0
-                wf.reset_flag(key=parameter, flag=0)
+                wf.reset_flag(parameters=parameter, flag=0)
                 # Flat test
-                wf.flat_test(key=parameter, window=0, flag=4)
+                wf.flat_test(parameters=parameter, window=0, flag=4)
                 # Spike test
-                wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+                wf.spike_test(parameters=parameter, window=0, threshold=3, flag=4)
                 # Range test
-                wf.range_test(key=parameter, flag=4)
+                wf.range_test(parameters=parameter, flag=4)
                 # Change flags from 0 to 1
-                wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+                wf.flag2flag(parameters=parameter, original_flag=0, translated_flag=1)
         if only_qc1:
             wf.use_only(flags=1)
 
@@ -1192,15 +1192,15 @@ class EGIM:
             # Creation of QC Flags following OceanSites recomendation
             for parameter in wf.parameters():
                 # Reset QC Flags to 0
-                wf.reset_flag(key=parameter, flag=0)
+                wf.reset_flag(parameters=parameter, flag=0)
                 # Flat test
-                wf.flat_test(key=parameter, window=0, flag=4)
+                wf.flat_test(parameters=parameter, window=0, flag=4)
                 # Spike test
-                wf.spike_test(key=parameter, window=0, threshold=3, flag=4)
+                wf.spike_test(parameters=parameter, window=0, threshold=3, flag=4)
                 # Range test
-                wf.range_test(key=parameter, flag=4)
+                wf.range_test(parameters=parameter, flag=4)
                 # Change flags from 0 to 1
-                wf.flag2flag(key=parameter, original_flag=0, translated_flag=1)
+                wf.flag2flag(parameters=parameter, original_flag=0, translated_flag=1)
         if only_qc1:
             wf.use_only(flags=1)
 
