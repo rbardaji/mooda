@@ -1,5 +1,5 @@
 """It just contains the WaterFrame class"""
-# pylint: disable=C0103
+# pylint: disable=C0103, too-many-lines
 import copy
 import io
 import pickle
