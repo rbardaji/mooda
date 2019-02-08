@@ -127,7 +127,7 @@ class WaterFrame:
                 parameters_message += \
                     "\n    - Values with QC = 1: {:.3f} %".format(percentage)
 
-        message = size_message + "\n" + parameters_message
+        message = size_message + "\n\n" + parameters_message
 
         return message
 
