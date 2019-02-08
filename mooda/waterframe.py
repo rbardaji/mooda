@@ -1659,3 +1659,38 @@ class WaterFrame:
         axes = self.data.plot(**kwds)
 
         return axes
+
+    def get_coordinates(self):
+        """
+        It returns the minimum and maximum coordinates placed in the metadata.
+
+        Returns
+        -------
+            coordinates: tuple of tuples
+                ((minimum latitude, minimum longitude, minimum depth),
+                 (maximum latitude, maximum longitude, maximum depth))
+        """
+        min_lat = None
+        min_lon = None
+        max_lat = None
+        max_lon = None
+        min_depth = None
+        max_depth = None
+
+        metadata_keys = self.metadata.keys()
+        if "geospatial_lat_min" in metadata_keys:
+            min_lat = self.metadata["geospatial_lat_min"]
+        if "geospatial_lat_max" in metadata_keys:
+            max_lat = self.metadata["geospatial_lat_max"]
+        if "geospatial_vertical_min" in metadata_keys:
+            min_depth = self.metadata["geospatial_vertical_min"]
+        if "geospatial_vertical_max" in metadata_keys:
+            max_depth = self.metadata["geospatial_vertical_max"]
+        if "geospatial_lon_max" in metadata_keys:
+            min_lon = self.metadata["geospatial_lon_max"]
+        if "geospatial_lon_max" in metadata_keys:
+            max_lon = self.metadata["geospatial_lon_max"]
+
+        coordinates = ((min_lat, min_lon, min_depth), (max_lat, max_lon, max_depth))
+
+        return coordinates

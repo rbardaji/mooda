@@ -30,7 +30,7 @@ class EGIM:
                       'geospatial_lat_max': '41.182',
                       'geospatial_lat_units': 'degree_north',
                       'geospatial_lon_min': '1.752',
-                      'geospatial_lon_mX': '1.752',
+                      'geospatial_lon_max': '1.752',
                       'geospatial_lon_units': 'degree_east',
                       'geospatial_vertical_min': '17.841',
                       'geospatial_vertical_max': '19.879',
@@ -802,18 +802,18 @@ class EGIM:
                 (Status code answer of the API, text of the acoustic file)
         """
         try:
-            r = requests.get(
+            response = requests.get(
                 'http://api.emsodev.eu/observatories' +
                 '/{}/instruments/{}/acousticfile?date={}&hourMinute={}'.format(
                     observatory, instrument, date, hour_minute), auth=(
                         self.login, self.password))
         except requests.RequestException:
             return None, None
-        if r.status_code == 200:
+        if response.status_code == 200:
 
             # Write metadata
             metadata = {}
-            lines = r.text.split("\n")
+            lines = response.text.split("\n")
             for i, line in enumerate(lines):
                 print(i, line)
                 if i in [0, 1, 9, 10, 17, 18]:
@@ -824,7 +824,7 @@ class EGIM:
                 metadata[parts[0]] = parts[1]
 
             # Write data
-            data_ = StringIO(r.text.split("Data:")[1])
+            data_ = StringIO(response.text.split("Data:")[1])
             data = pd.read_csv(data_, sep='\t')
 
             # Changing the time values to a datatime
@@ -832,9 +832,9 @@ class EGIM:
             data.rename(columns={"Time": "TIME"}, inplace=True)
             data.set_index('TIME', inplace=True)
 
-            return r.status_code, data, metadata
+            return response.status_code, data, metadata
         else:
-            return r.status_code, None
+            return response.status_code, None
 
     @staticmethod
     def to_waterframe(data, metadata):
@@ -1042,7 +1042,7 @@ class EGIM:
         return wf
 
     @staticmethod
-    def to_netcdf(observatory, instrument, data, path,  qc_tests=True,
+    def to_netcdf(observatory, instrument, data, path, qc_tests=True,
                   only_qc1=False):
         """It creates a netCDF3 file following the OceanSites standard.
 
