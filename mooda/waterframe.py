@@ -1736,7 +1736,7 @@ class WaterFrame:
         done = False
         try:
             big_dict = json.loads(json_string)
-            
+
             keys = big_dict.keys()
             if "metadata" in keys:
                 self.metadata = big_dict["metadata"].copy()
@@ -1745,7 +1745,7 @@ class WaterFrame:
             if "data" in keys:
                 self.data = pd.read_json(big_dict["data"])
             else:
-                self.data = df.read_json(big_dict)
+                self.data = pd.read_json(big_dict)
 
             done = True
         except ValueError:
