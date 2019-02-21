@@ -15,7 +15,7 @@ It returns the minimum and maximum coordinates placed in the metadata.
 from mooda import WaterFrame
 
 # I downloaded the NetCDF file from
-# http://193.144.35.225/data/obsea/OS_OBSEA_2016120120170426_R_37-14998.nc
+# http://193.144.35.225/emso_sites/data/obsea/OS_OBSEA_2016120120170426_R_37-14998.nc
 NC_FILE = r"path to the netcdf"
 
 wf = WaterFrame(NC_FILE)

@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 import pandas as pd
+import json
 
 
 class WaterFrame:
@@ -35,7 +36,7 @@ class WaterFrame:
         ----------
             path: str, optional
                 Create a WaterFrame with the data of the file of the path.
-                The file must be a NetCDF or a CSV.
+                The file must be a NetCDF, a CSV or a JSON string
             df: pandas Dataframe
                 pandas DataFrame
             metadata: dict
@@ -55,13 +56,15 @@ class WaterFrame:
         if df is not None:
             self.from_dataframe(df)
         if path:
-            parts = path.split(".")
-            if parts[-1] == "nc":
-                # It is a NetCDF file
-                self.from_netcdf(path)
-            if parts[-1] == "csv":
-                # It is a CSV file
-                self.from_csv(path)
+            done = self.from_json(path)
+            if not done:
+                parts = path.split(".")
+                if parts[-1] == "nc":
+                    # It is a NetCDF file
+                    self.from_netcdf(path)
+                if parts[-1] == "csv":
+                    # It is a CSV file
+                    self.from_csv(path)
 
     def __repr__(self):
         """
@@ -1694,3 +1697,57 @@ class WaterFrame:
         coordinates = ((min_lat, min_lon, min_depth), (max_lat, max_lon, max_depth))
 
         return coordinates
+
+    def to_json(self):
+        """
+        It creates a JSON string with the WaterFrame information.
+
+        Returns
+        -------
+            json_string: str
+                JSON string.
+        """
+
+        big_dict = {
+            "metadata": self.metadata,
+            "meaning": self.meaning,
+            "data": self.data.to_json()
+        }
+
+        json_string = json.dumps(big_dict)
+
+        return json_string
+
+    def from_json(self, json_string):
+        """
+        It loads a WaterFrame object from a JSON string.
+
+        Parameters
+        ----------
+            json_string: str
+                String that contains a JSON.
+
+        Returns
+        -------
+            done: bool
+                True if the operation is successful.
+        """
+
+        done = False
+        try:
+            big_dict = json.loads(json_string)
+            
+            keys = big_dict.keys()
+            if "metadata" in keys:
+                self.metadata = big_dict["metadata"].copy()
+            if "meaning" in keys:
+                self.meaning = big_dict["meaning"].copy()
+            if "data" in keys:
+                self.data = pd.read_json(big_dict["data"])
+            else:
+                self.data = df.read_json(big_dict)
+
+            done = True
+        except ValueError:
+            pass
+        return done

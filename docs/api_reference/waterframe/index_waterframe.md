@@ -13,12 +13,14 @@ Open files:
 * [from_pickle](from_pickle.md)
 * [from_dataframe](from_dataframe.md)
 * [from_csv](from_csv.md)
+* [from_json](from_json.md)
 
 Save files:
 
 * [to_pickle](to_pickle.md)
 * [to_csv](to_csv.md)
 * [copy](copy.md)
+* [to_json](to_json.md)
 
 Plots:
 
