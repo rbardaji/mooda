@@ -24,4 +24,9 @@ In access/pangea.py: New access module to download data from wwww.pangea.de
   * to_waterframe(): It creates a mooda.WaterFrame object from the data and metadata saved into the object.
   * from_source_to_waterframe(): Static method that creates a mooda.WaterFrame object from the input data source of Pangea.
 
+In access/licor.py: New access module to read data from LiCor instrumentation.
+
+* Class Licor:
+  * from_txt_to_waterframe(): It is a static method. It reads a txt datalog file and returns a WaterFrame.
+
 Return to the [Versions Index](index_versions.md).

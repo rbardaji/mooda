@@ -17,3 +17,6 @@ __pycache__
 # Test code
 download_all_emso.py
 examples.py
+
+# pylint
+.pylintrc
