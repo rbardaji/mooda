@@ -1,4 +1,4 @@
-# from_txt_to_waterframe(*sensor_model*, *path*, *qc_tests*=*False*)
+# Licor.from_txt_to_waterframe(*sensor_model*, *path*, *qc_tests*=*False*)
 
 From mooda >= 0.3
 

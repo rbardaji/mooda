@@ -16,7 +16,7 @@ class Hobo:
     @staticmethod
     def _find_units(header):
         """
-        Internal function to find the units value from the header of a hobo csv file.
+        Internal function to find the units value from the header of a HOBO csv file.
 
         Parameters
         ----------
@@ -35,7 +35,7 @@ class Hobo:
     @staticmethod
     def _find_name(header):
         """
-        Infernal function. It find the label of the parameter in the header.
+        Infernal function. It looks for the label of the parameter in the header.
 
         Parameters
         ----------
@@ -57,7 +57,7 @@ class Hobo:
     @staticmethod
     def _find_long_name(header):
         """
-        Infernal function. It find the long name of the parameter in the header.
+        Infernal function. It looks for the long name of the parameter in the header.
 
         Parameters
         ----------
