@@ -4,6 +4,7 @@ Analysis:
 
 * [WaterFrame](waterframe/index_waterframe.md)
 * [PlotMap](plotmap/index_plotmap.md)
+* [IFig](ifig/index_ifig.md)
 
 Access:
 

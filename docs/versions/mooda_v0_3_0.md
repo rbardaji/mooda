@@ -15,7 +15,7 @@ In access/egim.py
 * to_netcdf(): Fixed bug creating QC Flags.
 * to_csv(): Fixed bug creating QC Flags.
 
-In access/pangea.py: New access module to download data from wwww.pangea.de
+In access/pangea.py: New access module to download data from wwww.pangea.de.
 
 * Class Pangea:
   * \_\_init\_\_: Constructor of the class
@@ -28,5 +28,11 @@ In access/licor.py: New access module to read data from LiCor instrumentation.
 
 * Class Licor:
   * from_txt_to_waterframe(): It is a static method. It reads a txt datalog file and returns a WaterFrame.
+
+In ifig.py: New module to create the interactive charts of Plotly.
+
+* Class IFig:
+  * \_\_init\_\_: Constructor of the class
+  * site_map(): It creates a chart with a map with the coordinates of the site.
 
 Return to the [Versions Index](index_versions.md).

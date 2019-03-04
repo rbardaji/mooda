@@ -1,6 +1,6 @@
 # EGIM
 
-Magic attributes:
+Magic functions:
 
 * [Constructor](__init__.md)
 

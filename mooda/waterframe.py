@@ -6,11 +6,11 @@ import pickle
 import sys
 import datetime
 import warnings
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 import pandas as pd
-import json
 
 
 class WaterFrame:
