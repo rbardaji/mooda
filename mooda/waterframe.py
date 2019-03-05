@@ -1751,3 +1751,22 @@ class WaterFrame:
         except ValueError:
             pass
         return done
+
+    def __getattr__(self, key):
+        """
+        Get values from *self.metadata[key]*.
+
+        Parameters
+        ----------
+            key: str
+                key of self.metadata
+        
+        Returns
+        -------
+            value:
+                Value of self.metadata
+        """
+        
+        value = self.metadata[key]
+
+        return value

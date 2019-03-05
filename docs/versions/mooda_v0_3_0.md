@@ -9,6 +9,7 @@ In waterframe.py:
 * to_netcdf(): Some metadata contains lists of str. This is not compatible with the NETCDF3_64BITS format. We have changed the phrase lists by separate sentences by ",".
 * \_\_repr\_\_(): Added "\n\n" in front of the parameter information.
 * get_coordinates(): New method. It returns the coordinates of the WaterFrame measurements.
+* \_\_getatr\_\_(): New magic method. It returns the metadata information.
 
 In access/egim.py
 
@@ -34,5 +35,8 @@ In ifig.py: New module to create the interactive charts of Plotly.
 * Class IFig:
   * \_\_init\_\_: Constructor of the class
   * site_map(): It creates a chart with a map with the coordinates of the site.
+  * time_series(): It creates a chart of a time series of a parameter.
+  * site_map_from_waterframe(): Static method. Similar to site_map().
+  * time_series_from_waterframe(): Static method. Similar to time_series().
 
 Return to the [Versions Index](index_versions.md).

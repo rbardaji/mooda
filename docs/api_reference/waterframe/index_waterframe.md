@@ -6,6 +6,7 @@ Magic attributes:
 * [repr](__repr__.md)
 * [getitem](__getitem__.md)
 * [setitem](__setitem__.md)
+* [getattr](__getattr__.md)
 
 Open files:
 
