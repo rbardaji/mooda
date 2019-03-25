@@ -10,6 +10,7 @@ In waterframe.py:
 * \_\_repr\_\_(): Added "\n\n" in front of the parameter information.
 * get_coordinates(): New method. It returns the coordinates of the WaterFrame measurements.
 * \_\_getatr\_\_(): New magic method. It returns the metadata information.
+* empty(): New method. It returns True if self.data is empty.
 
 In access/egim.py
 

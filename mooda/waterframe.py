@@ -66,6 +66,13 @@ class WaterFrame:
                     # It is a CSV file
                     self.from_csv(path)
 
+        # Check if data is multiindex and change to single index
+        if isinstance(self.data.index, pd.core.index.MultiIndex):
+            self.data.reset_index(inplace=True)
+            self.data.set_index('TIME', inplace=True)
+            self.data.index = pd.to_datetime(self.data.index)
+            self.data.sort_index(inplace=True)
+
     def __repr__(self):
         """
         Return a string containing a printable representation of an object.
@@ -1770,3 +1777,14 @@ class WaterFrame:
         value = self.metadata[key]
 
         return value
+
+    def empty(self):
+        """
+        It return True if the dataframe is empty.
+
+        Returns
+        -------
+            empty: bool
+        """
+        empty = self.data.empty
+        return empty

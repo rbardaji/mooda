@@ -1,5 +1,6 @@
 """Module with the class IPlot, designed to create Plotly charts"""
 import plotly.graph_objs as go
+import pandas as pd
 
 
 class IFig:
@@ -14,6 +15,11 @@ class IFig:
             wf: WaterFrame
         """
         self.wf = wf
+
+        # Check if wf is multiindex and change to single index
+        if isinstance(self.wf.data.index, pd.core.index.MultiIndex):
+            self.wf.data.reset_index(inplace=True)
+            self.wf.data.set_index('TIME', inplace=True)
 
     def site_map(self):
         """
@@ -81,7 +87,6 @@ class IFig:
             figure: dict
                 Plotly figure dictionary
         """
-
         figure = {'data': None, 'layout': None}
 
         # Check parameters
@@ -129,7 +134,7 @@ class IFig:
                 'range': [min_value, max_value],
                 'title': y_label
             },
-            'margin': {'l': 50, 'r': 1, 't': 45, 'b': 30}
+            'margin': {'l': 50, 'r': 10, 't': 45, 'b': 30}
         }
 
         figure = {"data": data, "layout": layout}
@@ -169,11 +174,49 @@ class IFig:
 
         # Configuration of the zoom
         if lat is not None and lon is not None:
-            lataxis = dict(range=[float(lat)-9, float(lat)+9])
+            lataxis = dict(range=[float(lat)-8.5, float(lat)+8.5])
             lonaxis = dict(range=[float(lon)-16, float(lon)+16])
         else:
             lataxis = None
             lonaxis = None
+
+        layout = dict(
+            geo=dict(
+                lakecolor="rgb(255, 255, 255)",
+                resolution=50,
+                showcoastlines=True,
+                showland=True,
+                landcolor="rgb(229, 229, 229)",
+                countrycolor="rgb(255, 255, 255)",
+                coastlinecolor="rgb(255, 255, 255)",
+                lataxis=lataxis,
+                lonaxis=lonaxis
+            ),
+            margin=dict(l=10, r=10, t=0, b=0),
+        )
+
+        figure = dict(data=data, layout=layout)
+        return figure
+
+    @staticmethod
+    def site_map_from_coordinates(lat, lon, text):
+        """
+        It returns a figure of a map with a scatter of the input information.
+        """
+        # Data creation
+        data = [
+            dict(
+                type="scattergeo",
+                lon=lon,
+                lat=lat,
+                text=text,
+                mode='markers',
+            )
+        ]
+
+        # Configuration of the zoom
+        lataxis = dict(range=[min(lat)-9, max(lat)+9])
+        lonaxis = dict(range=[min(lon)-15, max(lon)+15])
 
         layout = dict(
             geo=dict(
