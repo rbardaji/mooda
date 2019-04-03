@@ -11,6 +11,7 @@ In waterframe.py:
 * get_coordinates(): New method. It returns the coordinates of the WaterFrame measurements.
 * \_\_getatr\_\_(): New magic method. It returns the metadata information.
 * empty(): New method. It returns True if self.data is empty.
+* info_metadata(): The values of the metadata dictionary are forced to be str.
 
 In access/egim.py
 

@@ -1,4 +1,4 @@
-# WaterFrame.empty(*self*):
+# WaterFrame.empty(*self*)
 
 It return True if the dataframe is empty.
 
@@ -23,3 +23,5 @@ def example():
 
 example()
 ```
+
+Return to the [WaterFrame Index](index_waterframe.md).

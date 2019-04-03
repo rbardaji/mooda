@@ -68,10 +68,13 @@ class WaterFrame:
 
         # Check if data is multiindex and change to single index
         if isinstance(self.data.index, pd.core.index.MultiIndex):
-            self.data.reset_index(inplace=True)
-            self.data.set_index('TIME', inplace=True)
-            self.data.index = pd.to_datetime(self.data.index)
-            self.data.sort_index(inplace=True)
+            try:
+                self.data.reset_index(inplace=True)
+                self.data.set_index('TIME', inplace=True)
+                self.data.index = pd.to_datetime(self.data.index)
+                self.data.sort_index(inplace=True)
+            except e:
+                pass
 
     def __repr__(self):
         """
@@ -1595,7 +1598,7 @@ class WaterFrame:
 
         message = ""
         for key, value in self.metadata.items():
-            if key in keys and value.strip() != "":
+            if key in keys and str(value).strip() != "":
                 message += "  - {}: {}\n".format(key, value)
 
         return message[:-1]
@@ -1767,13 +1770,13 @@ class WaterFrame:
         ----------
             key: str
                 key of self.metadata
-        
+
         Returns
         -------
             value:
                 Value of self.metadata
         """
-        
+
         value = self.metadata[key]
 
         return value
