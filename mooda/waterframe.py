@@ -264,7 +264,7 @@ class WaterFrame:
 
     def from_csv(self, path, metadata=None, meaning=None, **kwds):
         """
-        It reads data from a CSV vile.
+        It reads data from a CSV file.
 
         It uses the pandas.read_csv(). All parameters of read_csv() can be input here.
 
@@ -790,6 +790,7 @@ class WaterFrame:
             ax_out: matplotlib.AxesSubplot
                 New axes of the plot.
         """
+
         # Check the type of parameter_x
         if isinstance(parameter_x, str):
             parameter_x = [parameter_x]
@@ -799,8 +800,8 @@ class WaterFrame:
         keys = parameter_y + parameter_x
         df = self.data[keys].dropna().reset_index().set_index('TIME')
         df.index.rename("Date", inplace=True)
-
-        ax_out = df.plot(x=parameter_x, y=parameter_y[0], ax=ax)
+        
+        ax_out = df.plot.scatter(x=parameter_x[0], y=parameter_y[0], ax=ax)
 
         if len(parameter_x) == 1:
             ax_out.set_xlabel("{} ({})".format(self.meaning[parameter_x[0]]['long_name'],
@@ -810,7 +811,7 @@ class WaterFrame:
 
         ax_out.invert_yaxis()
         ax_out.ticklabel_format(useOffset=False)
-        ax_out.legend().set_visible(False)
+        # ax_out.legend().set_visible(False)
         ax_out.set_title('Profile Plot')
 
         return ax_out
