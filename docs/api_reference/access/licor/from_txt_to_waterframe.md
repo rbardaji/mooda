@@ -36,3 +36,5 @@ def example():
 
 example()
 ```
+
+Return to the [Licor Index](./index_licor.md).

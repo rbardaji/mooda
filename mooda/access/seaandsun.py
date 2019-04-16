@@ -23,8 +23,8 @@ class SeaAndSun:
             qc_tests: bool (optional, qc_tests=False)
                 If true, it executes WaterFrame.qc().
 
-        Retuns
-        ------
+        Returns
+        -------
             wf: WaterFrame
         """
         # Find the number of line where starts data and column names
@@ -42,10 +42,10 @@ class SeaAndSun:
                 line_split = line_strip.split(' ')
                 column_names = [
                     column for column in line_split if column not in [';', '', 'Datasets']]
+                data_start = index + 3
             elif line_strip.startswith('1 '):
                 data_start = index
                 break
-
         # Change name of columns and find date and time positions
         parameters = ['TIME']
         date_column = None
@@ -98,4 +98,8 @@ class SeaAndSun:
                 wf.meaning['PSAL'] = {
                     'long_name': 'Partial Salinity',
                     'units': 'PSU'}
+
+        if qc_tests:
+            wf.qc()
+
         return wf
