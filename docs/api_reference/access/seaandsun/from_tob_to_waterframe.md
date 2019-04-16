@@ -1,4 +1,4 @@
-# SeaAndSun.from_txt_to_waterframe(*sensor_model*, *path*, *qc_tests*=*False*)
+# SeaAndSun.from_txt_to_waterframe(*path*, *qc_tests*=*False*)
 
 From mooda >= 0.4
 
@@ -21,12 +21,12 @@ For this example we used the [seaandsun.TOB](../../../data/seaandsun.TOB) data f
 
 ```python
 """Example code"""
-from mooda.access import Licor
+from mooda.access import SeaAndSun
 
 
 def example():
     """
-    This example shows how to read data from a Licor data file.
+    This example shows how to read data from a Sea And Sun CTD data file.
     """
     wf = SeaAndSun.from_tob_to_waterframe("seaandsun.TOB")
     print(wf)

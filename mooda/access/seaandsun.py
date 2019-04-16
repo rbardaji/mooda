@@ -1,9 +1,8 @@
 """
-Module to open data from the TOB files of Sea And Sun CTDs
+Module to open data from the TOB files of Sea And Sun CTD
 """
-from mooda import WaterFrame
 import pandas as pd
-import re
+from mooda import WaterFrame
 
 
 class SeaAndSun:
