@@ -6,8 +6,8 @@ Magic attributes:
 
 Use of the Pangaea.de API (static methods):
 
-* [get_data](observatories.md)
-* [get_metadata](instruments.md)
+* [get_data](get_data.md)
+* [get_metadata](get_metadata.md)
 
 Getting data out:
 
