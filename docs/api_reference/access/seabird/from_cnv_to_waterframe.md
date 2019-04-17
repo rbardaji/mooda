@@ -28,7 +28,7 @@ def example():
     """
     This example shows how to read data from a SBE25 data file.
     """
-    wf = SeaAndSun.from_tob_to_waterframe("seabird.cnv")
+    wf = SeaBird.from_cnv_to_waterframe("seabird.cnv")
     print(wf)
 
 example()
