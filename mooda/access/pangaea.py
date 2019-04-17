@@ -255,8 +255,8 @@ class Pangaea:
         """
         # Check where to find data and metadata
         if id_data:
-            metadata_pangea = Pangea.get_metadata(id_data)
-            data_pangea = Pangea.get_data(id_data)
+            metadata_pangea = Pangaea.get_metadata(id_data)
+            data_pangea = Pangaea.get_data(id_data)
         else:
             if data and metadata:
                 data_pangea = data
