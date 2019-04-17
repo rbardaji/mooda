@@ -9,7 +9,7 @@ Analysis:
 Access:
 
 * [EGIM](access/egim/index_egim.md)
-* [Pangaea](access/pangea/index_pangaea.md)
+* [Pangaea](access/pangeaa/index_pangaea.md)
 * [Licor](access/licor/index_licor.md)
 * [Hobo](access/hobo/index_hobo.md)
 * [Sea and Sun](access/seaandsun/index_seaandsun.md)
