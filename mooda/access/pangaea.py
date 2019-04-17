@@ -10,7 +10,7 @@ import pandas as pd
 from mooda import WaterFrame
 
 
-class Pangea:
+class Pangaea:
     """ Main class of the module"""
 
     def __init__(self, id_data=None):

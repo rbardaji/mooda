@@ -1,4 +1,4 @@
-# Pangea.get_metadata(*id_data*)
+# Pangaea.get_metadata(*id_data*)
 
 It is a static method.
 
@@ -14,4 +14,4 @@ It obtain the metadata with id: *id_data* from www.Pangea.de.
     metadata: dict
         Dictionary with metadata information
 
-Return to the [Pangea Index](index_pangea.md).
+Return to the [Pangaea Index](index_pangaea.md).

@@ -1,4 +1,4 @@
-# Pangea.\_\_init\_\_(*self*, *id_data*=*None*)
+# Pangaea.\_\_init\_\_(*self*, *id_data*=*None*)
 
 Constructor of the class. It creates the instance variables:
 

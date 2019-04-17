@@ -1,4 +1,4 @@
-# Pangea.to_waterframe(*self*, *id_data*=*None*, *data*=*None*, *metadata*=*None*)
+# Pangaea.to_waterframe(*self*, *id_data*=*None*, *data*=*None*, *metadata*=*None*)
 
 It creates a mooda.WaterFrame object with data from www.pangea.de.
 
@@ -16,4 +16,4 @@ It creates a mooda.WaterFrame object with data from www.pangea.de.
     wf_pangea: mooda.WaterFrame
         WaterFrame object.
 
-Return to the [Pangea Index](index_pangea.md).
+Return to the [Pangaea Index](index_pangaea.md).

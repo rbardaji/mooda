@@ -1,4 +1,4 @@
-# Pangea.get_data(*id_data*)
+# Pangaea.get_data(*id_data*)
 
 It is a static method.
 
@@ -13,4 +13,4 @@ It obtain the data with id: *id_data* from www.Pangea.de.
 
     df: pandas.DataFrame
 
-Return to the [Pangea Index](index_pangea.md).
+Return to the [Pangaea Index](index_pangaea.md).

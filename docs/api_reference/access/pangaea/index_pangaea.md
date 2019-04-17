@@ -1,10 +1,10 @@
-# Pangea
+# Pangaea
 
 Magic attributes:
 
 * [Constructor](__init__.md)
 
-Use of the Pangea.de API (static methods):
+Use of the Pangaea.de API (static methods):
 
 * [get_data](observatories.md)
 * [get_metadata](instruments.md)
