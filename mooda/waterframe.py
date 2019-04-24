@@ -991,7 +991,7 @@ class WaterFrame:
                 return False
             else:
                 self.data.ix[df[parameter] == 0, parameter + '_QC'] = flag
-                return True
+        return True
 
     def flag2flag(self, parameters=None, original_flag=0, translated_flag=1):
         """
@@ -1102,6 +1102,28 @@ class WaterFrame:
 
         return answer
 
+    def value2nan(self, parameters=None, flags=4):
+        """
+        It changes the values of the parameters to NaN depending on the input flag.
+
+        Parameters
+        ----------
+        parameters: string, list of strings optional
+            (parameters = None)
+            Key of self.data to apply the test.
+        flags: int, list of int, optional (flag = 4)
+            Flags of the value to change.
+        """
+        if parameters is None:
+            parameters = self.parameters()
+        if isinstance(flags, int):
+            flags = [flags]
+        
+        for parameter in parameters:
+            for flag in flags:
+                self.data.ix[self.data[parameter + "_QC"] == flag, parameter] = np.NaN
+                self.data.ix[self.data[parameter + "_QC"] == flag, parameter + '_QC'] = np.NaN
+    
     def info_qc(self):
         """
         It returns a dictionary with the count and percentage of the QC flag.

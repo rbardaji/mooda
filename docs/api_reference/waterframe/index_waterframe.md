@@ -53,6 +53,7 @@ Modify data:
 * [slice_time](slice_time.md)
 * [clear](clear.md)
 * [use_only](use_only.md)
+* [value2nan](value2nan.md)
 
 Info:
 

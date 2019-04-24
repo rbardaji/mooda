@@ -1,6 +1,7 @@
 """Module with the class IPlot, designed to create Plotly charts"""
 import plotly.graph_objs as go
 import pandas as pd
+import numpy as np
 
 
 class IFig:
@@ -119,8 +120,8 @@ class IFig:
         max_value = None
         for parameter in parameters:
 
-            _min = min(self.wf[parameter])
-            _max = max(self.wf[parameter])
+            _min = np.nanmin(self.wf[parameter])
+            _max = np.nanmax(self.wf[parameter])
 
             if min_value is None or _min < min_value:
                 min_value = _min

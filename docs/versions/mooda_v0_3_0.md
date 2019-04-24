@@ -1,7 +1,5 @@
 # mooda v0.3.0
 
-State: Work in progress.
-
 In waterframe.py:
 
 * qcbarplot(): Legend changed.
