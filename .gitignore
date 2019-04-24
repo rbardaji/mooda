@@ -17,6 +17,7 @@ __pycache__
 # Test code
 download_all_emso.py
 examples.py
+Comparing data from two CTDs.ipynb
 
 # pylint
 .pylintrc

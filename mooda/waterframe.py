@@ -800,7 +800,7 @@ class WaterFrame:
         keys = parameter_y + parameter_x
         df = self.data[keys].dropna().reset_index().set_index('TIME')
         df.index.rename("Date", inplace=True)
-        
+
         ax_out = df.plot.scatter(x=parameter_x[0], y=parameter_y[0], ax=ax)
 
         if len(parameter_x) == 1:
@@ -865,6 +865,12 @@ class WaterFrame:
 
         return True
 
+    def peak_test(self):
+        """
+        https://stackoverflow.com/questions/22583391/peak-signal-detection-in-realtime-timeseries-data/43512887#43512887
+        """
+        pass
+
     def range_test(self, parameters=None, flag=4, limits=None):
         """
         Check if the values of a parameter are out of range.
@@ -889,6 +895,7 @@ class WaterFrame:
             'ATMS': [0, 2000],  # Atmospheric pressure at sea level
             'CHLT': [0, 30],  # total chlorophyll
             'CNDC': [0, 30],  # electrical conductivity
+            'DRYT': [-20, 50],  # air temperature at sea level
             'GSPD': [0, 40],  # gust wind speed
             'HCDT': [0, 360],  # current to direction relative true north
             'HEAD': [0, 360],  # PLAT. HEADING REL. TRUE NORTH
@@ -1111,7 +1118,7 @@ class WaterFrame:
 
         return qc_dict
 
-    def drop(self, keys, flags=None):
+    def drop(self, keys=None, flags=None):
         """
         Remove required keys (and associated QC keys) from self.data requested
         axis removed.
@@ -1129,6 +1136,8 @@ class WaterFrame:
                 It indicates that the process was successful."""
         # Look for QC keys and append to "keys"
         keys_qc = []
+        if keys is None:
+            keys = self.parameters()
         if isinstance(keys, str):
             key_qc = keys + "_QC"
             keys_qc.append(key_qc)
@@ -1156,6 +1165,10 @@ class WaterFrame:
                             inplace=True)
                     except KeyError:
                         # No data with this QC
+                        pass
+                    except TypeError:
+                        # Possible: TypeError, 'NoneType' object is not iterable
+                        # No values with this QC
                         pass
         return True
 
