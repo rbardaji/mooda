@@ -1,5 +1,7 @@
 ![mooda header](docs/img/logos/Mooda-documentation-header.png)
 
+Last release: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2643208.svg)](https://doi.org/10.5281/zenodo.2643208)
+
 Mooda is a python package designed mainly for oceanographers and marine science students. It is based on a power scripting system for:
 
 * open and analyze data files from scientific instrumentation and platforms
