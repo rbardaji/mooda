@@ -12,4 +12,12 @@ In ifig.py
 
 * time_series(): Changed min() and max() to np.nanmin() and np.nanmax()
 
+In access.seanadsun.py:
+
+* In SeaAndSun.from_tob_to_waterframe(): Now it can open files with unicede incompatibilities.
+
+In access.seabird.py:
+
+* In SeaBird.from_cnv_to_waterframe(): Now it can open files with unicede incompatibilities.
+
 Return to the [Versions Index](index_versions.md).

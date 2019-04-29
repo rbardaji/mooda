@@ -30,7 +30,7 @@ class SeaBird:
 
         # Read file
         lines = ""
-        with open(path) as handle:
+        with open(path, encoding="utf8", errors='ignore') as handle:
             lines = handle.readlines()
 
         # Extract info from cnv

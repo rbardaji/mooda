@@ -29,7 +29,7 @@ class SeaAndSun:
         # Find the number of line where starts data and column names
         # Read file
         lines = ""
-        with open(path) as handle:
+        with open(path, encoding="utf8", errors='ignore') as handle:
             lines = handle.readlines()
 
         data_start = None

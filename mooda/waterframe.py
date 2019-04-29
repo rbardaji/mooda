@@ -895,7 +895,7 @@ class WaterFrame:
             'ATMS': [0, 2000],  # Atmospheric pressure at sea level
             'CHLT': [0, 30],  # total chlorophyll
             'CNDC': [0, 30],  # electrical conductivity
-            'DRYT': [-20, 50],  # air temperature at sea level
+            'DRYT': [-20, 60],  # air temperature at sea level
             'GSPD': [0, 40],  # gust wind speed
             'HCDT': [0, 360],  # current to direction relative true north
             'HEAD': [0, 360],  # PLAT. HEADING REL. TRUE NORTH
@@ -948,8 +948,6 @@ class WaterFrame:
             elif parameter in ranges.keys():
                 self.data.ix[self.data[parameter] < ranges[parameter][0], parameter + '_QC'] = flag
                 self.data.ix[self.data[parameter] > ranges[parameter][1], parameter + '_QC'] = flag
-            else:
-                return False
         return True
 
     def flat_test(self, parameters=None, window=2, flag=4):
