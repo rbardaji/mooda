@@ -142,6 +142,86 @@ class IFig:
 
         return figure
 
+    def profile(self, y_axis=None, parameters=None):
+        """
+        It creates a Plotly profile figure.
+
+        Parameters
+        ----------
+            y_axis: str (optional, y_axis=None)
+                Vertical parameter. If y_axis is None, y_axis will be the Index of wf.data.
+            parameters: str or list (optional, parameters=None)
+                Parameters to plot.
+
+        Returns
+        -------
+            figure: dict
+                Plotly figure dictionary
+        """
+
+        figure = {'data': None, 'layout': None}
+
+        # Check parameters
+        if parameters is None:
+            parameters = self.wf.parameters()
+        elif isinstance(parameters, str):
+            parameters = [parameters]
+        elif isinstance(parameters, list):
+            pass
+        else:
+            return figure
+
+        if y_axis is None:
+            y_values = self.wf.data.index
+            y_name = y_values.name
+        else:
+            y_name = y_axis
+            y_values = self.wf.data[y_axis]
+
+        try:
+            data = [go.Scatter(x=self.wf[parameter], y=y_values,
+                               name=f"{parameter} ({self.wf.meaning[parameter]['units']})")
+                    for parameter in parameters]
+        except KeyError:
+            data = [go.Scatter(x=self.wf[parameter], y=y_values,
+                               name=parameter) for parameter in parameters]
+
+        # Layout
+        y_label = None
+        try:
+            y_label = self.wf.meaning[y_name]['units']
+        except KeyError:
+            pass
+
+        if len(parameters) == 1:
+            try:
+                title = self.wf.meaning[parameters[0]]['long_name']
+            except KeyError:
+                title = parameters[0]
+        else:
+            title = ""
+            for parameter in parameters:
+                try:
+                    title += self.wf.meaning[parameter]['long_name']
+                except KeyError:
+                    title += parameters[0]
+                title += ", "
+            # Delete last ", "
+            title = title[:-2]
+
+        layout = {
+            'title': title,
+            'hovermode': 'closest',
+            'yaxis': {
+                'autorange': 'reversed',
+                'title': y_label
+            },
+        }
+
+        figure = {"data": data, "layout": layout}
+
+        return figure
+
     @staticmethod
     def site_map_from_waterframe(waterframe):
         """

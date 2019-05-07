@@ -71,9 +71,9 @@ class WaterFrame:
             try:
                 self.data.reset_index(inplace=True)
                 self.data.set_index('TIME', inplace=True)
-                self.data.index = pd.to_datetime(self.data.index)
+                # self.data.index = pd.to_datetime(self.data.index)
                 self.data.sort_index(inplace=True)
-            except e:
+            except Exception as e:
                 pass
 
     def __repr__(self):
@@ -119,12 +119,12 @@ class WaterFrame:
                 value_mean = self.mean(parameter)
                 parameters_message += "\n    - Min value: {:.3f}".format(
                     value_min)
-                parameters_message += "\n    - Date min value: {}".format(
-                    date_min)
+                parameters_message += "\n    - {} min value: {}".format(
+                    self.data.index.name, date_min)
                 parameters_message += "\n    - Max value: {:.3f}".format(
                     value_max)
-                parameters_message += "\n    - Date max value: {}".format(
-                    date_max)
+                parameters_message += "\n    - {} max value: {}".format(
+                    self.data.index.name, date_max)
                 parameters_message += "\n    - Mean value: {:.3f}".format(
                     value_mean)
 

@@ -6,3 +6,4 @@ from mooda.access.licor import Licor
 from mooda.access.hobo import Hobo
 from mooda.access.seaandsun import SeaAndSun
 from mooda.access.seabird import SeaBird
+from mooda.access.bodc import Bodc
