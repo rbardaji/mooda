@@ -29,10 +29,10 @@ class Bodc:
         def change2metadata(wf_in, keys2change):
             keys = wf_in.data.keys()
 
-            for key in keys2change:
-                if key in keys:
-                    wf_in.metadata[key] = wf_in[key][0]
-                    del wf_in.data[key]
+            for key2change in keys2change:
+                if key2change in keys:
+                    wf_in.metadata[key2change] = str(wf_in[key2change].values[0])
+                    del wf_in.data[key2change]
 
             return wf_in
 
@@ -40,9 +40,6 @@ class Bodc:
         wf.from_netcdf(path)
         # wf.data.reset_index(inplace=True)
         # Here we have something into wf.data, but the wf is not well formated
-        
-        # Create the mean of the values of the group MAXZ
-        wf.data = wf.data.groupby('MAXZ').mean()
 
         # Do not know what to do with the folloowing data keys
         unknown_word = ['POSITION_SEADATANET_QC', 'TIME_SEADATANET_QC', 'ACYCAA01',
@@ -53,7 +50,7 @@ class Bodc:
                 del wf.meaning[unknown]
             except KeyError:
                 pass
-        
+
         # Change values of QC (48 is 0)
         # Change name from {parameter}_SEADATANET_QC to {parameter}_QC
         for key in wf.data.keys():
@@ -76,16 +73,27 @@ class Bodc:
                 wf.rename(parameter, "PSAL")
             elif "TEMP" in parameter:
                 wf.rename(parameter, "TEMP")
-
-        # Set index
-        keys = wf.data.keys()
-        if "TIME" in keys:
-            wf.data.reset_index(inplace=True)
-            del wf.data['MAXZ']
-            wf.data.set_index(['TIME'], inplace=True)
-        elif "PRES" in keys:
+            elif "CNDC" in parameter:
+                wf.rename(parameter, "CNDC")
+            elif "PREXMCAT" in parameter:
+                wf.rename(parameter, "PRES")
+        
+        try:
+            # It is a profile (CTD)
+            # Create the mean of the values of the group MAXZ
+            wf.data = wf.data.groupby('MAXZ').mean()
+            # Set index
             wf.data.reset_index(inplace=True)
             del wf.data['MAXZ']
             wf.data.set_index(['PRES'], inplace=True)
-        
+        except KeyError:
+            # It is a time series
+            # Create the mean of the values of the group MAXT
+            wf.data = wf.data.groupby('TIME').mean()
+
+            # The following lines translates from JulianDatatime to datatime
+            dates = [str(date) for date in  wf.data.index]
+            dates = pd.to_datetime(dates)
+            wf.data.index = dates
+
         return wf
