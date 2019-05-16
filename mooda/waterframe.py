@@ -1810,6 +1810,8 @@ class WaterFrame:
             value:
                 Value of self.metadata
         """
+        if key.startswith('__'):
+            raise AttributeError(key)
 
         value = self.metadata[key]
 
