@@ -71,12 +71,16 @@ class Bodc:
         for parameter in wf.parameters():
             if "PSAL" in parameter:
                 wf.rename(parameter, "PSAL")
+                wf.meaning["PSAL"]["long_name"] = "Practical salinity"
             elif "TEMP" in parameter:
                 wf.rename(parameter, "TEMP")
+                wf.meaning["CNDC"]["long_name"] = "Sea temperature"
             elif "CNDC" in parameter:
                 wf.rename(parameter, "CNDC")
+                wf.meaning["CNDC"]["long_name"] = "Electrical conductivity"
             elif "PREXMCAT" in parameter:
                 wf.rename(parameter, "PRES")
+                wf.meaning["PRES"]["long_name"] = "Sea pressure"
         
         try:
             # It is a profile (CTD)
