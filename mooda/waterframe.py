@@ -73,7 +73,7 @@ class WaterFrame:
                 self.data.set_index('TIME', inplace=True)
                 # self.data.index = pd.to_datetime(self.data.index)
                 self.data.sort_index(inplace=True)
-            except Exception as e:
+            except Exception:
                 pass
 
     def __repr__(self):
