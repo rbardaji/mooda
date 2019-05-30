@@ -74,13 +74,16 @@ class Bodc:
                 wf.meaning["PSAL"]["long_name"] = "Practical salinity"
             elif "TEMP" in parameter:
                 wf.rename(parameter, "TEMP")
-                wf.meaning["CNDC"]["long_name"] = "Sea temperature"
+                wf.meaning["TEMP"]["long_name"] = "Sea temperature"
             elif "CNDC" in parameter:
                 wf.rename(parameter, "CNDC")
                 wf.meaning["CNDC"]["long_name"] = "Electrical conductivity"
             elif "PREXMCAT" in parameter:
                 wf.rename(parameter, "PRES")
                 wf.meaning["PRES"]["long_name"] = "Sea pressure"
+            elif "PREXSINT" in parameter:
+                wf.rename(parameter, "PRESINT")
+                wf.meaning["PRESINT"]["long_name"] = "Interpolated values of sea pressure"
         
         try:
             # It is a profile (CTD)

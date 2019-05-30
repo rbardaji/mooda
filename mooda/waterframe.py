@@ -214,6 +214,10 @@ class WaterFrame:
                     continue
                 else:
                     self.meaning[variable] = dict(ds[variable].attrs)
+                    # Conversion to all strings
+                    for key, value in self.meaning[variable].items():
+                        self.meaning[variable][key] = str(value)
+
             # We add the meaning of DEPTH
             self.meaning['DEPTH'] = {
                 "long_name": "depth_of_measure",
