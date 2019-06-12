@@ -1,4 +1,4 @@
-# EGIM.instruments(*observatory*)
+# EGIM.instruments(*self*, *observatory*)
 
 It request the available instruments of a selected observatory to the EMSO DMP.
 

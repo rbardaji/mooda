@@ -1,4 +1,4 @@
-# EGIM.acoustic_observation(*observatory*, *instrument*, *date*, *hour_minute*)
+# EGIM.acoustic_observation(*self*, *observatory*, *instrument*, *date*, *hour_minute*)
 
 Gets an Acoustic file for a specific EGIM instrument of an EGIM Observatory.
 

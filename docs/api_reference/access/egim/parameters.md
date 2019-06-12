@@ -1,4 +1,4 @@
-# EGIM.parameters(*observatory*, *instrument*)
+# EGIM.parameters(*self*, *observatory*, *instrument*)
 
 Get the list of EGIM parameters for a specific EGIM instrument of an EGIM Observatory.
 

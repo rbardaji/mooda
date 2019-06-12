@@ -1,4 +1,4 @@
-# EGIM.\_\_init\_\_()
+# EGIM.\_\_init\_\_(*self*)
 
 It creates the instance variables login and password to use the DMP API.
 

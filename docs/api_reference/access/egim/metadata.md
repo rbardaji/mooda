@@ -1,4 +1,4 @@
-# EGIM.metadata(*observatory*, *instrument*)
+# EGIM.metadata(*self*, *observatory*, *instrument*)
 
 Get EGIM observatory instrument resource.
 

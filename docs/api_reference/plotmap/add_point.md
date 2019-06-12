@@ -6,7 +6,7 @@ Parameters | Description | Type
 --- | --- | ---
 lon | Longitude. | float
 lat | Latitude. | float
-label_color | Color of the point. | str
+dot_color | Color of the point. | str
 label | Text to write in the point. | str
 label_color | Color of the label. | str
 

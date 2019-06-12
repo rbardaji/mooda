@@ -1,4 +1,4 @@
-# EGIM.to_netcdf(*observatory*, *instrument*, *data*, *path*, *qc_tests*=*True*, *only_qc*=*True*)
+# EGIM.to_netcdf(*self*, *observatory*, *instrument*, *data*, *path*, *qc_tests*=*True*, *only_qc*=*True*)
 
 From mooda v0.2.0.
 

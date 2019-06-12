@@ -1,4 +1,4 @@
-# EGIM.acoustic_date(*observatory*, *instrument*)
+# EGIM.acoustic_date(*self*, *observatory*, *instrument*)
 
 Gets the date list of available acoustic files observed by a specific EGIM instrument of an EGIM Observatory.
 

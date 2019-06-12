@@ -1,4 +1,4 @@
-# EGIM.observatories()
+# EGIM.observatories(*self*)
 
 It represents the EGIM observatories accessible through the EMSODEV DMP API.
 

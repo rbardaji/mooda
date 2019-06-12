@@ -1,4 +1,4 @@
-# EGIM.to_waterframe(*data*, *metadata*)
+# EGIM.to_waterframe(*self*, *data*, *metadata*)
 
 It creates a WaterFrame object from the input variables.
 
@@ -9,6 +9,6 @@ metadata | Dictionary with metadata information. | dict
 
 Returns | Description | Type
 --- | --- | ---
-wf |  Data and metadata formated in a WaterFrame Object. | mooda WaterFrame
+wf |  Data and metadata formatted in a WaterFrame. | WaterFrame
 
 Return to the [EGIM Index](index_egim.md).

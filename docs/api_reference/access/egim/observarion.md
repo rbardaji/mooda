@@ -1,4 +1,4 @@
-# EGIM.observation(*observatory*, *instrument*, *parameter*, *startDate*=*None*, *endDate*=*None*, *limit*=*None*)
+# EGIM.observation(*self*, *observatory*, *instrument*, *parameter*, *startDate*=*None*, *endDate*=*None*, *limit*=*None*)
 
 Gets the time-series of a specific EGIM parameter in a certain  time range or  the last X (limit) values for an EGIM instrument of an EGIM observatory.
 

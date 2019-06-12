@@ -1,4 +1,4 @@
-# PlotMap._\_init_\_()
+# PlotMap._\_init_\_(*self*)
 
 It creates the instance variable *m*. *m* is a Basemap object.
 
