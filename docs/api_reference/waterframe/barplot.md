@@ -1,4 +1,4 @@
-# WaterFrame.barplot(*key*, *ax*=*None*, *average_time*=*None*)
+# WaterFrame.barplot(*self*, *key*, *ax*=*None*, *average_time*=*None*)
 
 Bar plot of time series.
 

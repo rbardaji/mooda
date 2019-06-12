@@ -1,4 +1,4 @@
-# plot(***kwds*)
+# WaterFrame.plot(*\*\*kwds*)
 
 It calls the pandas DataFrame.plot() method.
 
@@ -10,3 +10,5 @@ It calls the pandas DataFrame.plot() method.
 ## Returns
 
     axes : matplotlib.axes.Axes or numpy.ndarray of them
+
+Return to the [WaterFrame Index](index_waterframe.md).

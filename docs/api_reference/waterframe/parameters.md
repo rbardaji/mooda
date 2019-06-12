@@ -1,6 +1,6 @@
-# WaterFrame.parameters()
+# WaterFrame.parameters(*self*)
 
-It return the parameter list used in the WaterFrame. The parameters are the keys of self.data, expcluding the keys  with "_QC".
+It return the parameter list used in the WaterFrame. The parameters are the keys of self.data, excluding  the keys  with "_QC".
 
 Returns | Description | Type
 --- | --- | ---

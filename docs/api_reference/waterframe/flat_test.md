@@ -1,4 +1,4 @@
-# WaterFrame.flat_test(*parameters*=*None*, *window*=*3*, *flag*=*4*)
+# WaterFrame.flat_test(*self*, *parameters*=*None*, *window*=*3*, *flag*=*4*)
 
 It detects if there are equal consecutive values in the time series.
 

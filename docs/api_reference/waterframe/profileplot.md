@@ -1,4 +1,4 @@
-# WaterFrame.profileplot(*parameter_y*, *parameter_x*=*None*, *ax*=*None*)
+# WaterFrame.profileplot(*self*, *parameter_y*, *parameter_x*=*None*, *ax*=*None*)
 
 It creates a graph a profile plot. Y-axes suppose to be a depth related parameter.
 

@@ -1,4 +1,4 @@
-# WaterFrame.corr(*parameter1*, *parameter2*, *method='pearson'*, *min_periods=1*)
+# WaterFrame.corr(*self*, *parameter1*, *parameter2*, *method='pearson'*, *min_periods=1*)
 
 Compute pairwise correlation of data columns of parameter1 and parameter2, excluding NA/null values.
 

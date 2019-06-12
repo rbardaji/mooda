@@ -1,4 +1,4 @@
-# WaterFrame.max(*parameter*)
+# WaterFrame.max(*self*, *parameter*)
 
 It returns the max value of a parameter and the index of the value.
 

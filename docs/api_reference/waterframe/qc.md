@@ -1,4 +1,4 @@
-# WaterFrame.qc(*parameters*=*None*, *window*=*0*, *threshold*=*3*, *bad_flag*=*4*, *good_flag*=*1*)
+# WaterFrame.qc(*self*, *parameters*=*None*, *window*=*0*, *threshold*=*3*, *bad_flag*=*4*, *good_flag*=*1*)
 
 Auto QC process. It is the same that:
 

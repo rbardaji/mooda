@@ -1,4 +1,4 @@
-# WaterFrame.mean(*parameter*)
+# WaterFrame.mean(*self*, *parameter*)
 
 It returns the mean value of a parameter.
 

@@ -1,4 +1,4 @@
-# WaterFrame.from_json(*json_string*)
+# WaterFrame.from_json(*self*, *json_string*)
 
 (mooda >= v0.3.0)
 

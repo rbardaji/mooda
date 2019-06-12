@@ -1,6 +1,6 @@
-# WaterFrame.max_diff(*parameter1*, *parameter2*)
+# WaterFrame.max_diff(*self*, *parameter1*, *parameter2*)
 
-Calculation the maximum difference between values of two parameters.
+Calculation the maximum difference between the values of two parameters.
 
 Parameters | Description | Type
 --- | --- | ---

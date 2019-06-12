@@ -1,4 +1,4 @@
-# info_meaning(*keys*=*None*):
+# WaterFrame.info_meaning(*self*, *keys*=*None*)
 
 It returns a string with the meanings information.
 
@@ -9,3 +9,5 @@ keys | The return message will contain the information of the input keys. If key
 Returns | Description | Type
 --- | --- | ---
 message | Message with the meanings information. | string
+
+Return to the [WaterFrame Index](index_waterframe.md)

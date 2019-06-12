@@ -1,4 +1,4 @@
-# WaterFrame.slice_time(*start*=*None*, *end*=*None*)
+# WaterFrame.slice_time(*self*, *start*=*None*, *end*=*None*)
 
 Delete data outside the time interval. If start or end is None, the slice will be from the beginning or to the final of the time series.
 

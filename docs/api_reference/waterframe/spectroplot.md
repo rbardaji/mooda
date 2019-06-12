@@ -1,4 +1,4 @@
-# WaterFrame.spectroplot()
+# WaterFrame.spectroplot(*self*)
 
 It plots the spectrometer of the acoustic data.
 

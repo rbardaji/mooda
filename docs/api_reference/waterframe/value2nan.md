@@ -10,3 +10,5 @@ It changes the values of the parameters to NaN depending on the input flag.
         Key of self.data to apply the test.
     flags: int, list of int, optional (flag = 4)
         Flags of the value to change.
+
+Return to the [WaterFrame Index](index_waterframe.md).

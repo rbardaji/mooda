@@ -1,4 +1,4 @@
-# copy()
+# WaterFrame.copy()
 
 It creates a copy self.
 

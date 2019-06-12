@@ -1,10 +1,10 @@
-# WaterFrame.from_pickle(*path*)
+# WaterFrame.from_pickle(*self*, *path*)
 
 Load and decode a WaterFrame object from a pickle file.
 
 Parameters | Description | Type
 --- | --- | ---
-path | Path of the pickle file. | string
+path | Path to a pickle file. | string
 
 Returns | Description | Type
 --- | --- | ---

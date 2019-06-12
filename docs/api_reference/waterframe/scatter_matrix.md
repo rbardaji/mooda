@@ -1,4 +1,4 @@
-# WaterFrame.scatter_matrix(*keys*, *ax*=*None*)
+# WaterFrame.scatter_matrix(*self*, *keys*, *ax*=*None*)
 
 Draw a matrix of scatter plots.
 

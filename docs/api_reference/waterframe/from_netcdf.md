@@ -1,4 +1,4 @@
-# WaterFrame.from_netcdf(*path*)
+# WaterFrame.from_netcdf(*self*, *path*)
 
 Load and decode a dataset from a netcdf file. The compatible netCDF files are from the mooring-buoys of [EMODNET](http://www.emodnet-physics.eu/Map/), [JERICO](http://www.jerico-ri.eu/data-access/), [EMSO](http://emso.eu), and all time series with [NetCDF OceanSites](http://www.oceansites.org/data/) format.
 

@@ -1,4 +1,4 @@
-# WaterFrame.range_test(*key*, *flag*=*4*, *limits*=*None*)
+# WaterFrame.range_test(*self*, *key*, *flag*=*4*, *limits*=*None*)
 
 Check if the values of a parameter are out of range.
 

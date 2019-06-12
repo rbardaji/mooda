@@ -1,4 +1,4 @@
-# \_\_getitem\_\_(key)
+# WaterFrame.\_\_getitem\_\_(*self*, key)
 
 Get the values of *WaterFrame.data[key]*.
 

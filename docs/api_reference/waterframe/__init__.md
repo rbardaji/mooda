@@ -1,4 +1,4 @@
-# WaterFrame.\_\_init\_\_(*path*=*None*, *df*=*None*, *metadata*=*None*, *meaning*=*None*)
+# WaterFrame.\_\_init\_\_(*self*, *path*=*None*, *df*=*None*, *metadata*=*None*, *meaning*=*None*)
 
 It creates the following instance variables:
 

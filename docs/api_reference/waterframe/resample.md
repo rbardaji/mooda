@@ -1,4 +1,4 @@
-# WaterFrame.resample(*rule*, *method*=*'mean'*)
+# WaterFrame.resample(*self*, *rule*, *method*=*'mean'*)
 
 Convenience method for frequency conversion and sampling of time series of the WaterFrame object.
 

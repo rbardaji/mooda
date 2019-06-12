@@ -1,4 +1,4 @@
-# WaterFrame.reset_flag(*parameters*, *flag*=*0*)
+# WaterFrame.reset_flag(*self*, *parameters*, *flag*=*0*)
 
 It sets the flag values of the parameter to "flag".
 

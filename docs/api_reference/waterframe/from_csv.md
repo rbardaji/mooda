@@ -1,4 +1,4 @@
-# from_csv(*path*, *metadata*=*None*, *meaning*=*None*, ***kwds*)
+# from_csv(*self*, *path*, *metadata*=*None*, *meaning*=*None*, *\*\*kwds*)
 
 From mooda v0.2.0.
 
@@ -16,3 +16,5 @@ meaning | Meaning dictionary. | dictionary
 Returns | Description | Type
 --- | --- | ---
 True |Operation successful. | bool
+
+Return to the [WaterFrame Index](index_waterframe.md).

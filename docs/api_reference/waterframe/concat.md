@@ -1,4 +1,4 @@
-# WaterFrame.concat(*waterframe*)
+# WaterFrame.concat(*self*, *waterframe*)
 
 The concat function does all of the heavy lifting of performing concatenation operations along an axis while performing optional set logic (union or intersection) of the indexes on the other axes.
 

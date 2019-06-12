@@ -1,4 +1,4 @@
-# WaterFrame.\_\_repr\_\_()
+# WaterFrame.\_\_repr\_\_(*self*)
 
 (From mooda >= v0.1.0).
 

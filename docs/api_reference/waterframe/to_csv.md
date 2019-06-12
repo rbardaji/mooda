@@ -1,4 +1,4 @@
-# WaterFrame.to_csv(*path*)
+# WaterFrame.to_csv(*self*, *path*)
 
 It saves the WaterFrame data and metadata into a CSV file.
 

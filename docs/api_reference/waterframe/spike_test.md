@@ -1,4 +1,4 @@
-# WaterFrame.spike_test(*parameters*, *window*=*0*, *threshold*=*3*, *flag*=*4*)
+# WaterFrame.spike_test(*self*, *parameters*, *window*=*0*, *threshold*=*3*, *flag*=*4*)
 
 It checks if there is any spike in the time series.
 

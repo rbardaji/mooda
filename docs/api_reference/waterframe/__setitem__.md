@@ -1,4 +1,4 @@
-# \_\_setitem\_\_(*key*, *data*)
+# WaterFrame.\_\_setitem\_\_(*self*, *key*, *data*)
 
 Set the value of *data* at *key* of *WaterFrame.data*.
 

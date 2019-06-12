@@ -1,4 +1,4 @@
-# WaterFrame.rename(*old_name*, *new_name*)
+# WaterFrame.rename(*self*, *old_name*, *new_name*)
 
 It renames keys of self.data.
 

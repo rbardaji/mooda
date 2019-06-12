@@ -1,4 +1,4 @@
-# info_metadata(*keys*=*None*)
+# WaterFrame.info_metadata(*keys*=*None*)
 
 It returns a string with the metadata information.
 

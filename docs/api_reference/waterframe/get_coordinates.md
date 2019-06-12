@@ -1,4 +1,4 @@
-# WaterFrame.get_coordinates()
+# WaterFrame.get_coordinates(*self*)
 
 (mooda >= v0.3.0)
 

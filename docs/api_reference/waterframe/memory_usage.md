@@ -1,4 +1,4 @@
-# WaterFrame.memory_usage()
+# WaterFrame.memory_usage(*self*)
 
 Memory usage of the WaterFrame.
 

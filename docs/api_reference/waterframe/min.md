@@ -1,4 +1,4 @@
-# WaterFrame.min(*parameter*)
+# WaterFrame.min(*self*, *parameter*)
 
 It returns the min value of a parameter and the index of the value.
 

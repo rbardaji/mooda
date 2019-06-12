@@ -1,4 +1,4 @@
-# WaterFrame.empty(*self*)
+# WaterFrame.empty(*self*, *self*)
 
 It return True if the dataframe is empty.
 

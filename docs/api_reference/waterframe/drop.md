@@ -1,4 +1,4 @@
-# WaterFrame.drop(*keys*, *flags*=*None*)
+# WaterFrame.drop(*self*, *keys*, *flags*=*None*)
 
 Remove input keys (and associated QC keys) from self.data.
 
