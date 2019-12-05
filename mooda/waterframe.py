@@ -1125,7 +1125,7 @@ class WaterFrame:
             for flag in flags:
                 self.data.ix[self.data[parameter + "_QC"] == flag, parameter] = np.NaN
                 self.data.ix[self.data[parameter + "_QC"] == flag, parameter + '_QC'] = np.NaN
-    
+
     def info_qc(self):
         """
         It returns a dictionary with the count and percentage of the QC flag.
