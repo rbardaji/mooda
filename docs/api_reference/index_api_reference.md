@@ -1,19 +1,68 @@
-# Api reference
+# API reference
 
-Analysis:
+We import the package as follows:
 
-* [WaterFrame](waterframe/index_waterframe.md)
-* [PlotMap](plotmap/index_plotmap.md)
-* [IFig](ifig/index_ifig.md)
+```python
+import mooda as md
+```
 
-Access:
+## Read data
 
-* [EGIM](access/egim/index_egim.md)
-* [Pangaea](access/pangaea/index_pangaea.md)
-* [Licor](access/licor/index_licor.md)
-* [Hobo](access/hobo/index_hobo.md)
-* [Sea and Sun](access/seaandsun/index_seaandsun.md)
-* [Sea-Bird](access/seabird/index_seabird.md)
-* [BODC](access/bodc/index_bodc.md)
+* [md.read_nc(*path*)](input/read_nc.md): Get a WaterFrame from a generic NetCDF.
+* [md.read_nc_emodnet(*path*, *clean_data*=*True*)](input/read_nc_emodnet.md): Get a WaterFrame from a NetCDF from [EMODnet-physics](https://www.emodnet-physics.eu/).
+* [md.read_pkl(*path_pkl*)](input/read_pkl.md): Get a WaterFrame from a Pickle file.
+
+## WaterFrame
+
+We declare a WaterFrame object as follows:
+
+```python
+wf = md.WaterFrame()
+```
+
+* [WaterFrame](waterframe/waterframe.md): General WaterFrame object information.
+
+### Analyze data
+
+* [wf.copy()](waterframe/analysis/copy.md): Get a copy of the WaterFrame.
+* [wf.corr()](waterframe/analysis/corr.md): Compute pairwise correlation of data columns of parameter1 and parameter2, excluding NA/null values.
+* [wf.drop(*parameters*, *inplace*=*True*)](waterframe/analysis/drop.md): Remove input parameters from WaterFrame.data.
+* [wf.info_metadata(*keys*=*None*)](waterframe/analysis/info_metadata.md): It returns a formatted string with the metadata information.
+* [wf.info_vocabulary(*keys*=*None*)](waterframe/analysis/info_vocabulary.md): It returns a formatted string with the vocabulary information.
+* [wf.max_diff(parameter1, parameter2)](waterframe/analysis/max_diff.md): It calculates the maximum difference between the values of two parameters.
+* [wf.max(*parameter*)](waterframe/analysis/max.md): Get the maximum value of a parameter.
+* [wf.min(*parameter*)](waterframe/analysis/min.md): Get the minimum value of a parameter.
+* [wf.rename(*actual_name*, *new_name*, *inplace*=*True*)](waterframe/analysis/rename.md): It renames a parameter.
+* [wf.resample(*rule*, *method*=*'mean'*, *inplace*=*True*)](waterframe/analysis/resample.md): Convenience method for frequency conversion and sampling of time series of the WaterFrame object.
+* [wf.time_intervals(*parameter*, *frequency*)](waterframe/analysis/time_intervals.md): It returns the index (TIME) of intervals between NaNs.
+* [wf.use_only(*parameters_to_use*, *inplace*=*True*)](waterframe/analysis/use_only.md): It deletes all parameters except the input parameters.
+
+### Outout
+
+* [wf.to_json()](waterframe/output/to_json.md): Get a JSON with the WaterFrame information.
+* [wf.to_nc(*path*, *nc_format*=*"NETCDF4"*)](waterframe/output/to_nc.md): Save the WaterFrame in a NetCDF file.
+* [wf.to_pkl(*path*)](waterframe/output/to_pkl.md): Save the WaterFrame in a Pickle file.
+
+### Static plot
+
+* [wf.plot_hist(*parameters*=*None*, *mean_line*=*False*, ***kwds*)](waterframe/plot/plot_hist.md): Make a histogram of the WaterFrame's. A histogram is a representation of the distribution of data.
+* [wf.plot_timebar(*keys*, *ax*=*None*, *time_interval_mean*=*None*)](waterframe/plot/plot_timebar.md): Make a bar plot of the input keys. The bars are positioned at x with date/time. Their dimensions are given by height.
+* [wf.plot_timeseries(*parameters_to_plot*=*None*, *qc_flags*=*None*, *rolling_window*=*None*, ax=*None*, *average_time*=*None*, *secondary_y*=*None*, *color*=*None*)](waterframe/plot/plot_timeseries.md): Plot the input parameters with time on X and the parameters on Y. It calculates the standar deviation of a rolling window and plot it.
+* [wf.plot(***kwds*)](waterframe/plot/plot.md): It calls the pandas DataFrame.plot() method.
+
+### Interactive plot
+
+* [wf.iplot_location(self)](waterframe/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the WaterFrame.
+* [wf.iplot_timeseries(*parameters_to_plot*=*None*)](waterframe/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameters.
+
+### Data Quality Control
+
+* [wf.qc_flat_test(*parameters*=*None*, *window*=*3*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_flat_test.md): It detects if there are equal consecutive values in the time series.
+* [wf.qc_range_test(*parameters*=*None*, *limits*=*None*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_range_test.md): Check if the values of a parameter are out of range.
+* [wf.qc_spike_test(*parameters*=*None*, *window*=*0*, *threshold*=*3*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_spike_test.md): It checks if there is any spike in the time series.
+
+## Utilities
+
+* [md.concat(list_wf)](util/concat.md): `concat` does all of the heavy liftings of performing concatenation operations between a list of WaterFrames.
 
 Return to the [Docs Index](../index_docs.md).

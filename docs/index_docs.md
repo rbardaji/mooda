@@ -2,8 +2,4 @@
 
 Index:
 
-* [Installation](installation/installation.md)
 * [API reference](api_reference/index_api_reference.md)
-* [Tutorials and examples](examples/index_examples.md)
-* [Github repository structure and files](github_structure/github_structure.md)
-* [Versions](versions/index_versions.md)
