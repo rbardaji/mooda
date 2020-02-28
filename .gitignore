@@ -22,3 +22,6 @@ Comparing data from two CTDs.ipynb
 
 # pylint
 .pylintrc
+
+# python venv
+/mooda-venv/
