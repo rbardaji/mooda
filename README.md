@@ -15,7 +15,7 @@ In an oceanographic data file, metadata (the definition of data) is almost as re
 
 There are libraries, such as pandas, that allow you to manipulate the data quickly, but they do not give you the possibility to save the metadata.
 
-With mooda, we work with WaterFrames. A WaterFrame object contains a pandas DataFrame and two dictionaries. With a WaterFrame you can open data files; data is stored into the DataFrame, and the metadata is stored into the dictionaries. With a WaterFrame, you can use the power of a pandas DataFrame without loose all the metadata information. Additionally, mooda helps to open and analyze raw data from scientific instruments and data from oceanographic platforms.
+With mooda, we work with WaterFrames. A WaterFrame object contains a pandas DataFrame and two dictionaries. With a WaterFrame, you can open data files; data is stored into the DataFrame, and the metadata is stored into the dictionaries. With a WaterFrame, you can use the power of a pandas DataFrame without loose all the metadata information. Additionally, mooda helps to open and analyze raw data from scientific instruments and data from oceanographic platforms.
 
 # Where to get it
 
