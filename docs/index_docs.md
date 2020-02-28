@@ -3,3 +3,4 @@
 Index:
 
 * [API reference](api_reference/index_api_reference.md)
+* [Installation](installation/installation.md)
