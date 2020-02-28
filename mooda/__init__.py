@@ -1,5 +1,4 @@
-"""Constructor of package"""
-from mooda.waterframe import WaterFrame
-
-name = "mooda"
-__version__ = "0.5.2"
+""" Implementation of mooda """
+from .waterframe import WaterFrame
+from .input import read_nc_emodnet, read_nc, read_nc_imos, read_pkl
+from .util import concat
