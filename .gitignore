@@ -15,13 +15,9 @@ __pycache__
 /.vscode/
 
 # Test code
-/other_codes/
-download_all_emso.py
-examples.py
-Comparing data from two CTDs.ipynb
+ejemplo.py
+limit_memory.py
+*.nc
 
 # pylint
 .pylintrc
-
-# python venv
-/mooda-venv/
