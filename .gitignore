@@ -18,6 +18,6 @@ __pycache__
 ejemplo.py
 limit_memory.py
 *.nc
-
+desktop.ini
 # pylint
 .pylintrc
