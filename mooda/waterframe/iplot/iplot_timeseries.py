@@ -2,10 +2,11 @@
 import numpy as np
 import plotly.graph_objects as go
 
+
 def iplot_timeseries(self, parameters_to_plot=None):
     """
     It creates a Plotly figure with the time-series of the input parameters.
-    
+
     Parameters
     ----------
         parameters_to_plot: str or list (optional, parameters_to_plot=None)
@@ -26,7 +27,7 @@ def iplot_timeseries(self, parameters_to_plot=None):
     df = df.groupby(['DEPTH', 'TIME'])[parameters_to_plot].mean()
     df.reset_index(inplace=True)
     df.set_index('TIME', inplace=True)
-    
+
     data = [go.Scatter(x=df.index, y=df[parameter], fill="tozeroy", name=parameter)
             for parameter in parameters_to_plot]
 
