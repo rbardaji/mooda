@@ -35,7 +35,7 @@ def concat(list_wf):
                     wf_one.metadata['time_coverage_start'] = start_wf
                 if end_wf > end_wf_one:
                     wf_one.metadata['time_coverage_end'] = end_wf
-                
+
                 # Concat data
                 wf_one.data = pd.concat([wf_one.data, wf.data])
             else:
