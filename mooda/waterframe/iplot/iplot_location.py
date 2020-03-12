@@ -1,9 +1,10 @@
 """ Implementation of WaterFrame.iplot_location() """
 
+
 def iplot_location(self):
     """
     It creates a Plotly Figure with a map and a spot of the measurement location of the WaterFrame.
-    
+
     Returns
     -------
         figure: dict
@@ -20,8 +21,8 @@ def iplot_location(self):
             lon=[lon],
             lat=[lat],
             mode='markers',
-            marker = dict(
-                size = 16,
+            marker=dict(
+                size=16,
             ),
             text=text
         )
@@ -34,7 +35,7 @@ def iplot_location(self):
     else:
         lataxis = None
         lonaxis = None
-    
+
     layout = dict(
         geo=dict(
             lakecolor="rgb(255, 255, 255)",
