@@ -48,7 +48,8 @@ def read_nc_emodnet(path, clean_data=True):
             ds_out = ds_out.drop('LATITUDE')
         if 'LONGITUDE' in ds_in.variables.keys():
             ds_out = ds_out.drop('LONGITUDE')
-
+        if 'POSITION_QC' in ds_in.variables.keys():
+            ds_out = ds_out.drop('POSITION_QC')
         return ds_out
 
     # Create WaterFrame
