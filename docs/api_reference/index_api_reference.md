@@ -68,5 +68,6 @@ wf = md.WaterFrame()
 ### Interactive plot
 
 * [md.iplot_location(list_wf)](util/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the input WaterFrames.
+* [md.iplot_timeseries(list_wf, parameter_to_plot)](util/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameter.
 
 Return to the [Docs Index](../index_docs.md).
