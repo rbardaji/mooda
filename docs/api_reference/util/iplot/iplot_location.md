@@ -34,6 +34,6 @@ Output:
 ![iPlot location example][iplot-location]
 *Note: This image is NOT the real output. This image is the output, saved in PNG.*
 
-Return to [mooda.WaterFrame](../index_api_reference.md).
+Return to [mooda.WaterFrame](../../index_api_reference.md).
 
 [iplot-location]: ../img_util/iplot_location_example.png
