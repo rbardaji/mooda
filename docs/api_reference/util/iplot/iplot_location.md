@@ -32,6 +32,7 @@ go.Figure(fig).show()
 Output:
 
 ![iPlot location example][iplot-location]
+
 *Note: This image is NOT the real output. This image is the output, saved in PNG.*
 
 Return to [mooda.WaterFrame](../../index_api_reference.md).

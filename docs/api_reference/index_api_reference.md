@@ -65,4 +65,8 @@ wf = md.WaterFrame()
 
 * [md.concat(list_wf)](util/concat.md): `concat` does all of the heavy liftings of performing concatenation operations between a list of WaterFrames.
 
+### Interactive plot
+
+* [md.iplot_location(list_wf)](util/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the input WaterFrames.
+
 Return to the [Docs Index](../index_docs.md).
