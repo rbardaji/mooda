@@ -29,7 +29,8 @@ def iplot_timeseries(list_wf, parameter_to_plot):
         # df.renane(columns={parameter_to_plot: wf.metadata.get('platform_code')}, inplace=True)
 
         data.append(
-            go.Scatter(x=df.index, y=df[parameter_to_plot], fill="tozeroy",
+            go.Scatter(x=df.index, y=df[parameter_to_plot],
+                       # fill="tozeroy",
                        name=wf.metadata.get('platform_code')))
 
     # Layout
@@ -50,7 +51,7 @@ def iplot_timeseries(list_wf, parameter_to_plot):
     layout = {
         'title': title,
         'yaxis': {
-            'range': [min_value, max_value],
+            # 'range': [min_value, max_value],
             'title': y_label
         },
         'margin': {'l': 50, 'r': 10, 't': 45, 'b': 30}
