@@ -2,13 +2,28 @@
 import hashlib
 
 
-def md5(file_path, save_dm5=True, md5_path=None):
+def md5(file_path, save_md5=True, md5_path=None):
     """
     It generates the MD5 code of the input file.
     It saves the code into a file if it save_md5 is True.
     It saves the code into the text file of 'md5_path'.
-    If md5_path is None, the name of the file is the same of the input file
+    If md5_path is None, the name of the file is the same as the input file
     with the md5 extension.
+
+    Parameters
+    ----------
+        file_path: str
+            Path of the file to make the MD5.
+        save_md5: bool
+            If save_md5 is True, it creates a file with the MD5.
+        md5_path: path
+            Path of the MD5 file. If md5_path is None, the name of the file is
+            the same as the input file with the md5 extension.
+    
+    Returns
+    -------
+        haser: str
+            MD5 code.
     """
 
     # Make the MD5 code
@@ -17,7 +32,7 @@ def md5(file_path, save_dm5=True, md5_path=None):
         content = open_file.read()
         haser.update(content)
     
-    if save_dm5:
+    if save_md5:
         if md5_path:
             filename_md5 = md5_path
         else:
