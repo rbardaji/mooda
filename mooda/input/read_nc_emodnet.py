@@ -50,6 +50,10 @@ def read_nc_emodnet(path, clean_data=True):
             ds_out = ds_out.drop('LONGITUDE')
         if 'POSITION_QC' in ds_in.variables.keys():
             ds_out = ds_out.drop('POSITION_QC')
+        if 'DC_REFERENCE' in ds_in.variables.keys():
+            ds_out = ds_out.drop('DC_REFERENCE')
+        if 'POSITIONING_SYSTEM' in ds_in.variables.keys():
+            ds_out = ds_out.drop('POSITIONING_SYSTEM')
         return ds_out
 
     # Create WaterFrame
@@ -58,6 +62,7 @@ def read_nc_emodnet(path, clean_data=True):
     # Open file with xarrat
     ds = xr.open_dataset(path)
     ds = drop(ds, clean_data)
+
     # Save ds into a WaterFrame
     wf.metadata = dict(ds.attrs)
     wf.data = ds.to_dataframe()
