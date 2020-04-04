@@ -47,4 +47,4 @@ Range time from wf_february:  2014-02-01T00:00:00Z - 2014-02-28T23:00:00Z
 Range time from wf_january_february: 2014-01-19T00:00:00Z - 2014-02-28T23:00:00Z
 ```
 
-Return to [mooda.WaterFrame](../index_api_reference.md).
+Return to [Index](../index_api_reference.md).
