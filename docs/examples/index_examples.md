@@ -4,6 +4,7 @@
 ## General data
 
 * [Obtain a MD5 code for every NetCDF of a folder and make their MD5 files](md5_dyfamed.md)
+* [Make a WaterFrame following the OceanSites specification](wf_oceansite.md)
 
 ## Using EMODnet data
 
