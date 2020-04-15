@@ -66,6 +66,8 @@ def read_nc_emodnet(path, clean_data=True):
 
     # Save ds into a WaterFrame
     wf.metadata = dict(ds.attrs)
+    # Add network
+    wf.metadata['network'] = 'emodnet'
 
     wf.data = ds.to_dataframe()
     # Harmonize data
