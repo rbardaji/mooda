@@ -2,23 +2,25 @@
 from xarray import Dataset
 
 
-def to_nc(self, path, nc_format="NETCDF4"):
+def to_nc(self, path=None, nc_format="NETCDF4"):
     """
     It saves the WaterFrame into a NetCDF.
 
     Parameters
     ----------
         path: str
-            Path to save the NetCDF.
+            Path to save the NetCDF. If path is None, the filename will be metadata['id'].
         nc_format: str
             Specify the NetCDF format (NETCDF3_64BIT, NETCDF4).
 
     Returns
     -------
-        True: bool
-            If the internal functions of this method do not raise any error, the return is always
-            True.
+        path: str
+            Path where the file is placed.
     """
+
+    if path is None:
+        path = self.metadata['id'] + '.nc'
 
     # Sometimes the metadata contains a list of str.
     # It can crash the creation of the NetCDF3_64Bits.
@@ -43,4 +45,4 @@ def to_nc(self, path, nc_format="NETCDF4"):
     # Creation of the nc file
     ds.to_netcdf(path, format=nc_format)
 
-    return True
+    return path

@@ -44,6 +44,7 @@ def read_nc_emodnet(path, clean_data=True):
         else:
             ds_out = ds_in
 
+        # ds_out = ds_out.drop_sel('DEPTH')
         if 'LATITUDE' in ds_in.variables.keys():
             ds_out = ds_out.drop('LATITUDE')
         if 'LONGITUDE' in ds_in.variables.keys():
@@ -65,8 +66,8 @@ def read_nc_emodnet(path, clean_data=True):
 
     # Save ds into a WaterFrame
     wf.metadata = dict(ds.attrs)
-    wf.data = ds.to_dataframe()
 
+    wf.data = ds.to_dataframe()
     # Harmonize data
     wf.data.reset_index(inplace=True)
     wf.data.set_index(['DEPH', 'TIME'], inplace=True)

@@ -135,7 +135,7 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
         print(f"Error: Metadata {self.metadata['id']} not ingested")
     
     summary_dict = {
-        'sites': [self.metadata['site']],
+        'sites': [self.metadata['site_code']],
         'networks': [self.metadata['network']],
         'parameters': []}
     for key, value in self.vocabulary.items():
