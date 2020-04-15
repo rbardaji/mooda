@@ -14,16 +14,12 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
             Name of the ElasticSearch index that contains the WaterFrame.data documents.
         metadata_index_name: str
             Name of the ElasticSearch index that contains the WaterFrame.metadata documents.
-        wc_to_intest: list of int
-            QC Flags of data to be ingested to the ElasticSearch DB.
         summary_index_name: str
+            Name of the ElasticSearch index that contains the summary documents.
+        qc_to_intest: list of int
+            QC Flags of data to be ingested to the ElasticSearch DB.
         **kwargs: Elasticsearch object creation arguments.
             See https://elasticsearch-py.readthedocs.io/en/master/index.html#
-
-    Returns
-    -------
-        json_string: str
-            JSON string.
     """
     def data_ingestion(es, data_index_name, data_dict):
 
