@@ -39,6 +39,7 @@ wf = md.WaterFrame()
 
 ### Outout
 
+* [wf.to_es()](waterframe/output/to_es.md): Injestion of the WaterFrame into a ElasticSeach DB.
 * [wf.to_json()](waterframe/output/to_json.md): Get a JSON with the WaterFrame information.
 * [wf.to_nc(*path*, *nc_format*=*"NETCDF4"*)](waterframe/output/to_nc.md): Save the WaterFrame in a NetCDF file.
 * [wf.to_pkl(*path*)](waterframe/output/to_pkl.md): Save the WaterFrame in a Pickle file.
@@ -63,11 +64,13 @@ wf = md.WaterFrame()
 
 ## Utilities
 
-* [md.concat(list_wf)](util/concat.md): `concat` does all of the heavy liftings of performing concatenation operations between a list of WaterFrames.
+* [md.concat(*list_wf*)](util/concat.md): `concat` does all of the heavy liftings of performing concatenation operations between a list of WaterFrames.
+* [md.es_create_indexes(*delete_previous_indexes*=*True*, ***kwargs*)](util/es_create_indexes.md): Creation of ElasticSearch Indexes to save a WaterFrame object.
+* [md.md5(*file_path*, *save_dm5*=*True*, *md5_path*=*None*)](util/md5.md): It generates the MD5 code of the input file.
 
 ### Interactive plot
 
-* [md.iplot_location(list_wf)](util/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the input WaterFrames.
-* [md.iplot_timeseries(list_wf, parameter_to_plot)](util/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameter.
+* [md.iplot_location(*list_wf*)](util/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the input WaterFrames.
+* [md.iplot_timeseries(*list_wf*, *parameter_to_plot*)](util/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameter.
 
 Return to the [Docs Index](../index_docs.md).

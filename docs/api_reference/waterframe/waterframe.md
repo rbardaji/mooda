@@ -98,9 +98,9 @@ Output:
 
 ### Output
 
+* [WaterFrame.to_es()](./output/to_es.md): Injestion of the WaterFrame into a ElasticSeach DB.
 * [WaterFrame.to_json()](./output/to_json.md): Get a JSON with the WaterFrame information.
 * [WaterFrame.to_nc(*path*, *nc_format*=*"NETCDF4"*)](./output/to_nc.md): Save the WaterFrame into a NetCDF.
-* [WaterFrame.to_pkl(*path*)](./output/to_pkl.md): Save the WaterFrame into a Pickle file.
 
 ### Static plot
 
