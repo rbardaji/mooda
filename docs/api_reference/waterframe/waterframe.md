@@ -98,6 +98,7 @@ Output:
 
 ### Output
 
+* [WaterFrame.metadata_to_html()](./output/metadata_to_html.md): Make a html file with the metadata information.
 * [WaterFrame.to_es()](./output/to_es.md): Injestion of the WaterFrame into a ElasticSeach DB.
 * [WaterFrame.to_json()](./output/to_json.md): Get a JSON with the WaterFrame information.
 * [WaterFrame.to_nc(*path*, *nc_format*=*"NETCDF4"*)](./output/to_nc.md): Save the WaterFrame into a NetCDF.
@@ -105,7 +106,7 @@ Output:
 
 ### Static plot
 
-* [wf.plot_hist(*parameters*=*None*, *mean_line*=*False*, ***kwds*)](./plot/plot_hist.md): Make a histogram of the WaterFrame's. A histogram is a representation of the distribution of data.
+* [WaterFrame.plot_hist(*parameters*=*None*, *mean_line*=*False*, ***kwds*)](./plot/plot_hist.md): Make a histogram of the WaterFrame's. A histogram is a representation of the distribution of data.
 * [WaterFrame.plot_timebar(*keys*, *ax*=*None*, *time_interval_mean*=*None*)](./plot/plot_timebar.md): Make a bar plot of the input keys. The bars are positioned at x with date/time. Their dimensions are given by height.
 * [WaterFrame.plot_timeseries(*parameters_to_plot*=*None*, *qc_flags*=*None*, *rolling_window*=*None*, ax=*None*, *average_time*=*None*, *secondary_y*=*None*, *color*=*None*)](./plot/plot_timeseries.md): Plot the input parameters with time on X and the parameters on Y. It calculates the standar deviation of a rolling window and plot it.
 * [WaterFrame.plot(***kwds*)](./plot/plot.md): It calls the pandas DataFrame.plot() method.
