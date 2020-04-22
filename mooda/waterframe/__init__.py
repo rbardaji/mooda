@@ -8,7 +8,7 @@ class WaterFrame:
     from .analysis import (
         min, max, copy, use_only, rename, corr, max_diff, time_intervals, resample, slice_time,
         info_metadata, info_vocabulary, drop)
-    from .output import to_nc, to_pkl, to_json, to_es, metadata_to_html
+    from .output import to_nc, to_pkl, to_json, to_es, metadata_to_html, to_csv
     from .plot import plot_timeseries, plot_timebar, plot_hist, plot
     from .qc import qc_flat_test, qc_range_test, qc_spike_test
     from .iplot import iplot_location, iplot_timeseries

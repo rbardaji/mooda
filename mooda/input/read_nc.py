@@ -2,7 +2,7 @@
 import xarray as xr
 from ..waterframe import WaterFrame
 
-def read_nc(path):
+def read_nc(path, decode_times=True):
     """
     Read data form NetCDF file and create a WaterFrame.
 
@@ -10,6 +10,9 @@ def read_nc(path):
     ----------
         path: str
             Path of the NetCDF file.
+        decode_times : bool, optional
+            If True, decode times encoded in the standard NetCDF datetime format 
+            into datetime objects. Otherwise, leave them encoded as numbers. 
     
     Returns
     -------
@@ -19,7 +22,7 @@ def read_nc(path):
     wf = WaterFrame()
 
     # Open file with xarrat
-    ds = xr.open_dataset(path)
+    ds = xr.open_dataset(path, decode_times=decode_times)
 
     # Save ds into a WaterFrame
     wf.metadata = dict(ds.attrs)

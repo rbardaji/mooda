@@ -2,7 +2,7 @@ import flask
 import os
 
 
-def metadata_to_html(self, filename=None, logo_link=None, footer_text=None):
+def metadata_to_html(self, filename=None, logo_link=None, footer_text=''):
     """
     Make a html file with the metadata information.
 

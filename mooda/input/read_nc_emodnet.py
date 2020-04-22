@@ -30,6 +30,7 @@ def read_nc_emodnet(path, clean_data=True):
                 Input dataset.
             clean_data_in: bool
                 It indicates if "_DM" variables should be deleted.
+
         Returns
         -------
             ds_out: xarray.Dataset
