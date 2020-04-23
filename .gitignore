@@ -17,6 +17,7 @@ __pycache__
 # Test code
 ejemplo.py
 ejemplo2.py
+ejemplo3.py
 limit_memory.py
 *.nc
 desktop.ini

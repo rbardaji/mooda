@@ -3,7 +3,7 @@
 
 def to_csv(self, path=None):
     """
-    Create a CDV file with the WaterFrame data.
+    Create a CSV file with the WaterFrame data.
     The metadata and vocabulary will be placed in the first lines of the file with a # as first
     character of the line.
 
@@ -11,7 +11,8 @@ def to_csv(self, path=None):
     ----------
         path: str
             Location and filename of the csv file.
-            If path is None, the filename will be the metadata['id'].
+            If path is None, the filename will be the
+            metadata['id'].
     
     Returns
     -------
@@ -38,3 +39,5 @@ def to_csv(self, path=None):
 
     # Save data in a csv
     self.data.to_csv(filename, mode='a')
+
+    return filename

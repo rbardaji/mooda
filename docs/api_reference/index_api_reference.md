@@ -39,7 +39,8 @@ wf = md.WaterFrame()
 
 ### Outout
 
-* [wf.metadata_to_html()](waterframe/output/metadata_to_html.md): Make a html file with the metadata information.
+* [wf.metadata_to_html()](waterframe/output/metadata_to_html.md): Make an HTML file with the metadata information.
+* [wf.to_csv()](waterframe/output/to_csv.md): Create a CSV file with the WaterFrame data.
 * [wf.to_es()](waterframe/output/to_es.md): Injestion of the WaterFrame into a ElasticSeach DB.
 * [wf.to_json()](waterframe/output/to_json.md): Get a JSON with the WaterFrame information.
 * [wf.to_nc(*path*, *nc_format*=*"NETCDF4"*)](waterframe/output/to_nc.md): Save the WaterFrame in a NetCDF file.

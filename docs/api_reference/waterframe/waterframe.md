@@ -99,6 +99,7 @@ Output:
 ### Output
 
 * [WaterFrame.metadata_to_html()](./output/metadata_to_html.md): Make a html file with the metadata information.
+* [WaterFrame.to_csv()](./output/to_csv.md): Create a CSV file with the WaterFrame data.
 * [WaterFrame.to_es()](./output/to_es.md): Injestion of the WaterFrame into a ElasticSeach DB.
 * [WaterFrame.to_json()](./output/to_json.md): Get a JSON with the WaterFrame information.
 * [WaterFrame.to_nc(*path*, *nc_format*=*"NETCDF4"*)](./output/to_nc.md): Save the WaterFrame into a NetCDF.
