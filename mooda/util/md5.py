@@ -41,6 +41,11 @@ def md5(file_path, save_md5=True, md5_path=None):
             filename_md5 = ""
             for part in parts[:-1]:
                 filename_md5 += part
+                filename_md5 += '.'
+            # write the _<extension>
+            filename_md5 = filename_md5[:-1] + '_'
+            filename_md5 += parts[-1]
+
             filename_md5 += ".md5"
 
         # Save the md5 code into the file
