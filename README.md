@@ -1,4 +1,4 @@
-![mooda header](docs/img_docs/mooda-header.png)
+![mooda header](./docs/img_docs/mooda-header.png)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2677621.svg)](https://doi.org/10.5281/zenodo.2864645)
 
@@ -27,10 +27,14 @@ pip install mooda
 
 See more [instructions](docs/installation/installation.md) for installation from sources or non-PyPi releases.
 
-# License
-
-[MIT](LICENSE)
-
 # Documentation
 
 The official documentation is hosted here, on the [docs directory](docs/index_docs.md).
+
+# Projects that use or have used mooda
+
+![logos](./docs/img_docs/logos.png)
+
+# License
+
+[MIT](LICENSE)
