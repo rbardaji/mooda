@@ -1,7 +1,7 @@
 """ Implementation of md.read_nc_moist() """
 from . import read_nc
 
-def read_nc_moist(path):
+def read_nc_moist(path, resample_rule=False):
     """
     Open a NetCDF file from MOIST.
     This method only works with the files generated from CTDs.
@@ -10,6 +10,10 @@ def read_nc_moist(path):
     ----------
         path: str
             Path of the NetCDF file.
+        resample_rule: str
+            Time resample method. Use resample_rule = False to do not resample.
+            See DateOffset objects:
+            https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html
 
     Returns
     -------
@@ -35,9 +39,9 @@ def read_nc_moist(path):
 
         return wf_in
 
-    def resample(wf_in):
+    def resample(wf_in, resample_rule_in):
         wf_in.data.set_index('TIME', inplace=True)
-        wf_in.data = wf_in.data.resample('H').mean()
+        wf_in.data = wf_in.data.resample(resample_rule_in).mean()
         return wf_in
 
     def set_index(wf_in):
@@ -76,7 +80,8 @@ def read_nc_moist(path):
 
     wf = read_nc(path)
     wf = drop(wf)
-    wf = resample(wf)
+    if resample_rule:
+        wf = resample(wf, resample_rule)
     wf = set_index(wf)
     wf = rename(wf)
 

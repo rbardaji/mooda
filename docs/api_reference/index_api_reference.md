@@ -60,7 +60,7 @@ wf = md.WaterFrame()
 
 ### Data Quality Control
 
-* [wf.qc_flat_test(*parameters*=*None*, *window*=*3*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_flat_test.md): It detects if there are equal consecutive values in the time series.
+* [wf.qc_flat_test(*parameters*=*None*, *window*=*3*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_flag_test.md): It detects if there are equal consecutive values in the time series.
 * [wf.qc_range_test(*parameters*=*None*, *limits*=*None*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_range_test.md): Check if the values of a parameter are out of range.
 * [wf.qc_spike_test(*parameters*=*None*, *window*=*0*, *threshold*=*3*, *flag*=*4*, *inplace*=*True*)](waterframe/qc/qc_spike_test.md): It checks if there is any spike in the time series.
 
