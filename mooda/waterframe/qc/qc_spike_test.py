@@ -2,7 +2,8 @@
 import numpy as np
 
 
-def qc_spike_test(self, parameters=None, window=0, threshold=3.5, influence=0.5, flag=4, inplace=True):
+def qc_spike_test(self, parameters=None, window=0, threshold=3.5, influence=0.5, flag=4,
+                  inplace=True):
     """
     Based on:
     https://stackoverflow.com/questions/22583391/peak-signal-detection-in-realtime-timeseries-data
