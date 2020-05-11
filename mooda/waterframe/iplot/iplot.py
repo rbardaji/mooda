@@ -2,7 +2,7 @@ import plotly
 import plotly.express as px
 
 
-def iplot(self, y, x='TIME', color='auto', plot_type='scatter', marginal_x='histogram',
+def iplot(self, y, x='TIME', color='auto', plot_type='scatter', marginal_x='rug',
           marginal_y='box', trendline='ols', filename=None):
     """
     Get a figure using plotly.express.
@@ -55,9 +55,13 @@ def iplot(self, y, x='TIME', color='auto', plot_type='scatter', marginal_x='hist
 
     df = self.data.copy()
     df.reset_index(inplace=True)
+    if 'DEPTH' in df.keys() and 'DEPTH' not in columns_to_plot:
+        columns_to_plot.append('DEPTH')
+        df['DEPTH'] = df['DEPTH'].apply(str)
     df = df[columns_to_plot].copy()
     df.dropna(inplace=True)
-
+    df['DEPTH'] = df['DEPTH'].apply(str)
+    print(df.head())
     if plot_type == 'scatter':
         fig = px.scatter(df, 
                          x=x,
