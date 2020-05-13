@@ -62,22 +62,25 @@ class WaterFrame:
             min_dict = self.min(parameter)
             max_dict = self.max(parameter)
             value_mean = self.data[parameter].mean()
-            # min value string
-            parameters_message += f"\n    - Min value: {min_dict[parameter]}"
-            for key, value in min_dict.items():
-                if key == parameter:
-                    continue
-                else:
-                    parameters_message += f"\n      - {key}: {value}"
-            # max value string
-            parameters_message += f"\n    - Max value: {max_dict[parameter]}"
-            for key, value in max_dict.items():
-                if key == parameter:
-                    continue
-                else:
-                    parameters_message += f"\n      - {key}: {value}"
-            # mean value string
-            parameters_message += f"\n    - Mean value: {value_mean}"
+            if min_dict is not None and max_dict is not None:
+                # min value string
+                parameters_message += f"\n    - Min value: {min_dict[parameter]}"
+                for key, value in min_dict.items():
+                    if key == parameter:
+                        continue
+                    else:
+                        parameters_message += f"\n      - {key}: {value}"
+                # max value string
+                parameters_message += f"\n    - Max value: {max_dict[parameter]}"
+                for key, value in max_dict.items():
+                    if key == parameter:
+                        continue
+                    else:
+                        parameters_message += f"\n      - {key}: {value}"
+                # mean value string
+                parameters_message += f"\n    - Mean value: {value_mean}"
+            else:
+                parameters_message += "\n    - Parameter without values."
 
         message = size_message + "\n" + parameters_message
 

@@ -1,5 +1,5 @@
 """ Implementation of WaterFrame.min(parameter_name) """
-
+import numpy as np
 
 def min(self, parameter_min):
     """
@@ -19,11 +19,15 @@ def min(self, parameter_min):
                 '<name of index n>': <value of index n>,
                 'name of parameter': < min value of parameter>
             }
+            If min_dict is None, all the values of the parameter are NaN.
     """
 
     df = self.data[parameter_min]
     df = df.reset_index()
 
-    min_dict = df.loc[df[parameter_min] == df[parameter_min].min()].to_dict('record')[0]
+    try:
+        min_dict = df.loc[df[parameter_min] == df[parameter_min].min(skipna=True)].to_dict('record')[0]
+    except IndexError:
+        min_dict = None
 
     return min_dict

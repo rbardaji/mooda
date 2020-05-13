@@ -19,11 +19,16 @@ def max(self, parameter_max):
                 '<name of index n>': <value of index n>,
                 'name of parameter': < maximum value of parameter>
             }
+            If max_dict is None, all the values of the parameter are NaN.
     """
 
     df = self.data[parameter_max]
     df = df.reset_index()
 
-    max_dict = df.loc[df[parameter_max] == df[parameter_max].max()].to_dict('record')[0]
+    try:
+        max_dict = df.loc[
+            df[parameter_max] == df[parameter_max].max(skipna=True)].to_dict('record')[0]
+    except IndexError:
+        max_dict = None
 
     return max_dict
