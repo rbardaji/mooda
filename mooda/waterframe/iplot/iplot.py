@@ -84,7 +84,7 @@ def iplot(self, y, x='auto', color='auto', facet_col='auto', plot_type='scatter'
     if facet_col:
         if plot_type == 'scatter':
             if facet_col == 'auto':
-                if 'DEPTH' in self.data.index.names:
+                if 'DEPTH' in self.data.index.names and 'DEPTH' not in columns_to_plot:
                     facet_col = 'DEPTH'
                     columns_to_plot.append(facet_col)
                 else:
