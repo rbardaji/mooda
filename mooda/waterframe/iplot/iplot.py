@@ -1,3 +1,4 @@
+import pandas as pd
 import plotly
 import plotly.express as px
 
@@ -106,6 +107,10 @@ def iplot(self, y, x='auto', color='auto', facet_col='auto', plot_type='scatter'
     # Use only the selected columns
     df = df[columns_to_plot].copy()
     df.dropna(inplace=True)
+
+    # Make sure that 'TIME' is a timestamp
+    if 'TIME' in df.keys():
+        df['TIME'] = pd.to_datetime(df['TIME'])
 
     if plot_type == 'scatter':
         fig = px.scatter(df, 
