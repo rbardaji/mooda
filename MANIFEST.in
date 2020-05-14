@@ -4,3 +4,4 @@ include LICENSE
 include setup.py
 include setup.cfg
 include mooda/docs/*.*
+include mooda/waterframe/output/html_templates/metadata.html
