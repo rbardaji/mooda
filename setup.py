@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 
 NAME = 'mooda'
-VERSION = '1.4.1'
+VERSION = '1.4.2'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
 LONG_DESCRIPTION = ("""
 MOODA - Module for Ocean Observatory Data Analysis
