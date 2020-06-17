@@ -81,10 +81,13 @@ def iplot_scatter(self, y, x='TIME', trendline=None, marginal_x=None, marginal_y
     # Dropna
     df.dropna(inplace=True)
 
-    fig = px.scatter(
-        df, x=x, y=y, trendline=trendline, marginal_x=marginal_x, marginal_y=marginal_y,
-        color=color, symbol=symbol, range_y=range_y, **kwds)
+    # Sort index TIME
+    df.set_index('TIME', inplace=True)
+    df.sort_index(inplace=True)
+    df.reset_index(inplace=True)
 
-    fig.update_xaxes(rangeslider_visible=True)
+    fig = px.scatter(
+        df[100:150], x=x, y=y, trendline=trendline, marginal_x=marginal_x, marginal_y=marginal_y,
+        color=color, symbol=symbol, range_y=range_y, **kwds)
 
     return fig
