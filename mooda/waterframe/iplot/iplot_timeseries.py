@@ -52,17 +52,16 @@ def iplot_timeseries(self, parameters_to_plot=None, mode='lines', marker_line_wi
         showscale = True
 
     data = [go.Scattergl(
-                       x=df.index,
-                       y=df[parameter],
-                       fill="tozeroy",
-                       mode=mode,
-                       marker_line_width=marker_line_width,
-                       marker_size=marker_size,
-                       marker_color=marker_color,
-                       marker_showscale=showscale,
-                       marker_colorscale=marker_colorscale,
-                       trendline="ols",
-                       name=parameter)
+        x=df.index,
+        y=df[parameter],
+        fill="tozeroy",
+        mode=mode,
+        marker_line_width=marker_line_width,
+        marker_size=marker_size,
+        marker_color=marker_color,
+        marker_showscale=showscale,
+        marker_colorscale=marker_colorscale,
+        name=parameter)
             for parameter in parameters_to_plot]
 
     # Layout
