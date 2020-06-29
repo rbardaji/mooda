@@ -4,7 +4,9 @@ from time import sleep
 
 
 def to_es(self, data_index_name='data', metadata_index_name='metadata',
-          summary_index_name='summary', qc_to_ingest=[0, 1], **kwargs):
+          summary_index_name='summary', qc_to_ingest=[0, 1], parameters=None,
+          metadata_to_es=True, data_to_es=True, summary_to_es=True,
+          vocabulary_to_es=True, **kwargs):
     """
     Injestion of the WaterFrame into a ElasticSeach DB.
 
@@ -16,8 +18,18 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
             Name of the ElasticSearch index that contains the WaterFrame.metadata documents.
         summary_index_name: str
             Name of the ElasticSearch index that contains the summary documents.
+        vocabulary_index_name: str
+            Name of the ElasticSearch index that contains the summary documentation.
         qc_to_intest: list of int
             QC Flags of data to be ingested to the ElasticSearch DB.
+        parameters: list of str
+            List of parameters to ingest. If parameters is None, all parameters will be ingested.
+        metadata_to_es: bool
+            If True, metadata will be ingested.
+        data_to_es: bool
+            If True, data will be ingested.
+        vocabulary_to_es: bool
+            If True, vocabulary will be ingested.
         **kwargs: Elasticsearch object creation arguments.
             See https://elasticsearch-py.readthedocs.io/en/master/index.html#
     """
@@ -41,11 +53,11 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
             param_list = []
 
             for stats_parameter in summary_dict['parameters']:
-
                 tengui = False
                 for summary_parameter in es_summary['parameters']:
-                    if summary_parameter['acronym'] == stats_parameter['acronym'] or \
-                        'QC' in summary_parameter['acronym']:
+                    if summary_parameter['acronym'] == stats_parameter['acronym'] and \
+                        'units' in stats_parameter:
+                        print('tengui')
                         tengui = True
                         break
                 if not tengui:
@@ -121,71 +133,88 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
     
     es = Elasticsearch(**kwargs)
 
-    # Add parameters in metadata information
-    self.metadata['parameters'] = self.parameters
+    if metadata_to_es:
+        # Add parameters in metadata information
+        self.metadata['parameters'] = self.parameters
 
-    ok = metadata_ingestion(es, metadata_index_name, self.metadata)
-    if ok:
-        print(f"Metadata {self.metadata['id']} ingested")
-    else:
-        print(f"Error: Metadata {self.metadata['id']} not ingested")
+        ok = metadata_ingestion(es, metadata_index_name, self.metadata)
+        if ok:
+            print(f"Metadata {self.metadata['id']} ingested")
+        else:
+            print(f"Error: Metadata {self.metadata['id']} not ingested")
     
-    summary_dict = {
-        'sites': [self.metadata['site_code']],
-        'networks': [self.metadata['network']],
-        'parameters': []}
-    for key, value in self.vocabulary.items():
-        if '_QC' not in key or 'TIME' not in key or 'DEPH' not in key:
+    if summary_to_es:
+        summary_dict = {
+            'sites': [self.metadata['site_code']],
+            'networks': [self.metadata['network']],
+            'parameters': []}
+        for key, value in self.vocabulary.items():
+            if '_QC' not in key or 'TIME' not in key or 'DEPH' not in key:
+                try:
+                    summary_dict['parameters'].append(
+                        {
+                            'long_name': value['long_name'],
+                            'acronym': key,
+                            'units': value['units']})
+                except KeyError:
+                    print(f"Caution: {key} doesn't contain 'long_name'")
+
+        ok = summary_ingestion(es, summary_index_name, summary_dict)
+        if ok:
+            print('Stats updated')
+        else:
+            print('Error: Stats not updated')
+
+    if data_to_es:
+        if parameters is None:
+            parameters = self.parameters
+
+        for parameter in self.parameters:
+
+            # Only upload the input parameters
+            if parameter not in parameters:
+                continue
+
+            mini_wf = self.copy()
             try:
-                summary_dict['parameters'].append({'long_name': value['long_name'], 'acronym': key})
+                mini_wf.data = self.data[[parameter, parameter+'_QC', 'DEPH', 'DEPH_QC', 'TIME_QC']]
             except KeyError:
-                print(f"Caution: {key} doesn't contain 'long_name'")
-
-    ok = summary_ingestion(es, summary_index_name, summary_dict)
-    if ok:
-        print('Stats updated')
-    else:
-        print('Error: Stats not updated')
-
-    for parameter in self.parameters:
-        mini_wf = self.copy()
-        try:
-            mini_wf.data = self.data[[parameter, parameter+'_QC', 'DEPH', 'DEPH_QC', 'TIME_QC']]
-        except KeyError:
-            mini_wf.data = self.data[[parameter, parameter+'_QC', 'TIME_QC']]
-            mini_wf.data['DEPH'] = mini_wf.data.index.get_level_values('DEPTH')
-            if 'DEPTH_QC' in self.data.keys():
-                mini_wf.data['DEPH_QC'] = self.data['DEPTH_QC']
-            else:
-                mini_wf.data['DEPH_QC'] = 0
-
-        mini_wf.data = mini_wf.data.dropna()
-
-        mini_wf.data.reset_index(inplace=True)
-        mini_wf.data.set_index('TIME', inplace=True)
-
-        df_init = mini_wf.data
-
-        for qc_value in qc_to_ingest:
-            df = df_init[df_init[parameter+'_QC'] == qc_value]
-
-            for num, (index, row) in enumerate(df.iterrows()):
-                data_dict = {
-                    'parameter': parameter,
-                    'time': str(index)[:19],
-                    'time_qc': int(row['TIME_QC']),
-                    'depth': str(row['DEPH']),
-                    'depth_qc': int(row['DEPH_QC']),
-                    'value': str(row[parameter]),
-                    'value_qc': int(row[parameter+'_QC']),
-                    'metadata_id': self.metadata['id']
-                }
-
-                ok = data_ingestion(es, data_index_name, data_dict)
-                if ok:
-                    print(f"{data_dict['parameter']} from {data_dict['metadata_id']} ingested: {num} of {len(df.index)}")
+                mini_wf.data = self.data[[parameter, parameter+'_QC', 'TIME_QC']]
+                mini_wf.data['DEPH'] = mini_wf.data.index.get_level_values('DEPTH')
+                if 'DEPTH_QC' in self.data.keys():
+                    mini_wf.data['DEPH_QC'] = self.data['DEPTH_QC']
                 else:
-                    print(f"ERROR: {data_dict['parameter']} from {data_dict['metadata_id']} NOT ingested: {num} of {len(df.index)}")
+                    mini_wf.data['DEPH_QC'] = 0
 
-                # Wait for ES operations
-                sleep(0.01)
+            mini_wf.data = mini_wf.data.dropna()
+
+            mini_wf.data.reset_index(inplace=True)
+            mini_wf.data.set_index('TIME', inplace=True)
+
+            df_init = mini_wf.data
+
+            for qc_value in qc_to_ingest:
+                df = df_init[df_init[parameter+'_QC'] == qc_value]
+
+                for num, (index, row) in enumerate(df.iterrows()):
+                    data_dict = {
+                        'parameter': parameter,
+                        'time': str(index)[:19],
+                        'time_qc': int(row['TIME_QC']),
+                        'depth': str(row['DEPH']),
+                        'depth_qc': int(row['DEPH_QC']),
+                        'value': str(row[parameter]),
+                        'value_qc': int(row[parameter+'_QC']),
+                        'metadata_id': self.metadata['id']
+                    }
+
+                    ok = data_ingestion(es, data_index_name, data_dict)
+                    if ok:
+                        print(f"{data_dict['parameter']} from {data_dict['metadata_id']} ingested: {num} of {len(df.index)}")
+                    else:
+                        print(f"ERROR: {data_dict['parameter']} from {data_dict['metadata_id']} NOT ingested: {num} of {len(df.index)}")
+
+                    # Wait for ES operations
+                    sleep(0.01)
+
+    if vocabulary_to_es:

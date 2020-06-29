@@ -2,7 +2,8 @@ from elasticsearch import Elasticsearch
 
 
 def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
-                   summary_index_name='summary', delete_previous_indexes=True, **kwargs):
+                   summary_index_name='summary', vocabulary_index_name='vocabulary',
+                   delete_previous_indexes=True, **kwargs):
     """
     Creation of ElasticSearch Indexes to save a WaterFrame object.
     
@@ -14,6 +15,8 @@ def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
             Name of the ElasticSearch index that contains the WaterFrame.metadata documents.
         summary_index_name: str
             Name of the ElasticSearch index that contains the summary documentation.
+        vocabulary_index_name: str
+            Name of the ElasticSearch index that contains the vocabulary documentation.
         delete_previous_indexes: bool
             Delete previous indexes with the input names and all their documents.
         **kwargs: Elasticsearch object creation arguments.
@@ -108,17 +111,24 @@ def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
                     'parameters': {
                         'properties': {
                             'long_name': {'type': 'keyword'},
-                            'acronym': {'type': 'keyword'}
-                        },
-                    },
+                            'acronym': {'type': 'keyword'}}},
                     'networks': {'type': 'keyword'},
-                    'sites': {'type': 'keyword'},
-                }
-            }
-        }
+                    'sites': {'type': 'keyword'}}}}
 
         # Creation of the index
         es.indices.create(index=summary_index_name, body=settings)
+
+    def create_vocabulary_index():
+        # Index settings
+        settings = {
+            'mappings': {
+                'properties': {
+                    'long_name': {'type': 'keyword'},
+                    'acronym': {'type': 'keyword'},
+                    'units': {'type': 'keyword'}}}}
+
+        # Creation of the index
+        es.indices.create(index=vocabulary_index_name, body=settings)
 
     es = Elasticsearch(**kwargs)
 
@@ -127,11 +137,13 @@ def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
         es.indices.delete(index=data_index_name, ignore=404)
         es.indices.delete(index=metadata_index_name, ignore=404)
         es.indices.delete(index=summary_index_name, ignore=404)
+        es.indices.delete(index=vocabulary_index_name, ignore=404)
     
     # Index creation
     create_data_index()
     create_metadata_index()
     create_summary_index()
+    create_vocabulary_index()
 
     success = True
     return success
