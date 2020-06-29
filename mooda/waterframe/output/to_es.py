@@ -4,9 +4,9 @@ from time import sleep
 
 
 def to_es(self, data_index_name='data', metadata_index_name='metadata',
-          summary_index_name='summary', qc_to_ingest=[0, 1], parameters=None,
-          metadata_to_es=True, data_to_es=True, summary_to_es=True,
-          vocabulary_to_es=True, **kwargs):
+          summary_index_name='summary', vocabulary_index_name='vocabulary',
+          qc_to_ingest=[0, 1], parameters=None, metadata_to_es=True,
+          data_to_es=True, summary_to_es=True, vocabulary_to_es=True, **kwargs):
     """
     Injestion of the WaterFrame into a ElasticSeach DB.
 
@@ -218,3 +218,17 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
                     sleep(0.01)
 
     if vocabulary_to_es:
+        for key, value in self.vocabulary.items():
+            if '_QC' in key or key in [
+                'DEPTH', 'LATITUDE', 'LONGITUDE', 'TIME', 'station_name'] :
+                continue
+
+            vocabulary_dict = {
+                'acronim': key,
+                'long_name': value['long_name'],
+                'units':  value['units']
+            }
+
+            vocabulary_json = json.dumps(vocabulary_dict)
+            # Create or update document
+            es.index(index=vocabulary_index_name, id=key, body=vocabulary_json)
