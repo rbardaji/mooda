@@ -45,10 +45,11 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
         try:
             # Read emso-stats
-            response = es.get(index='emso-stats', id='datalab')
+            response = es.get(index=summary_index_name, id='datalab')
             es_summary = response['_source']
 
             es_summary['sites'] = list(set(es_summary['sites'] + summary_dict['sites']))
+
             es_summary['networks'] = list(set(es_summary['networks'] + summary_dict['networks']))
             param_list = []
 
@@ -57,7 +58,7 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
                 for summary_parameter in es_summary['parameters']:
                     if summary_parameter['acronym'] == stats_parameter['acronym'] and \
                         'units' in stats_parameter:
-                        print('tengui')
+                        # print('tengui')
                         tengui = True
                         break
                 if not tengui:
@@ -145,7 +146,7 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
     
     if summary_to_es:
         summary_dict = {
-            'sites': [self.metadata['site_code']],
+            'sites': [self.metadata['site']],
             'networks': [self.metadata['network']],
             'parameters': []}
         for key, value in self.vocabulary.items():

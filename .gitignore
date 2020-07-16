@@ -15,9 +15,7 @@ __pycache__
 /.vscode/
 
 # Test code
-ejemplo.py
-ejemplo2.py
-ejemplo3.py
+/my-codes
 limit_memory.py
 *.nc
 desktop.ini
