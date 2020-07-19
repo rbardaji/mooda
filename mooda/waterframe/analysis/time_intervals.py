@@ -40,10 +40,8 @@ def time_intervals(self, parameter, frequency):
         if in_interval is False and value is False:
             in_interval = True
             start = index.strftime('%Y-%m-%d %H:%M:%S')
-            print(f'start: {start}')
         elif in_interval is True and value is True:
             in_interval = False
-            print(f'end: {end}')
             intervals.append((start, end))
     if in_interval is True:
         intervals.append((start, end))
