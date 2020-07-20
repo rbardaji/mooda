@@ -61,7 +61,11 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
     df.sort_index(inplace=True)
     df.reset_index(inplace=True)
 
-    fig = px.line(df, x=x, y=y, color=color, range_y=range_y, **kwds)
+    fig = px.line(df, x=x, y=y, color=color,
+                  range_y=range_y,
+                  line_shape=line_shape,
+                  labels={y: self.vocabulary[y].get('long_name', y)},
+                  **kwds)
 
     fig.update_xaxes(rangeslider_visible=True)
 

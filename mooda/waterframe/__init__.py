@@ -11,7 +11,9 @@ class WaterFrame:
     from .output import to_nc, to_pkl, to_json, to_es, metadata_to_html, to_csv
     from .plot import plot_timeseries, plot_timebar, plot_hist, plot
     from .qc import qc_flat_test, qc_range_test, qc_spike_test, qc_replace
-    from .iplot import iplot_location, iplot_timeseries, iplot, iplot_scatter, iplot_line
+    from .iplot import (
+        iplot_location, iplot_timeseries, iplot, iplot_scatter, iplot_line,
+        iplot_data_intervals)
 
     def __init__(self, df=None, metadata=None, vocabulary=None):
         """ Constructor """
