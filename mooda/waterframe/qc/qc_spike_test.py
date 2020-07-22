@@ -85,18 +85,30 @@ def qc_spike_test(self, parameters=None, window=0, threshold=3.5, influence=0.5,
         df = data[[parameter, f'{parameter}_QC']].reset_index()
         df.set_index('TIME', inplace=True)
 
-        for depth, df_depth in df.groupby('DEPTH'):
-            df_depth.sort_index(inplace=True)
+        try:
+            for depth, df_depth in df.groupby('DEPTH'):
+                df_depth.sort_index(inplace=True)
 
-            y = df_depth[parameter].values
-            signals = df_depth[f'{parameter}_QC'].values
+                y = df_depth[parameter].values
+                signals = df_depth[f'{parameter}_QC'].values
+
+                # Run algo with settings from above
+                result = thresholding_algo(y, lag=window, threshold=threshold,
+                                        influence=influence, signals=signals,
+                                        flag=4)
+                
+                data.loc[(depth,), f'{parameter}_QC'] = result
+        except KeyError:
+            # No Depth
+            y = df[parameter].values
+            signals = df[f'{parameter}_QC'].values
 
             # Run algo with settings from above
             result = thresholding_algo(y, lag=window, threshold=threshold,
-                                       influence=influence, signals=signals,
-                                       flag=4)
+                                    influence=influence, signals=signals,
+                                    flag=4)
             
-            data.loc[(depth,), f'{parameter}_QC'] = result
+            data[f'{parameter}_QC'] = result
     
     if inplace:
         self.data = data

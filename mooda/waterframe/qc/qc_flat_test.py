@@ -10,7 +10,7 @@ def qc_flat_test(self, parameters=None, window=3, flag=4, inplace=True):
         parameters: string or list of strings, optional
         (parameters = None)
             Parameter to apply the test.
-        window: int, optional (window = 1)
+        window: int, optional (window = 3)
             Size of the moving window of values to calculate the mean.
             If it is 0, the function calculates the optimal window.
         flag: int, optional (flag = 4)
@@ -40,7 +40,7 @@ def qc_flat_test(self, parameters=None, window=3, flag=4, inplace=True):
             return False
         else:
             data.loc[df_rolling[parameter] == 0, parameter + '_QC'] = flag
-    
+
     if inplace:
         self.data = data
         return True

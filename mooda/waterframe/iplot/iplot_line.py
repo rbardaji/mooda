@@ -64,9 +64,25 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
     fig = px.line(df, x=x, y=y, color=color,
                   range_y=range_y,
                   line_shape=line_shape,
-                  labels={y: self.vocabulary[y].get('long_name', y)},
+                  labels={
+                      y: self.vocabulary[y].get('units', y)},
                   **kwds)
 
     fig.update_xaxes(rangeslider_visible=True)
+    fig.update_layout(margin=dict(l=30, r=0, t=30, b=0))
+
+    if 'QC' in color:
+        fig.for_each_trace(
+            lambda trace: trace.update(
+                visible='legendonly',
+                mode='markers',
+                marker_color='red') if trace.name == 'Bad data' else (),
+        )
+        fig.for_each_trace(
+            lambda trace: trace.update(
+                mode='lines+markers',
+                marker_color='blue',
+                line_color='blue') if trace.name == 'Good data' else (),
+        )
 
     return fig
