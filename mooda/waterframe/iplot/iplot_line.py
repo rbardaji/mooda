@@ -37,6 +37,9 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
     df[y] = _df[y]
     df[x] = _df[x]
 
+    if 'DEPTH' in _df.keys():
+        df['DEPTH'] = _df['DEPTH']
+
     # Range Y calculation
     y_min = min(df[y].values)
     y_max = max(df[y].values)
