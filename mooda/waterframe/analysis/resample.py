@@ -1,5 +1,5 @@
 """ Implementation of WaterFrame.resample(rule, method='mean') """
-
+import pandas as pd
 
 def resample(self, rule, method='mean', inplace=True):
     """
@@ -22,14 +22,38 @@ def resample(self, rule, method='mean', inplace=True):
     -------
         new_wf: WaterFrame
     """
-    # It only can be possible if the dataframe only contain 1 index.
+    if isinstance(self.data.index,
+        pd.MultiIndex) and 'DEPTH' in self.data.index.names:
+    
+        # pd.Grouper allows you to specify a "groupby instruction for a target
+        # object".
+        # Ref: https://stackoverflow.com/questions/15799162/resampling-within-a-pandas-multiindex
+        level_values = self.data.index.get_level_values
 
-    if method == "mean":
-        data = self.data.resample(rule, level='TIME').mean()
-    elif method == "max":
-        data = self.data.resample(rule, level='TIME').max()
-    elif method == "min":
-        data = self.data.resample(rule, level='TIME').min()
+        if method == "mean":
+            data = (
+                self.data.groupby(
+                    [level_values(0)] +  # 0 is 'DEPTH'
+                    [pd.Grouper(freq=rule, level='TIME')]).mean())
+        elif method == "max":
+            data = (
+                self.data.groupby(
+                    [level_values(0)] +  # 0 is 'DEPTH'
+                    [pd.Grouper(freq=rule, level='TIME')]).max())
+        elif method == "min":
+            data = (
+                self.data.groupby(
+                    [level_values(0)] +  # 0 is 'DEPTH'
+                    [pd.Grouper(freq=rule, level='TIME')]).min())
+    else:
+        # Legacy
+        if method == "mean":
+            data = self.data.resample(rule, level='TIME').mean()
+        elif method == "max":
+            data = self.data.resample(rule, level='TIME').max()
+        elif method == "min":
+            data = self.data.resample(rule, level='TIME').min()
+
     # Change "_QC" values to 0
     for key in self.data.keys():
         if "_QC" in key:

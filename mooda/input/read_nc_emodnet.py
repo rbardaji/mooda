@@ -73,10 +73,14 @@ def read_nc_emodnet(path, clean_data=True):
     wf.data = ds.to_dataframe()
     # Harmonize data
     wf.data.reset_index(inplace=True)
-    wf.data.set_index(['DEPH', 'TIME'], inplace=True)
-    wf.data.index.rename(['DEPTH', 'TIME'], inplace=True)
-    del wf.data['DEPTH']
-    wf.data.rename(columns={'DEPH_QC':'DEPTH_QC'}, inplace=True)
+
+    try:
+        wf.data.set_index(['DEPH', 'TIME'], inplace=True)
+        wf.data.index.rename(['DEPTH', 'TIME'], inplace=True)
+        del wf.data['DEPTH']
+        wf.data.rename(columns={'DEPH_QC':'DEPTH_QC'}, inplace=True)
+    except KeyError:
+        wf.data.set_index(['DEPTH', 'TIME'], inplace=True)
 
     for variable in ds.variables:
         wf.vocabulary[variable] = dict(ds[variable].attrs)
