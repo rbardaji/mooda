@@ -2,8 +2,8 @@ from elasticsearch import Elasticsearch
 
 
 def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
-                   summary_index_name='summary', vocabulary_index_name='vocabulary',
-                   delete_previous_indexes=True, **kwargs):
+                      summary_index_name='summary', vocabulary_index_name='vocabulary',
+                      delete_previous_indexes=True, **kwargs):
     """
     Creation of ElasticSearch Indexes to save a WaterFrame object.
     
@@ -29,6 +29,25 @@ def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
     """
     def create_data_index():
         # Index settings
+        # settings = {
+        #     'mappings': {
+        #         'properties': {
+        #             'parameter': {'type': 'keyword'},
+        #             'time': {
+        #                 'type': 'date',
+        #                 'format': 'yyyy-MM-dd HH:mm:ss'
+        #             },
+        #             'time_qc': {'type': 'integer'},
+        #             'depth': {'type': 'float'},
+        #             'depth_qc': {'type': 'integer'},
+        #             'value': {'type': 'float'},
+        #             'value_qc': {'type': 'integer'},
+        #             'metadata_id': {'type': 'keyword'},
+        #         }
+        #     }
+        # }
+
+        # New version, 01-09-2020
         settings = {
             'mappings': {
                 'properties': {
@@ -43,6 +62,15 @@ def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
                     'value': {'type': 'float'},
                     'value_qc': {'type': 'integer'},
                     'metadata_id': {'type': 'keyword'},
+                    'platform_code': {'type': 'keyword'},
+                    'site': {'type': 'keyword'},
+                    'institution': {'type': 'text'},
+                    'area': {'type': 'text'},
+                    'network': {'type': 'text'},
+                    'long_name': {'type': 'text'},
+                    'units': {'type': 'text'},
+                    'location': {'type': 'geo_point'},
+                    'location_qc': {'type': 'integer'},
                 }
             }
         }
@@ -94,7 +122,7 @@ def es_create_indexes(data_index_name='data', metadata_index_name='metadata',
                     'data_assembly_center': {'type': 'keyword'},
                     'last_location_observation': {'type': 'geo_point'},
                     'last_date_observation': {'type': 'date'},
-                    'parameters': {'type': 'keyword'},
+                    'parameters': {'type': 'text', 'analyzer': 'standard'},
                     'site': {'type': 'keyword'},
                     'network': {'type': 'keyword'},
                 }

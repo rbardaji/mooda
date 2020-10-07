@@ -33,11 +33,17 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
         **kwargs: Elasticsearch object creation arguments.
             See https://elasticsearch-py.readthedocs.io/en/master/index.html#
     """
-    def data_ingestion(es, data_index_name, data_dict):
+    def data_ingestion(es, data_index_name, list_data_dict):
 
-        data_id = f"{data_dict['metadata_id']}_{data_dict['parameter']}_{data_dict['time'].replace(' ', 'T')}_{data_dict['depth']}"
-        data_json = json.dumps(data_dict)
-        es.index(index=data_index_name, id=data_id, body=data_json)
+        bulk_size = len(list_data_dict)
+        print("Data to ingest:", bulk_size, "records")
+        while bulk_size >= 100000:
+            es.bulk(index=data_index_name, body=list_data_dict[:100000], refresh=True)
+            list_data_dict = list_data_dict[100000:]
+            bulk_size -= 100000
+            print("Data to ingest:", bulk_size, "records")
+        if bulk_size > 0:
+            es.bulk(index=data_index_name, body=list_data_dict, refresh=True)
 
         return True
 
@@ -129,6 +135,10 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
         metadata_json = json.dumps(metadata_dict)
         # Create or update document
+        try:
+            es.delete(index=metadata_index_name, id=metadata_dict['id'])
+        except exceptions.NotFoundError:
+            pass
         es.index(index=metadata_index_name, id=metadata_dict['id'], body=metadata_json)
         return True
     
@@ -136,7 +146,12 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
     if metadata_to_es:
         # Add parameters in metadata information
-        self.metadata['parameters'] = self.parameters
+        parameters_string = []
+        for parameter in self.parameters:
+            parameters_string.append(
+                f"{parameter} - {self.vocabulary[parameter]['long_name']} [{self.vocabulary[parameter]['units']}]")
+
+        self.metadata['parameters'] = parameters_string
 
         ok = metadata_ingestion(es, metadata_index_name, self.metadata)
         if ok:
@@ -172,6 +187,7 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
         for parameter in self.parameters:
 
+            print(parameter)
             # Only upload the input parameters
             if parameter not in parameters:
                 continue
@@ -180,7 +196,7 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
             try:
                 mini_wf.data = self.data[[parameter, parameter+'_QC', 'DEPH', 'DEPH_QC', 'TIME_QC']]
             except KeyError:
-                mini_wf.data = self.data[[parameter, parameter+'_QC', 'TIME_QC']]
+                mini_wf.data = self.data[[parameter, parameter+'_QC', 'TIME_QC']].copy()
                 mini_wf.data['DEPH'] = mini_wf.data.index.get_level_values('DEPTH')
                 if 'DEPTH_QC' in self.data.keys():
                     mini_wf.data['DEPH_QC'] = self.data['DEPTH_QC']
@@ -197,7 +213,16 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
             for qc_value in qc_to_ingest:
                 df = df_init[df_init[parameter+'_QC'] == qc_value]
 
-                for num, (index, row) in enumerate(df.iterrows()):
+                list_data_dict = []
+                for index, row in df.iterrows():
+
+                    index_dict = {
+                        'index': {
+                            '_id': f"{self.metadata['id']}_{parameter}_{str(index)[:19].replace(' ', 'T')}_{str(row['DEPH'])}"
+                        }
+                    }
+                    list_data_dict.append(index_dict)
+
                     data_dict = {
                         'parameter': parameter,
                         'time': str(index)[:19],
@@ -206,14 +231,26 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
                         'depth_qc': int(row['DEPH_QC']),
                         'value': str(row[parameter]),
                         'value_qc': int(row[parameter+'_QC']),
-                        'metadata_id': self.metadata['id']
+                        'metadata_id': self.metadata['id'],
+                        'platform_code': self.metadata['platform_code'],
+                        'institution': self.metadata['institution'],
+                        'area': self.metadata['area'],
+                        'long_name': self.vocabulary[parameter]['long_name'],
+                        'units': self.vocabulary[parameter]['units'],
+                        'location': {
+                            'lat': self.metadata['last_latitude_observation'],
+                            'lon': self.metadata['last_longitude_observation'],
+                        },
+                        'location_qc': 0,
                     }
+                    list_data_dict.append(data_dict)
 
-                    ok = data_ingestion(es, data_index_name, data_dict)
+                if list_data_dict:
+                    ok = data_ingestion(es, data_index_name, list_data_dict)
                     if ok:
-                        print(f"{data_dict['parameter']} from {data_dict['metadata_id']} ingested: {num} of {len(df.index)}")
+                        print(f"Data from {parameter} with QC {qc_value} ingested")
                     else:
-                        print(f"ERROR: {data_dict['parameter']} from {data_dict['metadata_id']} NOT ingested: {num} of {len(df.index)}")
+                        print(f"ERROR in ingestion of data from {parameter}")
 
                     # Wait for ES operations
                     sleep(0.01)
