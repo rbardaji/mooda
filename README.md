@@ -1,6 +1,6 @@
 ![mooda header](./docs/img_docs/mooda-header.png)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2677621.svg)](https://doi.org/10.5281/zenodo.2864645)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2677621.svg)](10.5281/zenodo.2643207)
 
 Mooda is a python package designed mainly for oceanographers and marine science students. It is based on a power scripting system for:
 
