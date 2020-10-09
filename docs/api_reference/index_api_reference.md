@@ -58,6 +58,7 @@ wf = md.WaterFrame()
 
 * [wf.iplot_location(self)](waterframe/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the WaterFrame.
 * [wf.iplot_timeseries(*parameters_to_plot*=*None*)](waterframe/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameters.
+* [wf.iplot_scatter(*y*, *x*=*'TIME'*, *trendline*=*None*, *marginal_x*=*None*, *marginal_y*=*'histogram'*, *color*=*'auto'*, *symbol*=*'DEPTH'*, *range_y*=*'auto'*, ***kwds*)](waterframe/iplot/iplot_scatter.md): It makes an interactive scatter plot.
 
 ### Data Quality Control
 
