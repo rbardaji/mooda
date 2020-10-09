@@ -13,12 +13,12 @@ def iplot_scatter(self, y, x='TIME', trendline=None, marginal_x=None, marginal_y
     Parameters
     ----------
         y: str
-            Y axes, column or index of data.
+            Y axis, column or index of data.
         x: str
-            X axes, column or index of data.
+            X axis, column or index of data.
         trendline: str
             Options:
-                None,
+                None
                 'ols': Ordinary Least Squares regression line will be drawn for each
                     discrete-color/symbol group.
                 'ols_np': Ordinary Least Squares regression line will be drawn for each
@@ -42,7 +42,7 @@ def iplot_scatter(self, y, x='TIME', trendline=None, marginal_x=None, marginal_y
             marks.
         range_y: list
             [min value, max value] of y axes. If range_y = 'auto', range is generated between the
-            mina nd max values of y axes +- 5%.
+            min and max values of y axes +- 5%.
         **kwds: keywords
             plotly express scatter keywords.
 
