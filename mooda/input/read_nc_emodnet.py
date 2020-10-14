@@ -85,4 +85,6 @@ def read_nc_emodnet(path, clean_data=True):
     for variable in ds.variables:
         wf.vocabulary[variable] = dict(ds[variable].attrs)
 
+    wf.reduce_memory()
+
     return wf

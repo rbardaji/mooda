@@ -11,3 +11,4 @@ from .slice_time import slice_time
 from .info_metadata import info_metadata
 from .info_vocabulary import info_vocabulary
 from .drop import drop
+from .reduce_memory import reduce_memory
