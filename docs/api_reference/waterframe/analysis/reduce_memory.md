@@ -11,3 +11,5 @@ Data in a WaterFrame is saved in a pandas DataFrame. By default, the obtained da
 ### Returns
 
 * True or a new WaterFrame
+
+Return to [mooda.WaterFrame](../waterframe.md).
