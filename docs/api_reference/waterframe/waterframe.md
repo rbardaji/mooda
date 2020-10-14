@@ -95,6 +95,7 @@ Output:
 * [WaterFrame.resample(*rule*, *method*=*'mean'*, *inplace*=*True*)](./analysis/resample.md): Convenience method for frequency conversion and sampling of time series of the WaterFrame object.
 * [WaterFrame.time_intervals(*parameter*, *frequency*)](./analysis/time_intervals.md): It returns the index (TIME) of intervals between NaNs.
 * [WaterFrame.use_only(*parameters_to_use*, *inplace*=*True*)](./analysis/use_only.md): It deletes all parameters except the input parameters.
+* [WaterFrame.reduce_memory(*inplace*=*True*)](./analysis/reduce_memory.md): It reduces the WaterFrame size in memory by 30% - 50%
 
 ### Output
 

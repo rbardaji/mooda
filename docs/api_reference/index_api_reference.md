@@ -37,6 +37,7 @@ wf = md.WaterFrame()
 * [wf.resample(*rule*, *method*=*'mean'*, *inplace*=*True*)](waterframe/analysis/resample.md): Convenience method for frequency conversion and sampling of time series of the WaterFrame object.
 * [wf.time_intervals(*parameter*, *frequency*)](waterframe/analysis/time_intervals.md): It returns the index (TIME) of intervals between NaNs.
 * [wf.use_only(*parameters_to_use*, *inplace*=*True*)](waterframe/analysis/use_only.md): It deletes all parameters except the input parameters.
+* [wf.reduce_memory(*inplace*=*True*)](waterframe/analysis/reduce_memory.md): It reduces the WaterFrame size in memory by 30% - 50%
 
 ### Outout
 
