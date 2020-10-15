@@ -96,7 +96,7 @@ Output:
 
 ![Fake data chart][fake-data-chart]
 
-Optionaly:
+Optional:
 
 ```python
 # Save WaterFrame to pikle
