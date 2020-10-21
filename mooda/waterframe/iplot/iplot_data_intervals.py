@@ -12,7 +12,8 @@ def iplot_data_intervals(self, resample_rule='D', **kwds):
     ----------
         resample_rule: None, str
             Resample rule.
-
+        **kwds: Arguments
+            Arguments from plotly.express.timeline
     Returns
     -------
         fig: plotly.graph_objects.Figure

@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 
 def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color='DEPTH',
-               range_y='auto', line_shape='spline', rangeslider_visible=True, **kwds):
+               range_y='auto', line_shape='lineard', rangeslider_visible=True, **kwds):
     """
     It uses plotly.express.line.
     Each data point is represented as a marker point, whose location is given by the x and y columns
