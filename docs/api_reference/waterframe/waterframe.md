@@ -118,6 +118,7 @@ Output:
 * [WaterFrame.iplot_location()](./iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the WaterFrame.
 * [WaterFrame.iplot_timeseries(*parameters_to_plot*=*None*)](./iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameters.
 * [WaterFrame.iplot_scatter(*y*, *x*=*'TIME'*, *trendline*=*None*, *marginal_x*=*None*, *marginal_y*=*'histogram'*, *color*=*'auto'*, *symbol*=*'DEPTH'*, *range_y*=*'auto'*, ***kwds*)](.iplot/iplot_scatter.md): It makes an interactive scatter plot.
+* [WaterFrame.iplot_data_intervals(*resample_rule*=*'D'*, ***kwds*)](.iplot/iplot_data_intervals.md): It creates a plot to view the time intervals of the parameters.
 
 ### Data Quality Control
 
