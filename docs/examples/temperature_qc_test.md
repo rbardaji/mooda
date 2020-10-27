@@ -26,11 +26,11 @@ Following the [QUARTOD manual for T&S data](https://ioos.noaa.gov/ioos-in-action
 
 MOODA contains functionalities to perform some of the tests proposed by QUARTOD. The QC tests implemented in MOODA are as follows:
 
-* [Range test](../api_reference/waterframe/qc/qc_range_test.md): Flag out-of-range values. With the range test, we can perform the *4th* and *5th* of the QUARTOD tests.
+* [Range test](../api_reference/waterframe/qc/qc_range_test.md): Flag out-of-range values. With the range test, we can perform the *4th* and *5th* of the QUARTOD tests. The QUARTOD test *3* is also a range test on the position data. The sample dataset does not contain position columns so this test is not applicable.
 * [Spike test](../api_reference/waterframe/qc/qc_spike_test.md): We can complete the *6th* of the QUARTOD tests.
 * [Flat test](../api_reference/waterframe/qc/qc_flat_test.md): We can perform the *8th* of the QUARTOD tests.
 
-QUARTOD test number *1*, *2*, *3*, *7*, *9*, *10*, *11*, *12* and *13* need to be developed with MOODA.
+QUARTOD test number *1*, *2*, *7*, *9*, *10*, *11*, *12* and *13* need to be developed with MOODA.
 
 The following script uses the [test_qc.pkl](./data/test_qc.pkl) dataset, generated with the example [Create a waterframe with fake data to evaluate the Quality Control Tests](fake_waterframe.md). The dataset contains water temperature values (TEMP parameter) and has not yet passed any quality control tests, so all indicators are at 0 (all TEMP_QC values are 0).
 
