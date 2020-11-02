@@ -122,6 +122,7 @@ Output:
 
 ### Data Quality Control
 
+* [WaterFrame.qc_syntax_test()](./qc/qc_syntax_test.md): It checks whether the object data contains all the QC columns required to pass the rest of the tests.
 * [WaterFrame.qc_flat_test(*parameters*=*None*, *window*=*3*, *flag*=*4*, *inplace*=*True*)](./qc/qc_flat_test.md): It detects if there are equal consecutive values in the time series.
 * [WaterFrame.qc_range_test(*parameters*=*None*, *limits*=*None*, *flag*=*4*, *inplace*=*True*)](./qc/qc_range_test.md): Check if the values of a parameter are out of range.
 * [WaterFrame.qc_spike_test(*parameters*=*None*, *window*=*0*, *threshold*=*3*, *flag*=*4*, *inplace*=*True*)](./qc/qc_spike_test.md): It checks if there is any spike in the time series.

@@ -26,11 +26,12 @@ Following the [QUARTOD manual for T&S data](https://ioos.noaa.gov/ioos-in-action
 
 MOODA contains functionalities to perform some of the tests proposed by QUARTOD. The QC tests implemented in MOODA are as follows:
 
-* [Range test](../api_reference/waterframe/qc/qc_range_test.md): Flag out-of-range values. With the range test, we can perform the *4th* and *5th* of the QUARTOD tests. The QUARTOD test *3* is also a range test on the position data. The sample dataset does not contain position columns so this test is not applicable.
+* [Syntax test](../api_reference/waterframe/qc/qc_syntax_test.md): It checks whether the object data contains all the QC columns required to pass the rest of the tests. *Note: This function is not yet implemented in the current "release" version. To use it, you need to use MOODA with the source code.*
+* [Range test](../api_reference/waterframe/qc/qc_range_test.md): Flag out-of-range values. With the range test, we can perform the *1st*, *4th* and *5th* of the QUARTOD tests. The QUARTOD test *3* is also a range test on the position data. The sample dataset does not contain position columns so this test is not applicable.
 * [Spike test](../api_reference/waterframe/qc/qc_spike_test.md): We can complete the *6th* of the QUARTOD tests.
 * [Flat test](../api_reference/waterframe/qc/qc_flat_test.md): We can perform the *8th* of the QUARTOD tests.
 
-QUARTOD test number *1*, *2*, *7*, *9*, *10*, *11*, *12* and *13* need to be developed with MOODA.
+QUARTOD test number *2*, *7*, *9*, *10*, *11*, *12* and *13* need to be developed with MOODA.
 
 The following script uses the [test_qc.pkl](./data/test_qc.pkl) dataset, generated with the example [Create a waterframe with fake data to evaluate the Quality Control Tests](fake_waterframe.md). The dataset contains water temperature values (TEMP parameter) and has not yet passed any quality control tests, so all indicators are at 0 (all TEMP_QC values are 0).
 
@@ -78,6 +79,12 @@ wf = md.read_pkl(dataset_location)
 show_result(wf, 'Values without apply any QC test')
 
 ## QC tests
+### Syntax test. This function is not yet implemented in the current "release" version. To use it, you need to use MOODA with the source code.
+ok = wf.qc_syntax_test()
+if ok:
+    print('The syntaxis of the data is correct')
+else:
+    print('The syntaxis of the data is not correct')
 ### Flat test
 wf.qc_flat_test()
 show_result(
@@ -100,6 +107,10 @@ show_result(wf, f'Final result')
 ```
 
 Output:
+
+```
+The syntaxis of the data is correct
+```
 
 ![Initial data](./img_examples/no-qc.png)
 ![Flat test](./img_examples/qc-flat.png)

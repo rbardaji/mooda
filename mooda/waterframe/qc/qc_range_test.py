@@ -73,8 +73,17 @@ def qc_range_test(self, parameters=None, limits=None, flag=4, inplace=True):
 
     for parameter in parameters:
         if limits:
-            data.loc[self.data[parameter] < limits[0], parameter + '_QC'] = flag
-            data.loc[self.data[parameter] > limits[1], parameter + '_QC'] = flag
+            # Parameter can be an index
+            if parameter in data.index.names:
+                data.loc[
+                    self.data.index.get_level_values(
+                        parameter) < limits[0], parameter + '_QC'] = flag
+                data.loc[
+                    self.data.index.get_level_values(
+                        parameter) > limits[1], parameter + '_QC'] = flag
+            else:
+                data.loc[self.data[parameter] < limits[0], parameter + '_QC'] = flag
+                data.loc[self.data[parameter] > limits[1], parameter + '_QC'] = flag
         elif parameter in ranges.keys():
             self.data.loc[self.data[parameter] < ranges[parameter][0], parameter + '_QC'] = flag
             self.data.loc[self.data[parameter] > ranges[parameter][1], parameter + '_QC'] = flag

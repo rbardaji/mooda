@@ -17,7 +17,7 @@ It detects if there are equal consecutive values in the time series.
 
 ## Example
 
-To reproduce the example, download the NetCDF file [here](http://data.emso.eu/files/emso/obsea/mo/ts/MO_TS_MO_OBSEA.nc) and save it as `example.nc` in the same python script folder.
+To reproduce the example, download the NetCDF file [here](http://data.emso.eu/files/emso/obsea/mo/ts/MO_TS_MO_OBSEA.nc) and save it as `MO_TS_MO_OBSEA_201401.nc` in the same python script folder.
 
 ```python
 import mooda as md
