@@ -1,6 +1,6 @@
 """ Implementation of wf.qc_replace() """
 
-def qc_replace(self, parameters=None, to_replace=0, value=1, inplace=True):
+def qc_replace(self, parameters=None, to_replace=0, value=1, start=0, inplace=True):
     """
     Replace the values of QC from the input parameters.
 
@@ -20,6 +20,19 @@ def qc_replace(self, parameters=None, to_replace=0, value=1, inplace=True):
     -------
         new_wf: WaterFrame
     """
+    def change_signals(signals):
+         # Change flags
+        result = []
+        for i, signal in enumerate(signals):
+            if i < start:
+                result.append(signal)
+            else:
+                if signal == to_replace:
+                    result.append(value)
+                else:
+                    result.append(signal)
+
+        return result
 
     if parameters is None:
         parameters = self.parameters
@@ -29,7 +42,29 @@ def qc_replace(self, parameters=None, to_replace=0, value=1, inplace=True):
     data = self.data.copy()
 
     for parameter in parameters:
-        data[f'{parameter}_QC'].replace(to_replace=to_replace, value=value, inplace=True)
+        
+        # New
+        df = data[[parameter, f'{parameter}_QC']].reset_index()
+        df.set_index('TIME', inplace=True)
+
+        try:
+            for depth, df_depth in df.groupby('DEPTH'):
+                df_depth.sort_index(inplace=True)
+
+                signals = df_depth[f'{parameter}_QC'].values
+
+                # Change flags
+                result = change_signals(signals)
+
+                data.loc[(depth,), f'{parameter}_QC'] = result
+        except KeyError:
+            # No Depth
+            signals = df[f'{parameter}_QC'].values
+
+            # Change flags
+            result = change_signals(signals)
+            
+            data[f'{parameter}_QC'] = result
 
     if inplace:
         self.data = data
