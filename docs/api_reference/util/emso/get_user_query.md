@@ -1,4 +1,4 @@
-# mooda.get_user_query(*size*=10, *sort*='desc')
+# mooda.emso.get_user_query(*size*=10, *sort*='desc')
 
 ## Reference
 
