@@ -6,7 +6,8 @@ from time import sleep
 def to_es(self, data_index_name='data', metadata_index_name='metadata',
           summary_index_name='summary', vocabulary_index_name='vocabulary',
           qc_to_ingest=[0, 1], parameters=None, metadata_to_es=True,
-          data_to_es=True, summary_to_es=True, vocabulary_to_es=True, **kwargs):
+          data_to_es=True, summary_to_es=True, vocabulary_to_es=True, start=None,
+          **kwargs):
     """
     Injestion of the WaterFrame into a ElasticSeach DB.
 
@@ -33,15 +34,38 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
         **kwargs: Elasticsearch object creation arguments.
             See https://elasticsearch-py.readthedocs.io/en/master/index.html#
     """
-    def data_ingestion(es, data_index_name, list_data_dict):
+    def data_ingestion(es, data_index_name, list_data_dict, start_in):
 
         bulk_size = len(list_data_dict)
-        print("Data to ingest:", bulk_size, "records")
-        while bulk_size >= 100000:
-            es.bulk(index=data_index_name, body=list_data_dict[:100000], refresh=True)
-            list_data_dict = list_data_dict[100000:]
-            bulk_size -= 100000
-            print("Data to ingest:", bulk_size, "records")
+        try:
+            print(list_data_dict[1]['parameter'], "to ingest:", bulk_size, "records")
+        except IndexError:
+            pass
+        while bulk_size >= 100:
+            if start_in:
+                if bulk_size <= start_in:
+                    try:
+                        es.bulk(index=data_index_name, body=list_data_dict[:100], refresh=True)
+                    except ValueError:
+                        # Empty body
+                        pass
+                    list_data_dict = list_data_dict[100:]
+                    bulk_size -= 100
+                else:
+                    list_data_dict = list_data_dict[start_in:]
+                    bulk_size = start_in
+            else:
+                try:
+                    es.bulk(index=data_index_name, body=list_data_dict[:100], refresh=True)
+                except ValueError:
+                    # Empty body
+                    pass
+                list_data_dict = list_data_dict[100:]
+                bulk_size -= 100
+            try:
+                print(list_data_dict[1]['parameter'], "to ingest:", bulk_size, "records")
+            except IndexError:
+                pass
         if bulk_size > 0:
             es.bulk(index=data_index_name, body=list_data_dict, refresh=True)
 
@@ -187,7 +211,8 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
         for parameter in self.parameters:
 
-            print(parameter)
+            print(f'Parameter to ingest: {parameter}')
+            print(f'Total parameters [{self.parameters}]')
             # Only upload the input parameters
             if parameter not in parameters:
                 continue
@@ -218,7 +243,8 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
                     index_dict = {
                         'index': {
-                            '_id': f"{self.metadata['id']}_{parameter}_{str(index)[:19].replace(' ', 'T')}_{str(row['DEPH'])}"
+                            # '_id': f"{self.metadata['id']}_{parameter}_{str(index)[:19].replace(' ', 'T')}_{str(row['DEPH'])}"
+                            '_id': f"{self.metadata['id']}_{parameter}_{str(index).replace(' ', 'T')}_{str(row['DEPH'])}"
                         }
                     }
                     list_data_dict.append(index_dict)
@@ -246,7 +272,7 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
                     list_data_dict.append(data_dict)
 
                 if list_data_dict:
-                    ok = data_ingestion(es, data_index_name, list_data_dict)
+                    ok = data_ingestion(es, data_index_name, list_data_dict, start)
                     if ok:
                         print(f"Data from {parameter} with QC {qc_value} ingested")
                     else:
@@ -254,6 +280,9 @@ def to_es(self, data_index_name='data', metadata_index_name='metadata',
 
                     # Wait for ES operations
                     sleep(0.01)
+
+            print(f'Parameter ingested: {parameter}')
+            print(f'Total parameters [{self.parameters}]')
 
     if vocabulary_to_es:
         for key, value in self.vocabulary.items():
