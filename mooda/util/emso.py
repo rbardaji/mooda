@@ -63,7 +63,7 @@ class EMSO():
             size: int
                 Number of results (def: 10, max:10000)
             sort: str
-        
+                Order of the values (def: 'desc', options: 'asc', 'desc')
         Returns
         -------
             query_list: List[str]
