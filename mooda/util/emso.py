@@ -134,7 +134,7 @@ class EMSO():
         Returns
         -------
             argument_info: Tuple[str, List[str]]
-                (meaning of the argumnt, list of available options)
+                (meaning of the argument, list of available options)
         """
         message = ''
         option_list = []
