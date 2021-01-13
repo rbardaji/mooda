@@ -15,5 +15,8 @@ emso = md.util.EMSO(user='bardaji', password='1234test')
 # metadata_ids = emso.get_info_metadata_id()
 # print(*metadata_ids, sep='\n')
 
-parameters = emso.get_info_parameter()
-print(*parameters, sep='\n')
+# parameters = emso.get_info_parameter()
+# print(*parameters, sep='\n')
+
+platform_codes = emso.get_info_platform_code()
+print(*platform_codes, sep='\n')
