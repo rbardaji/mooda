@@ -1,4 +1,5 @@
 import mooda as md
+import pprint
 
 emso = md.util.EMSO(user='bardaji', password='1234test')
 
@@ -18,5 +19,16 @@ emso = md.util.EMSO(user='bardaji', password='1234test')
 # parameters = emso.get_info_parameter()
 # print(*parameters, sep='\n')
 
-platform_codes = emso.get_info_platform_code()
-print(*platform_codes, sep='\n')
+# platform_codes = emso.get_info_platform_code()
+# print(*platform_codes, sep='\n')
+
+# sites = emso.get_info_site()
+# print(*sites, sep='\n')
+
+# metadatas = emso.get_metadata()
+# for metadata in metadatas:      
+#     pprint.pprint(metadata)
+
+data_list = emso.get_data()
+for data in data_list:      
+    pprint.pprint(data)
