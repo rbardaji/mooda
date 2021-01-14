@@ -92,6 +92,12 @@ Management of the [EMSO API](http://api.emso.eu)
 * [md.emso.get_info_fig_plot(*plot*)](util/emso/get_info_fig_plot.md): Get the available arguments for the input plot.
 * [md.emso.get_info_fig()](util/emso/get_info_fig.md): Get the available figures.
 * [md.emso.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
-* [md.emso.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
+* [md.emso.get_info_parameter(*platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_parameter.md): Get available parameters of the EMSO ERIC API.
+* [md.emso.get_info_platform_code(*parameters*=[], *sites*=[])](util/emso/get_info_parameter.md): Get available platfom codes ('platform_code') of the EMSO ERIC API.
+* [md.emso.get_info_site()](util/emso/get_info_site.md): Get available sites ('site') of the EMSO ERIC API.
+* [md.emso.get_info_summary(*fields*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_summary.md): Get the most used fields of the metadatada archivements.
+* [md.emso.get_metadata(*fields*=[], *metadata_ids*=[], *platform_codes*=[], *sites*=[])](util/emso/get_metadata.md): Get all fields of the metadatada archivements.
+* [md.emso.get_user_query(*size*=10, *sort*='desc')](util/emso/get_user_query.md): Get the queries of the user.
+* [md.emso.post_user_email(*message*)](util/emso/post_user_email.md): Send an email to help@emso-eu.org.
 
 Return to the [Docs Index](../index_docs.md).

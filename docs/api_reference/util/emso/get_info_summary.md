@@ -1,4 +1,4 @@
-# mooda.emso.get_info_summary(*fields*=[], *parameters*=[], platform_codes=[], sites=[])
+# mooda.emso.get_info_summary(*fields*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)
 
 ## Reference
 

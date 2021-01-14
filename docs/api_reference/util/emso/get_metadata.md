@@ -1,4 +1,4 @@
-# mooda.emso.get_metadata(*fields*=[], *metadata_ids*=[], *platform_codes*=[], *sites*=[])
+# mooda.emso.get_metadata(*fields*=*[]*, *metadata_ids*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)
 
 ## Reference
 

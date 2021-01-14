@@ -2,7 +2,7 @@
 
 ## Reference
 
-Get available platfom codes ('platform_code') of the EMSO ERIC API.
+Get available sites ('site') of the EMSO ERIC API.
 
 ### Returns
 
