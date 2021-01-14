@@ -458,11 +458,11 @@ class EMSO():
 
         return data_list
 
-    def get_data_interval(self, interval:str='D', depth_max:int=None, depth_min:int=None,
-                          depth_qcs:List[int]=[], end_time:str='', metadata_ids:List[str]=[],
-                          parameters:List[str]=[], platform_codes:List[str]=[],
-                          rangeslider:bool=False, start_time:str='', time_qcs:List[int]=[],
-                          title:str='', value_qcs:List[int]=[]) -> dict:
+    def get_fig_data_interval(self, interval:str='D', depth_max:int=None, depth_min:int=None,
+                              depth_qcs:List[int]=[], end_time:str='', metadata_ids:List[str]=[],
+                              parameters:List[str]=[], platform_codes:List[str]=[],
+                              rangeslider:bool=False, start_time:str='', time_qcs:List[int]=[],
+                              title:str='', value_qcs:List[int]=[]) -> dict:
         """
         Get the plotly figure 'Data Interval' from the EMSO ERIC API
 
@@ -500,6 +500,9 @@ class EMSO():
             fig: dict
                 Plotly figure
         """
+        # Add the number
+        if len(interval) < 2:
+            interval = '1' + interval
 
         interval_str = interval.replace(
             'S', 's').replace('T', 'm').replace('H', 'h').replace('D', 'd')
@@ -513,6 +516,8 @@ class EMSO():
 
         # Make the query
         query = f'{url}/fig/data_interval/{interval_str}?rangeslider={rangeslider_str}'
+
+        print(query)
 
         if depth_max or depth_min or depth_qcs or end_time or metadata_ids or \
             parameters or platform_codes or start_time or time_qcs or \
