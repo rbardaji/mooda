@@ -80,4 +80,18 @@ wf = md.WaterFrame()
 * [md.iplot_location(*list_wf*)](util/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the input WaterFrames.
 * [md.iplot_timeseries(*list_wf*, *parameter_to_plot*)](util/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameter.
 
+### EMSO
+
+Management of the [EMSO API](http://api.emso.eu)
+
+* [md.emso.get_data(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *size*=*10*, *sort*=*'desc'*, *parameters*=*[]*, platform_codes:List[str]=[], start_time:str='', *time_qcs*=*[]*, *value_qcs*=*[]*)](util/emso/get_data.md): Get data from the EMSO ERIC API.
+* [md.emso.get_fig_data_interval(*interval*=*'D'*, *depth_max*=*None*, *depth_min*=*None*, *depth_qcs*:=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *rangeslider*=*False*, *start_time*=*''*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*)](util/emso/get_fig_data_interval.md): Get the plotly figure 'Data Interval' from the EMSO ERIC API.
+* [md.emso.get_fig_line(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *size*=*10*, *start_time*=*''*, *sort*=*'desc'*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*, *x*=*'time'*, *y*=*'value'*)](util/emso/get_fig_line.md): Get the plotly figure 'line' from the EMSO ERIC API.
+* [md.emso.get_fig_map(*parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_fig_map.md): Get the plotly figure 'line' from the EMSO ERIC API.
+* [md.emso.get_info_fig_plot_argument(*plot*, *argument*)](util/emso/get_info_fig_plot_argument.md): Get argument information and available options.
+* [md.emso.get_info_fig_plot(*plot*)](util/emso/get_info_fig_plot.md): Get the available arguments for the input plot.
+* [md.emso.get_info_fig()](util/emso/get_info_fig.md): Get the available figures.
+* [md.emso.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
+* [md.emso.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
+
 Return to the [Docs Index](../index_docs.md).

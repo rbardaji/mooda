@@ -1,4 +1,4 @@
-# mooda.emso.post_user_email(*message*)
+# mooda.emso.get_info_parameter(*platform_codes*=*[]*, *sites*=*[]*)
 
 ## Reference
 
