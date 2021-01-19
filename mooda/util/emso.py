@@ -375,7 +375,7 @@ class EMSO():
 
         return metadatas
 
-    def get_data(self, depth_max:int=None, depth_min:int=None, depth_qcs:List[int]=[],
+    def get_data(self, depth_max:float=None, depth_min:float=None, depth_qcs:List[int]=[],
                  end_time:str='', metadata_ids:List[str]=[], size:int=10, sort:str='desc',
                  parameters:List[str]=[], platform_codes:List[str]=[], start_time:str='',
                  time_qcs:List[int]=[], value_qcs:List[int]=[]) -> List[dict]:

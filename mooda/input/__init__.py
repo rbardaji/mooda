@@ -6,3 +6,4 @@ from .read_nc_imos import read_nc_imos
 from .read_pkl import read_pkl
 from .read_json import read_json
 from .read_nc_moist import read_nc_moist
+from .from_emso import from_emso

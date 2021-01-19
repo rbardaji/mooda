@@ -4,8 +4,6 @@ from typing import List, List
 from ..input import read_pkl
 import plotly.offline as pyo
 
-pyo.init_notebook_mode()
-
 class Widgets:
 
     @staticmethod
@@ -29,6 +27,8 @@ class Widgets:
             main_box: ipwidgets.VBox
                 Jupyter notebook widget 
         """
+
+        pyo.init_notebook_mode()
 
         def show_result(wf, parameter_in, chart_title=''):
             # Change name of flags
