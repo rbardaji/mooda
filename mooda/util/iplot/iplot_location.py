@@ -1,4 +1,4 @@
-""" Implementation of WaterFrame.iplot_location() """
+""" Implementation of mooda.iplot_location() """
 
 
 def iplot_location(list_wf):

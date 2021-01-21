@@ -1,6 +1,7 @@
 import requests
 import json
 from typing import Dict, List, Tuple
+import urllib.parse
 
 url = 'http://api.emso.eu'
 

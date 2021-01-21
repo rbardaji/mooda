@@ -88,6 +88,16 @@ class WaterFrame:
 
         return message
 
+    def _repr_html_(self, *args, **kwargs):
+        data_html = self.data._repr_html_()
+
+        metadata_list = ''
+        for key, value in self.metadata.items():
+            metadata_list += f'<li><b>{key}</b>: {value}</li>'
+
+        dictionary_html = f'<div><p>Metadata:</p><ul>{metadata_list}</ul><p>Data:</p></div>'
+        return dictionary_html + data_html
+
     @property
     def parameters(self):
         """
