@@ -158,13 +158,14 @@ def widget_qc(wf, parameter: str, range_test: List[float]=[-1000, 1000],
     # linking button and function together using a button's method
     button.on_click(on_button_clicked)
 
+    reset_box = widgets.HBox([reset_label, reset_checkbox])
     flat_box = widgets.HBox([flat_label, flat_checkbox, window_flat])
     range_box = widgets.HBox([range_label, range_checkbox, limits])
     spike_column = widgets.VBox([window_spike, threshold, influence])
     spike_box = widgets.HBox([spike_label, spike_checkbox, spike_column])
     replace_box = widgets.HBox([replace_label, replace_checkbox])
 
-    main_box = widgets.VBox([flat_box, range_box, spike_box, replace_box,
-                                button, out])
+    main_box = widgets.VBox([reset_box, flat_box, range_box, spike_box,
+                             replace_box, button, out])
 
     return main_box
