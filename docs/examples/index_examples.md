@@ -7,6 +7,7 @@
 * [Make a WaterFrame with fake data to evaluate the Quality Control Tests](fake_waterframe.md)
 * [Make a WaterFrame with fake data to evaluate the Quality Control Tests - Notebook edition](QUARTOD-tests.ipynb)
 * [Applying QUARTOD QC tests to Water Temperature dataset](temperature_qc_test.md)
+* [How to check data quality with a Widget for Jupyter Notebook](qc_widget.md)
 * [How to check data quality with a Widget for Jupyter Notebook - Notebook edition](qc_widget.ipynb)
 
 ## Using EMODnet data
