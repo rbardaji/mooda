@@ -9,6 +9,7 @@
 * [Applying QUARTOD QC tests to Water Temperature dataset](temperature_qc_test.md)
 * [How to check data quality with a Widget for Jupyter Notebook](qc_widget.md)
 * [How to check data quality with a Widget for Jupyter Notebook - Notebook edition](qc_widget.ipynb)
+* [How to download EMSO data with a Jupyter Notebook Widget](emso-widget.md)
 
 ## Using EMODnet data
 

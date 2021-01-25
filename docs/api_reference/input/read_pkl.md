@@ -1,4 +1,4 @@
-# read_pkl(*path_pkl*)
+# mooda.read_pkl(*path_pkl*)
 
 ## Reference
 

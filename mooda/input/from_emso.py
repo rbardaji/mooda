@@ -28,8 +28,6 @@ def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
             Minimum depth of the measurement
         depth_max: float
             Maximum depth of the measurement
-        resample: str
-            Resample rule
         size: int
             Number of values
     
