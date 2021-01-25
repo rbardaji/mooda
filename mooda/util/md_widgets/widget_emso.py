@@ -2,8 +2,7 @@
 from typing import List
 import ipywidgets as widgets
 from IPython.display import clear_output
-from ...input import from_emso
-
+import mooda
 
 def widget_emso(wf, depth_range: List[float]=[-10, 10000]):
     """
@@ -27,7 +26,10 @@ def widget_emso(wf, depth_range: List[float]=[-10, 10000]):
 
     # Platform code
     platform_label = widgets.Label('Platform code:')
-    input_platform = widgets.Text()
+    emso = mooda.EMSO()
+    platform_codes = emso.get_info_platform_code()
+    input_platform = widgets.Dropdown(options=platform_codes,
+                                      value=platform_codes[0], disabled=False)
 
     # Parameters
     parameters_label = widgets.Label('Parameters (separated by commas):')
@@ -39,7 +41,8 @@ def widget_emso(wf, depth_range: List[float]=[-10, 10000]):
 
     # Depth
     depth_label = widgets.Label('Depth:')
-    input_depth = widgets.FloatRangeSlider(value=[0, 30], min=depth_range[0],
+    input_depth = widgets.FloatRangeSlider(value=depth_range,
+                                           min=depth_range[0],
                                            max=depth_range[1], step=0.1,
                                            disabled=False,
                                            continuous_update=False,
@@ -60,8 +63,38 @@ def widget_emso(wf, depth_range: List[float]=[-10, 10000]):
         with out:
             # what happens when we press the button
             clear_output()
-            print(input_start_date.value)
-            print(type(input_start_date.value))
+            if ',' in input_parameters.value:
+                parameters = input_parameters.value.split(',').strip()
+            else:
+                parameters = [input_parameters.value]
+
+            if input_start_date.value is None:
+                start_time = ''
+            else:
+                start_time = input_start_date.value
+
+            if input_end_date.value is None:
+                end_time = ''
+            else:
+                end_time = input_end_date.value
+
+            print('Downloading data, please wait')
+
+            wf2 = mooda.from_emso(platform_code=input_platform.value,
+                                 parameters=parameters, start_time=start_time,
+                                 end_time=end_time,
+                                 depth_min=input_depth.value[0],
+                                 depth_max=input_depth.value[1],
+                                 user=input_user.value,
+                                 password=input_password.value,
+                                 size=input_size.value)
+            
+            wf.data = wf2.data.copy()
+            wf.metadata = wf2.metadata.copy()
+
+            clear_output()
+            print('Done')
+            print(wf)
 
     # linking button and function together using a button's method
     button.on_click(on_button_clicked)

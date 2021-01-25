@@ -109,6 +109,8 @@ def widget_qc(wf, parameter: str, range_test: List[float]=[-1000, 1000],
         with out:
             # what happens when we press the button
             clear_output()
+            print('Please wait')
+            
             if parameter in wf.parameters:
                 show_result(wf, parameter, 
                             'Values without apply any QC test')
