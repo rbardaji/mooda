@@ -1,6 +1,6 @@
 # How to download EMSO data and perform QC data tests with a Jupyter Notebook Widget
 
-Este widget es la combinación de los widgets [mooda.widget_emso()](https://github.com/rbardaji/mooda/blob/master/docs/examples/emso-widget.md) y [mooda.widget_qc()](https://github.com/rbardaji/mooda/blob/master/docs/examples/qc-widget.md).
+Este widget es la combinación de los widgets [mooda.widget_emso()](emso-widget.md) y [mooda.widget_qc()](qc-widget.md).
 
 ```python
 import mooda as md
