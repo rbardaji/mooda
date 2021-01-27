@@ -84,12 +84,19 @@ def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
         wf.metadata = metadata_list[0]
     wf.data = complete_data.copy()
     for parameter in wf.parameters:
+        find = False
         for metadata_parameter in wf.metadata['parameters']:
-            acronym = metadata_parameter.split('-')[0].strip()
-            long_name = metadata_parameter.split('-')[1].strip().split('[')[0].strip()
-            units = metadata_parameter.split('-')[1].strip().split('[')[1].strip().split(']')[0]
-            if parameter == acronym:
-                wf.vocabulary[acronym] = {'long_name': long_name, 'units': units}
-                break
+            try:
+                acronym = metadata_parameter.split('-')[0].strip()
+                long_name = metadata_parameter.split('-')[1].strip().split('[')[0].strip()
+                units = metadata_parameter.split('-')[1].strip().split('[')[1][:-1]
+                if parameter == acronym:
+                    wf.vocabulary[acronym] = {'long_name': long_name, 'units': units}
+                    find = True
+                    break
+            except:
+                pass
+        if not find:
+            wf.vocabulary[parameter] = {'long_name': '', 'units': ''}
 
     return wf

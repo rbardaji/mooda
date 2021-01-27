@@ -34,14 +34,16 @@ def widget_save(wf):
         with out_save:
             if input_name.value:
                 if input_type.value == 'csv':
-                    wf.to_csv(path='{input_name.value}.csv')
+                    wf.to_csv(path=f'{input_name.value}.csv')
                 elif input_type.value == 'nc':
-                    wf.to_nc(path='{input_name.value}.nc')
+                    wf.to_nc(path=f'{input_name.value}.nc')
                 elif input_type.value == 'pkl':
-                    wf.to_pkl(path='{input_name.value}.pkl')
+                    wf.to_pkl(path=f'{input_name.value}.pkl')
                 print('Done.')
             else:
                 print('Please, write a name.')
+    # linking button and function together using a button's method
+    button.on_click(on_button_clicked)
 
     filename_box = widgets.HBox([name_label, input_name])
     type_box = widgets.HBox([type_label, input_type])
