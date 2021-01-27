@@ -36,11 +36,11 @@ def widget_qc(wf, parameter: str, range_test: List[float]=[-1000, 1000],
         # Change name of flags
         wf2 = wf.copy()
         qc_labels = {0: 'No QC', 1: 'Good data', 4: 'Bad data'}
-        wf2.data[f'{parameter}_QC'].replace(qc_labels, inplace=True)
+        wf2.data[f'{parameter_in}_QC'].replace(qc_labels, inplace=True)
 
         fig = wf2.iplot_line(
-            parameter,
-            color='TEMP_QC',
+            parameter_in,
+            color=f'{parameter_in}_QC',
             marginal_y=None,
             line_shape='linear',
             rangeslider_visible=False,

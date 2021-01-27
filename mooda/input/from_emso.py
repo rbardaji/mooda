@@ -6,7 +6,8 @@ from ..util import EMSO
 
 def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
               end_time: str='', depth_min: float=None, depth_max: float=None,
-              user: str='', password: str='', size: int=10) -> WaterFrame:
+              user: str='', password: str='', size: int=10, token: str=''
+              ) -> WaterFrame:
     """
     Get a WaterFrame with the data of the EMSO API (api.emso.eu).
 
@@ -16,6 +17,8 @@ def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
             Login for the EMSO ERIC API.
         password: str
             Password for the EMSO ERIC API.
+        token: str
+            Token for the EMSO ERIC API.
         platform_code: str
             Data filtered by platform_code
         parameters: List[str]
@@ -36,11 +39,11 @@ def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
         wf: WaterFrame object
     """
     # Login to EMSO
-    emso = EMSO(user=user, password=password)
+    emso = EMSO(user=user, password=password, token=token)
 
     # Get metadata    
     metadata_list = emso.get_metadata(platform_codes=[platform_code])
-    
+
     # Get data
     complete_data = DataFrame()
     for parameter in parameters:
@@ -75,10 +78,18 @@ def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
             data.set_index(['DEPTH', 'TIME'], inplace=True)
             data = data.astype(float)
             complete_data = complete_data.append(data)
-        
+
     wf = WaterFrame()
     if metadata_list:
         wf.metadata = metadata_list[0]
-    wf.data = complete_data
+    wf.data = complete_data.copy()
+    for parameter in wf.parameters:
+        for metadata_parameter in wf.metadata['parameters']:
+            acronym = metadata_parameter.split('-')[0].strip()
+            long_name = metadata_parameter.split('-')[1].strip().split('[')[0].strip()
+            units = metadata_parameter.split('-')[1].strip().split('[')[1].strip().split(']')[0]
+            if parameter == acronym:
+                wf.vocabulary[acronym] = {'long_name': long_name, 'units': units}
+                break
 
     return wf

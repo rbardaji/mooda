@@ -14,15 +14,21 @@ class EMSO():
         user: str
             User or email of the EMSO ERIC API.
         password: str
+            Password for the EMSO ERIC API.
+        token: str
+            Token for the EMSO ERIC API.
     """
 
-    def __init__(self, user: str='', password: str=''):
+    def __init__(self, user: str='', password: str='', token: str=''):
 
         # Creation of a requests session
         self.api = requests.Session()
-        self.token = ''
+        self.token = token
 
-        if user and password:
+        if token:
+            # Update requests session with the authorization header
+            self.api.headers.update({'Authorization': self.token})
+        elif user and password:
             # Get API token
             query = f'{url}/user/authorization?user={user}&password={password}'
             r = requests.get(query)
