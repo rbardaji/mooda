@@ -9,7 +9,7 @@ def widget_qc(wf, parameter: str, range_test: List[float]=[-1000, 1000],
               spike_window: int=100, spike_threshold: float=3.5,
               spike_influence: float=0.5):
     """
-    It makes a QC Jupyter Widget
+    It makes a Data QC Widget for Jupyter Notebook
 
     Parameters
     ----------

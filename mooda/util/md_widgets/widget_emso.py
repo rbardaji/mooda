@@ -11,13 +11,19 @@ import mooda
 def widget_emso(wf, depth_range: List[float]=[-10, 10000], user: str='',
                 password: str='', token: str=''):
     """
-    It makes a Widget to download data from the EMSO API
+    It makes a Jupyter notebook widget to download data from the EMSO API
 
     Parameters
     ----------
         wf: WaterFrame
         depth_range: List[float]
             Range of depth
+        user: str
+            User for the EMSO ERIC API
+        password: str
+            Password for the EMSO ERIC API
+        token: str
+            Token for the EMSO ERIC API
 
     Returns
     -------

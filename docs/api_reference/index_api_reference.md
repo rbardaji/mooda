@@ -85,20 +85,29 @@ wf = md.WaterFrame()
 
 Management of the [EMSO API](http://api.emso.eu)
 
-* [md.emso.get_data(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *size*=*10*, *sort*=*'desc'*, *parameters*=*[]*, platform_codes:List[str]=[], start_time:str='', *time_qcs*=*[]*, *value_qcs*=*[]*)](util/emso/get_data.md): Get data from the EMSO ERIC API.
-* [md.emso.get_fig_data_interval(*interval*=*'D'*, *depth_max*=*None*, *depth_min*=*None*, *depth_qcs*:=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *rangeslider*=*False*, *start_time*=*''*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*)](util/emso/get_fig_data_interval.md): Get the plotly figure 'Data Interval' from the EMSO ERIC API.
-* [md.emso.get_fig_line(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *size*=*10*, *start_time*=*''*, *sort*=*'desc'*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*, *x*=*'time'*, *y*=*'value'*)](util/emso/get_fig_line.md): Get the plotly figure 'line' from the EMSO ERIC API.
-* [md.emso.get_fig_map(*parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_fig_map.md): Get the plotly figure 'line' from the EMSO ERIC API.
-* [md.emso.get_info_fig_plot_argument(*plot*, *argument*)](util/emso/get_info_fig_plot_argument.md): Get argument information and available options.
-* [md.emso.get_info_fig_plot(*plot*)](util/emso/get_info_fig_plot.md): Get the available arguments for the input plot.
-* [md.emso.get_info_fig()](util/emso/get_info_fig.md): Get the available figures.
-* [md.emso.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
-* [md.emso.get_info_parameter(*platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_parameter.md): Get available parameters of the EMSO ERIC API.
-* [md.emso.get_info_platform_code(*parameters*=[], *sites*=[])](util/emso/get_info_parameter.md): Get available platfom codes ('platform_code') of the EMSO ERIC API.
-* [md.emso.get_info_site()](util/emso/get_info_site.md): Get available sites ('site') of the EMSO ERIC API.
-* [md.emso.get_info_summary(*fields*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_summary.md): Get the most used fields of the metadatada archivements.
-* [md.emso.get_metadata(*fields*=[], *metadata_ids*=[], *platform_codes*=[], *sites*=[])](util/emso/get_metadata.md): Get all fields of the metadatada archivements.
-* [md.emso.get_user_query(*size*=10, *sort*='desc')](util/emso/get_user_query.md): Get the queries of the user.
-* [md.emso.post_user_email(*message*)](util/emso/post_user_email.md): Send an email to help@emso-eu.org.
+* [md.EMSO(*user*=*''*, *password*=*''*, *token*=*''*)](util/emso/emso.md): Manage the [EMSO API](http://api.emso.eu).
+* [md.EMSO.get_data(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *size*=*10*, *sort*=*'desc'*, *parameters*=*[]*, platform_codes:List[str]=[], start_time:str='', *time_qcs*=*[]*, *value_qcs*=*[]*)](util/emso/get_data.md): Get data from the EMSO ERIC API.
+* [md.EMSO.get_fig_data_interval(*interval*=*'D'*, *depth_max*=*None*, *depth_min*=*None*, *depth_qcs*:=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *rangeslider*=*False*, *start_time*=*''*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*)](util/emso/get_fig_data_interval.md): Get the plotly figure 'Data Interval' from the EMSO ERIC API.
+* [md.EMSO.get_fig_line(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *size*=*10*, *start_time*=*''*, *sort*=*'desc'*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*, *x*=*'time'*, *y*=*'value'*)](util/emso/get_fig_line.md): Get the plotly figure 'line' from the EMSO ERIC API.
+* [md.EMSO.get_fig_map(*parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_fig_map.md): Get the plotly figure 'line' from the EMSO ERIC API.
+* [md.EMSO.get_info_fig_plot_argument(*plot*, *argument*)](util/emso/get_info_fig_plot_argument.md): Get argument information and available options.
+* [md.EMSO.get_info_fig_plot(*plot*)](util/emso/get_info_fig_plot.md): Get the available arguments for the input plot.
+* [md.EMSO.get_info_fig()](util/emso/get_info_fig.md): Get the available figures.
+* [md.EMSO.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
+* [md.EMSO.get_info_parameter(*platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_parameter.md): Get available parameters of the EMSO ERIC API.
+* [md.EMSO.get_info_platform_code(*parameters*=[], *sites*=[])](util/emso/get_info_parameter.md): Get available platfom codes ('platform_code') of the EMSO ERIC API.
+* [md.EMSO.get_info_site()](util/emso/get_info_site.md): Get available sites ('site') of the EMSO ERIC API.
+* [md.EMSO.get_info_summary(*fields*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_summary.md): Get the most used fields of the metadatada archivements.
+* [md.EMSO.get_metadata(*fields*=[], *metadata_ids*=[], *platform_codes*=[], *sites*=[])](util/emso/get_metadata.md): Get all fields of the metadatada archivements.
+* [md.EMSO.get_user_query(*size*=10, *sort*='desc')](util/emso/get_user_query.md): Get the queries of the user.
+* [md.EMSO.post_user_email(*message*)](util/emso/post_user_email.md): Send an email to help@emso-eu.org.
+
+### Jupyter Notebook Widgets
+
+* [md.widget_qc(*wf*, *parameter*, *range_test*=*[-1000, 1000]*, *spike_window*=*100*, *spike_threshold*=*3.5*, *spike_influence*=*0.5*)](util/md_widgets/widget_qc.md): It makes a Data QC Widget for Jupyter Notebook.
+* [md.widget_emso(*wf*, *depth_range*=*[-10, 10000]*, *user*=*''*, *password*=*''*, *token*=*''*)](util/md_widgets/widget_emso.md): It makes a Jupyter notebook widget to download data from the EMSO API.
+* [md.widget_emso_qc(*wf*, *depth_range*=*[-10, 10000]*, *range_test*=*[-1000, 1000]*, *spike_window*=*100*, *spike_threshold*=*3.5*, *spike_influence*=*0.5*, *user*=*''*, *password*=*''*, *token*=*''*)](util/md_widgets/widget_emso_qc.md): It makes a Jupyter Notebook Widget used to download EMSO data and make data quality control tests.
+* [md.widget_save(*wf*)](util/md_widgets/widget_save.md): Make a Jupyter notebook widget that allows to save the WaterFrame to a file.
+
 
 Return to the [Docs Index](../index_docs.md).

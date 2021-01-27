@@ -12,8 +12,39 @@ import mooda
 def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
                    range_test: List[float]=[-1000, 1000],
                    spike_window: int=100, spike_threshold: float=3.5,
-                   spike_influence: float=0.5,  user: str='',
+                   spike_influence: float=0.5, user: str='',
                    password: str='', token: str=''):
+    """
+    It makes a Jupyter Notebook Widget used to download EMSO data and make data
+    quality control tests.
+
+    Parameters
+    ----------
+        wf: WaterFrame
+        depth_range: List[float]
+            Range of depth
+        user: str
+            User for the EMSO ERIC API
+        password: str
+            Password for the EMSO ERIC API
+        token: str
+            Token for the EMSO ERIC API
+        parameter: str
+            Parameter
+        range_test: List[float]
+            Limits for the range test [min value, max value]
+        spike_window: int
+            Window for the spike test
+        spike_threshold: float
+            Float for the spike test
+        spike_influence: float
+            Influence of the bad data on the spike test
+
+    Returns
+    -------
+        main_box: ipwidgets.VBox
+            Jupyter notebook widget 
+    """
     pyo.init_notebook_mode()
 
     def show_result(wf, parameter_in, chart_title=''):
@@ -124,6 +155,8 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
                                             int(end_date.split('-')[0]),
                                             int(end_date.split('-')[1]),
                                             int(end_date.split('-')[2])))
+
+    qc_label = widgets.Label('QC Tests')
 
     # Reset flags
     reset_label = widgets.Label('Reset flags:')
@@ -335,7 +368,7 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
 
     main_box = widgets.VBox([user_box, token_box, platform_box, parameters_box,
                              size_box, depth_box, start_date_box, end_date_box,
-                             reset_box, flat_box, range_box, spike_box,
-                             replace_box, button, out, out2])
+                             qc_label, reset_box, flat_box, range_box,
+                             spike_box, replace_box, button, out, out2])
 
     return main_box

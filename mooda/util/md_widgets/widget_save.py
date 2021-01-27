@@ -4,7 +4,7 @@ import ipywidgets as widgets
 
 def widget_save(wf):
     """
-    Create a widget that allows to save the WaterFrame to a file
+    Make a Jupyter notebook widget that allows to save the WaterFrame to a file
 
     Parameters
     ----------
