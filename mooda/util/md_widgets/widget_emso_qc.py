@@ -47,6 +47,11 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
     """
     pyo.init_notebook_mode()
 
+    # Layout config
+    label_width = '7rem'
+    sublabel_width = '5rem'
+    checkbox_width = '8rem'
+
     def show_result(wf, parameter_in, chart_title=''):
         # Change name of flags
         wf2 = wf.copy()
@@ -64,12 +69,19 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
         fig.show()
 
     # Sing in
-    user_label = widgets.Label('User:')
+    authentification_title = widgets.HTML('<b>Authentification</b>')
+    user_label = widgets.Label('User:',
+                               layout=widgets.Layout(width=label_width))
     input_user = widgets.Text(value=user)
-    password_label = widgets.Label('Password:')
-    input_password = widgets.Text(value=password)
-    token_label = widgets.Label('Token:')
+    password_label = widgets.Label('Password:',
+                                   layout=widgets.Layout(width=label_width))
+    input_password = widgets.Password(value=password)
+    or_label = widgets.Label('or', layout=widgets.Layout(width=label_width))
+    token_label = widgets.Label('Token:',
+                                layout=widgets.Layout(width=label_width))
     input_token = widgets.Text(value=token)
+
+    break_label = widgets.Label('')
 
     # map
     emso = mooda.EMSO(user=input_user.value, password=input_password.value,
@@ -78,7 +90,9 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
     pio.show(map_dict)
 
     # Platform code
-    platform_label = widgets.Label('Platform code:')
+    data_title = widgets.HTML('<b>Downloading data</b>')
+    platform_label = widgets.Label('Platform code:',
+                                   layout=widgets.Layout(width=label_width))
     platform_codes = emso.get_info_platform_code()
     input_platform = widgets.Dropdown(options=platform_codes,
                                       value=platform_codes[0], disabled=False)
@@ -106,17 +120,20 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
         end_date = None
 
     # Parameters
-    parameters_label = widgets.Label('Parameters:')
+    parameters_label = widgets.Label('Parameters:',
+                                     layout=widgets.Layout(width=label_width))
     input_parameters = widgets.SelectMultiple(options=parameter_list, rows=10,
                                               disabled=False,
                                               value=[parameter_list[0]])
 
     # Size
-    size_label = widgets.Label('Size:')
+    size_label = widgets.Label('Size:',
+                               layout=widgets.Layout(width=label_width))
     input_size = widgets.BoundedIntText(value=10, min=1, step=1)
 
     # Depth
-    depth_label = widgets.Label('Depth:')
+    depth_label = widgets.Label('Depth:',
+                                layout=widgets.Layout(width=label_width))
     input_depth = widgets.FloatRangeSlider(value=[depth_min, depth_max],
                                            min=depth_min,
                                            max=depth_max, step=0.1,
@@ -126,7 +143,8 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
                                            readout=True, readout_format='.1f')
 
     # Time
-    start_date_label = widgets.Label('Start date:')
+    start_date_label = widgets.Label('Start date:',
+                                     layout=widgets.Layout(width=label_width))
     input_start_date = widgets.DatePicker(disabled=False,
                                           min_date=date(
                                               int(start_date.split('-')[0]),
@@ -141,7 +159,8 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
                                               int(start_date.split('-')[1]),
                                               int(start_date.split('-')[2])))
 
-    end_date_label = widgets.Label('End date:')
+    end_date_label = widgets.Label('End date:',
+                                   layout=widgets.Layout(width=label_width))
     input_end_date = widgets.DatePicker(disabled=False,
                                         min_date=date(
                                             int(start_date.split('-')[0]),
@@ -156,28 +175,38 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
                                             int(end_date.split('-')[1]),
                                             int(end_date.split('-')[2])))
 
-    qc_label = widgets.Label('QC Tests')
+    qc_label = widgets.HTML('<b>Data QC Tests - Select the test to run</b>')
 
+    # Layout config
+    checkbox_width = '8rem'
     # Reset flags
-    reset_label = widgets.Label('Reset flags:')
-    reset_checkbox = widgets.Checkbox(description='Do it!')
+    # reset_label = widgets.Label('Reset flags:')
+    reset_checkbox = widgets.Checkbox(description='Reset flags',
+                                      style={'description_width': '0'},
+                                      layout=widgets.Layout(width=checkbox_width))
 
     # Flat test
-    flat_label = widgets.Label('Flat test:')
+    flat_checkbox = widgets.Checkbox(description='Flat test',
+                                     style={'description_width': '0'},
+                                     layout=widgets.Layout(width=checkbox_width))
+    window_label = widgets.Label('Window:',
+                                 layout=widgets.Layout(width=sublabel_width))
     window_flat = widgets.IntText(value=2,
-                                    description='Window:',
                                     disabled=False,
                                     color='black')
-    flat_checkbox = widgets.Checkbox(description='Do it!')
+    
 
     # Range test
-    range_label = widgets.Label('Range test:')
-    range_checkbox = widgets.Checkbox(description='Do it!')
+    # range_label = widgets.Label('Range test:')
+    range_checkbox = widgets.Checkbox(description='Range test',
+                                      style={'description_width': '0'},
+                                      layout=widgets.Layout(width=checkbox_width))
+    limit_label = widgets.Label('Limits:',
+                                layout=widgets.Layout(width=sublabel_width))
     limits = widgets.FloatRangeSlider(value=[range_test[0], range_test[1]],
                                         min=range_test[0],
                                         max=range_test[1],
                                         step=0.1,
-                                        description='Limits:',
                                         disabled=False,
                                         continuous_update=False,
                                         orientation='horizontal',
@@ -185,20 +214,23 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
                                         readout_format='.1f')
 
     # Spike test
-    spike_label = widgets.Label('Spike test:')
-    spike_checkbox = widgets.Checkbox(description='Do it!')
-    window_spike = widgets.IntText(value=spike_window,
-                                    description='Window:', disabled=False,
-                                    color='black')
-    threshold = widgets.FloatText(value=spike_threshold,
-                                    description='Threshold:', disabled=False,
-                                    color='black')
+    # spike_label = widgets.Label('Spike test:')
+    spike_checkbox = widgets.Checkbox(description='Spike test',
+                                      style={'description_width': '0'},
+                                      layout=widgets.Layout(width=checkbox_width))
+    window_spike = widgets.IntText(value=spike_window, disabled=False,
+                                   color='black')
+    threshold_label = widgets.Label('Threshold:',
+                                    layout=widgets.Layout(width=sublabel_width))
+    threshold = widgets.FloatText(value=spike_threshold, disabled=False,
+                                  color='black')
+    influence_label = widgets.Label('Influence:',
+                                    layout=widgets.Layout(width=sublabel_width))
     influence = widgets.FloatSlider(
         value=spike_influence,
         min=0,
         max=1,
         step=0.1,
-        description='Influence:',
         disabled=False,
         continuous_update=False,
         orientation='horizontal',
@@ -208,8 +240,9 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
     )
 
     # Replace
-    replace_label = widgets.Label('Replace QC:')
-    replace_checkbox = widgets.Checkbox(description='Do it!')
+    # replace_label = widgets.Label('Replace QC:')
+    replace_checkbox = widgets.Checkbox(description='Replace flags',
+                                        style={'description_width': '0'})
 
     def update_components(_):
         # Update all components
@@ -349,9 +382,8 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
 
     # linking button and function together using a button's method
     button.on_click(on_button_clicked)
-
-    user_box = widgets.HBox([user_label, input_user, password_label,
-                             input_password])
+    user_box = widgets.HBox([user_label, input_user])
+    password_box = widgets.HBox([password_label, input_password])
     token_box = widgets.HBox([token_label, input_token])
     platform_box = widgets.HBox([platform_label, input_platform])
     parameters_box = widgets.HBox([parameters_label, input_parameters])
@@ -359,14 +391,20 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
     depth_box = widgets.HBox([depth_label, input_depth])
     start_date_box = widgets.HBox([start_date_label, input_start_date])
     end_date_box = widgets.HBox([end_date_label, input_end_date])
-    reset_box = widgets.HBox([reset_label, reset_checkbox])
-    flat_box = widgets.HBox([flat_label, flat_checkbox, window_flat])
-    range_box = widgets.HBox([range_label, range_checkbox, limits])
-    spike_column = widgets.VBox([window_spike, threshold, influence])
-    spike_box = widgets.HBox([spike_label, spike_checkbox, spike_column])
-    replace_box = widgets.HBox([replace_label, replace_checkbox])
+    reset_box = widgets.HBox([reset_checkbox])
+    flat_box = widgets.HBox([flat_checkbox, window_label, window_flat])
+    range_box = widgets.HBox([range_checkbox, limit_label, limits])
+    spike_window_column = widgets.HBox([window_label, window_spike])
+    spike_threshold_column = widgets.HBox([threshold_label, threshold])
+    spike_influence_column = widgets.HBox([influence_label, influence])
+    spike_column = widgets.VBox([spike_window_column, spike_threshold_column,
+                                 spike_influence_column])
+    spike_box = widgets.HBox([spike_checkbox, spike_column])
+    replace_box = widgets.HBox([replace_checkbox])
 
-    main_box = widgets.VBox([user_box, token_box, platform_box, parameters_box,
+    main_box = widgets.VBox([authentification_title, user_box, password_box,
+                             or_label, token_box, data_title,
+                             platform_box, parameters_box,
                              size_box, depth_box, start_date_box, end_date_box,
                              qc_label, reset_box, flat_box, range_box,
                              spike_box, replace_box, button, out, out2])
