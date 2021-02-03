@@ -3,8 +3,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color='DEPTH',
-               range_y='auto', line_shape='lineard', rangeslider_visible=True, **kwds):
+def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color='auto',
+               range_y='auto', line_shape='linear', rangeslider_visible=True, line_group='DEPTH',
+               **kwds):
     """
     It uses plotly.express.line.
     Each data point is represented as a marker point, whose location is given by the x and y columns
@@ -26,6 +27,9 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
             Line options: 'linear' 'spline', 'vhv', 'hvh', 'vh', 'hv'
         rangeslider_visible: bool
             Show a time range slide on the bottom x axes.
+        line_group: str or int or Series or array-like
+            Either a name of a column in wf.data, or a pandas Series or array_like object.
+            Values from this column or array_like are used to group rows of data_frame into lines.
         **kwds: keywords
             plotly express scatter keywords.
 
@@ -65,19 +69,21 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
 
     if color == 'DEPTH':
         df[color] = df[color].astype('str')
-    elif color:
-        df[color] = df[color]
+    elif color == 'auto':
+        color = f'{y}_QC'
+    # elif color:
+    #     df[color] = df[color]
 
     # # Set index TIME
     # df.set_index('TIME', inplace=True)
     # df.sort_index(inplace=True)
     # df.reset_index(inplace=True)
 
-    fig = px.line(df, x=x, y=y, color=color,
-                  range_y=range_y,
+    fig = px.line(df, x=x, y=y, color=color, range_y=range_y,
                   line_shape=line_shape,
                   labels={
                       y: self.vocabulary[y].get('units', y)},
+                  line_group=line_group,
                   **kwds)
 
     fig.update_xaxes(rangeslider_visible=rangeslider_visible)

@@ -38,7 +38,7 @@ def widget_save(wf):
                 elif input_type.value == 'nc':
                     wf.to_nc(path=f'{input_name.value}.nc')
                 elif input_type.value == 'pkl':
-                    wf.to_pkl(path=f'{input_name.value}.pkl')
+                    wf.to_pkl(path_pkl=f'{input_name.value}.pkl')
                 print('Done.')
             else:
                 print('Please, write a name.')

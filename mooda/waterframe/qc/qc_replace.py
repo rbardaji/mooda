@@ -1,4 +1,6 @@
 """ Implementation of wf.qc_replace() """
+import numpy as np
+
 
 def qc_replace(self, parameters=None, to_replace=0, value=1, start=0, inplace=True):
     """
@@ -32,7 +34,7 @@ def qc_replace(self, parameters=None, to_replace=0, value=1, start=0, inplace=Tr
                 else:
                     result.append(signal)
 
-        return result
+        return np.array(result)
 
     if parameters is None:
         parameters = self.parameters
@@ -56,7 +58,9 @@ def qc_replace(self, parameters=None, to_replace=0, value=1, start=0, inplace=Tr
                 # Change flags
                 result = change_signals(signals)
 
-                data.loc[(depth,), f'{parameter}_QC'] = result
+                # Asignation of result with numpy array due to
+                # AttributeError: 'list' object has no attribute 'ravel'
+                data.loc[(depth,), f'{parameter}_QC'] = np.array(result)
         except KeyError:
             # No Depth
             signals = df[f'{parameter}_QC'].values

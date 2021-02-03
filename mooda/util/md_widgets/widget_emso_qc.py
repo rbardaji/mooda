@@ -60,12 +60,13 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
 
         fig = wf2.iplot_line(
             parameter_in,
-            color=f'{parameter_in}_QC',
+            # color=f'{parameter_in}_QC',
             marginal_y=None,
             line_shape='linear',
             rangeslider_visible=False,
             line_dash_sequence=['dot', 'dot'],
-            title=chart_title)
+            title=chart_title,)
+            # line_group='DEPTH')
         fig.show()
 
     # Sing in
@@ -80,8 +81,6 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
     token_label = widgets.Label('Token:',
                                 layout=widgets.Layout(width=label_width))
     input_token = widgets.Text(value=token)
-
-    break_label = widgets.Label('')
 
     # map
     emso = mooda.EMSO(user=input_user.value, password=input_password.value,
@@ -129,7 +128,7 @@ def widget_emso_qc(wf, depth_range: List[float]=[-10, 10000],
     # Size
     size_label = widgets.Label('Size:',
                                layout=widgets.Layout(width=label_width))
-    input_size = widgets.BoundedIntText(value=10, min=1, step=1)
+    input_size = widgets.BoundedIntText(value=10, min=1, max=100000, step=1)
 
     # Depth
     depth_label = widgets.Label('Depth:',
