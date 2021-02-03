@@ -62,6 +62,7 @@ wf = md.WaterFrame()
 * [wf.iplot_timeseries(*parameters_to_plot*=*None*)](waterframe/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameters.
 * [wf.iplot_scatter(*y*, *x*=*'TIME'*, *trendline*=*None*, *marginal_x*=*None*, *marginal_y*=*'histogram'*, *color*=*'auto'*, *symbol*=*'DEPTH'*, *range_y*=*'auto'*, ***kwds*)](waterframe/iplot/iplot_scatter.md): It makes an interactive scatter plot.
 * [wf.iplot_data_intervals(*resample_rule*=*'D'*, ***kwds*)](waterframe/iplot/iplot_data_intervals.md): It creates a plot to view the time intervals of the parameters.
+* [wf.iplot_line(*y*, *x*=*'TIME'*, *marginal_x*=*None*, *marginal_y*=*'histogram'*, *color*=*'auto'*, *range_y*=*'auto'*, *line_shape*=*'lineard'*, *rangeslider_visible*=*True*, *line_group*=*'DEPTH'*, ***kwds*)](.iplot/iplot_line.md): Each data point is represented as a marker point, whose location is given by the x and y columns of wf.data.
 
 ### Data Quality Control
 
