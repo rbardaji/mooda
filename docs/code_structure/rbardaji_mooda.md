@@ -11,4 +11,4 @@
 * requirements.txt: List of python packages required to run mooda successfully.
 * setup.py: The setup.py file contains information about mooda that PyPi needs to publish install the package, like its name, a description, the requeriments, the current version etc.
 
-Return to [index](index_docs.md).
+Return to [index](../index_docs.md).
