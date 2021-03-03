@@ -2,7 +2,7 @@
 
 * **.github**: This folder hosts files that are used by the GitHub platform itself. In our case, this folder only contains the form templates to report bugs or request new functionalities, but in other repositories, this folder may contain more files.
 * [**docs**](rbardaji_mooda_docs.md): This folder contains the Markdown files for mooda documentation.
-* **mooda**: This is the most important folder in the repository and contains the code for the mooda library.
+* [**mooda**](rbardaji_mooda_mooda.md): This is the most important folder in the repository and contains the code for the mooda library.
 * .gitignore: A gitignore file specifies intentionally untracked files that Git should ignore. Files already tracked by Git are not affected.
 * LICENSE: File to define all license details. We use the MIT license.
 * MANIFEST.in: Code that allows to include files in source distributions. When building a source distribution for the package by default, only a minimal set of files are included. We want to include extra files in the source distribution, such as the requirements file (requirements.txt), that the setup file (setup.py) need to instal all dependencies of the package. [more info](https://packaging.python.org/guides/using-manifest-in/).
