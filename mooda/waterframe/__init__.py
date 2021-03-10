@@ -7,7 +7,8 @@ class WaterFrame:
 
     from .analysis import (
         min, max, copy, use_only, rename, corr, max_diff, time_intervals, resample, slice_time,
-        info_metadata, info_vocabulary, drop, reduce_memory)
+        info_metadata, info_vocabulary, drop, reduce_memory, pres2depth, psal2asal,
+        asal_temp2dens)
     from .output import to_nc, to_pkl, to_json, to_es, metadata_to_html, to_csv
     from .plot import plot_timeseries, plot_timebar, plot_hist, plot
     from .qc import qc_flat_test, qc_range_test, qc_spike_test, qc_replace, qc_syntax_test

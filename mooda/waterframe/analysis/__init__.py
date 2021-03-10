@@ -12,3 +12,6 @@ from .info_metadata import info_metadata
 from .info_vocabulary import info_vocabulary
 from .drop import drop
 from .reduce_memory import reduce_memory
+from .pres2depth import pres2depth
+from .psal2asal import psal2asal
+from .asal_temp2dens import asal_temp2dens
