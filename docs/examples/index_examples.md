@@ -16,6 +16,7 @@
 * [How to download EMSO data with a Jupyter Notebook Widget - Notebook edition](emso-widget.ipynb)
 * [How to download EMSO data and perform QC data tests with a Jupyter Notebook Widget](emso-qc-widget.md)
 * [How to download EMSO data and perform QC data tests with a Jupyter Notebook Widget - Notebook edition](emso-qc-widget.ipynb)
+* [How to calculate Absolute Salinity and Water Density](dyfamed-density.md)
 
 ## Using EMODnet data
 
