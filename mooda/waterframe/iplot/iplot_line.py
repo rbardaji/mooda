@@ -4,8 +4,8 @@ import plotly.graph_objects as go
 
 
 def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color='auto',
-               range_y='auto', line_shape='linear', rangeslider_visible=True, line_group='DEPTH',
-               **kwds):
+               range_y='auto', line_shape='linear', rangeslider_visible=False, line_group='DEPTH',
+               resample=None, **kwds):
     """
     It uses plotly.express.line.
     Each data point is represented as a marker point, whose location is given by the x and y columns
@@ -30,6 +30,8 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
         line_group: str or int or Series or array-like
             Either a name of a column in wf.data, or a pandas Series or array_like object.
             Values from this column or array_like are used to group rows of data_frame into lines.
+        resample: str
+            Get the plot with resample data. If resample, color = 'DEPTH'
         **kwds: keywords
             plotly express scatter keywords.
 
@@ -67,10 +69,14 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
     elif 'TIME' in df.keys():
         df.sort_values(['TIME'], inplace=True)
 
+    if resample:
+        color = 'DEPTH'
+
     if color == 'DEPTH':
         df[color] = df[color].astype('str')
     elif color == 'auto':
         color = f'{y}_QC'
+
     # elif color:
     #     df[color] = df[color]
 
@@ -79,12 +85,90 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
     # df.sort_index(inplace=True)
     # df.reset_index(inplace=True)
 
-    fig = px.line(df, x=x, y=y, color=color, range_y=range_y,
-                  line_shape=line_shape,
-                  labels={
-                      y: self.vocabulary[y].get('units', y)},
-                  line_group=line_group,
-                  **kwds)
+    if resample:
+
+        df_agg = df.groupby(['DEPTH'] + [pd.Grouper(freq=resample, key='TIME')]).agg({y: ['mean', 'max', 'min']})
+        df_agg.reset_index(inplace=True)
+        df_agg['mean'] = df_agg[y]['mean']
+        df_agg['max'] = df_agg[y]['max']
+        df_agg['min'] = df_agg[y]['min']           
+
+        fig = go.Figure()
+        # Color configuration
+        fillcolor_list = [
+            'rgba(0,100,80,0.2)',
+            'rgba(0,176,246,0.2)',
+            'rgba(231,107,243,0.2)',
+            'rgba(240,184,48,0.2)',
+            'rgba(245,71,26,0.2)',
+            'rgba(227,245,65,0.2)',
+            'rgba(0,0,0,0.2)',
+            'rgba(94,86,245,0.2)',
+            'rgba(157,49,245,0.2)',
+            'rgba(255,0,0,0.2)',
+            'rgba(0,255,0,0.2)',
+            'rgba(0,0,255,0.2)',
+            'rgba(0,100,100,0.2)']
+        line_color_list = [
+            'rgb(0,100,80)',
+            'rgb(0,176,246)',
+            'rgb(231,107,243)',
+            'rgb(240,184,48)',
+            'rgb(245,71,26)',
+            'rgb(227,245,65)',
+            'rgb(0,0,0)',
+            'rgb(94,86,245)',
+            'rgb(157,49,245)',
+            'rgb(255,0,0)',
+            'rgba(0,255,0,0.2)',
+            'rgba(0,0,255,0.2)',
+            'rgba(0,100,100,0.2)']
+        for color_comt, (depth, df_depth) in enumerate(df_agg.groupby('DEPTH')):
+
+            x = df_depth['TIME']
+            x_rev = x[::-1]
+            y_mean = df_depth['mean']
+            y_max = df_depth['max']
+            y_min = df_depth['min']
+            y_min = y_min[::-1]
+
+            fig.add_trace(go.Scatter(
+                x=pd.concat([x, x_rev]),
+                y=pd.concat([y_max, y_min]),
+                fill='toself',
+                fillcolor=fillcolor_list[color_comt],
+                line_color='rgba(255,255,255,0)',
+                showlegend=False,
+                name=depth,
+                line_shape=line_shape
+            ))
+
+            fig.add_trace(go.Scatter(
+                x=x, y=y_mean,
+                line_color=line_color_list[color_comt],
+                name=depth,
+                line_shape=line_shape
+            ))
+
+            fig.update_traces(mode='lines')
+
+            # Update yaxis
+            try:
+                fig.update_layout(
+                    yaxis=dict(
+                        title=f"{self.vocabulary[y]['long_name']} ({self.vocabulary[y]['units']})"))
+            except:
+                pass
+    
+        # Add 'Depth' to legend
+        fig.update_layout(legend_title={'text': 'Depth (m)'})
+    else:
+        fig = px.line(df, x=x, y=y, color=color, range_y=range_y,
+                    line_shape=line_shape,
+                    labels={
+                        y: self.vocabulary[y].get('units', y)},
+                    line_group=line_group,
+                    **kwds)
 
     fig.update_xaxes(rangeslider_visible=rangeslider_visible)
     fig.update_layout(margin=dict(l=30, r=0, t=30, b=0))

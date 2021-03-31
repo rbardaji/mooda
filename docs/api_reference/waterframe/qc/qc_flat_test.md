@@ -4,6 +4,8 @@
 
 It detects if there are equal consecutive values in the time series.
 
+$$Q_n = \left\lbrace \begin{array}{c} K ~if ~\frac{\sum_{t = n - w}^{n} f(d,t)}{w} = f(d,n) \\ 0~ otherwise \end{array}\right.$$
+
 ### Parameters
 
 * parameters: Parameter to apply the test. (str, list of str)

@@ -15,7 +15,7 @@ The DYFAMED platform is a moored surface buoy located at 43.826N, 9.111W. The co
 * Sea temperature
 * Sea pressure
 
-As you know, metadata and parameters can also be printed from the code with ```print(wf.parameters)``` and ```print(wf.info_metadata()``` In this example we will not paint this information because without the output it is too long.
+As you know, metadata and parameters can also be printed from the code with ```print(wf.parameters)``` and ```print(wf.info_metadata())``` In this example we will not paint this information because without the output it is too long.
 
 Water density is calculated from:
 
@@ -32,8 +32,6 @@ To calculate absolute salinity we need:
 * The sampling location (latitude, longitude)
 
 The formulas for calculating absolute salinity and density are complex. Luckily, in mooda we import the [swg library](https://github.com/TEOS-10/GSW-Python) (thank you guys!), with which these calculations are done and then we package the results in our WaterFrame by adding the data quality control column.
-
-In short, the following figure summarizes what we do in this example:
 
 Here's the code:
 
