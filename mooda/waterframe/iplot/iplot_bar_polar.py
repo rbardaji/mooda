@@ -88,7 +88,11 @@ def iplot_bar_polar(self, theta, color, r='auto', template='xgridoff',
     if r == 'auto':
         r = 'frequency'
 
-    fig = px.bar_polar(df_work, r=r, theta="direction", color="WSPD",
-                        color_continuous_scale= color_continuous_scale,
-                        template=template)
+    try:
+        labels = {color: f'{self.vocabulary[color]["long_name"]} ({self.vocabulary[color]["units"]})'}
+    except KeyError:
+        labels=None
+    fig = px.bar_polar(df_work, r=r, theta="direction", color=color,
+                       color_continuous_scale= color_continuous_scale,
+                       template=template, labels=labels)
     return fig
