@@ -1,11 +1,14 @@
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from sklearn.linear_model import LinearRegression
 
 
-def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color='auto',
-               range_y='auto', line_shape='linear', rangeslider_visible=False, line_group='DEPTH',
-               resample=None, **kwds):
+def iplot_line(self, y, x='TIME', color='auto', range_y='auto',
+               line_shape='spline', rangeslider_visible=False,
+               line_group='DEPTH', resample=None, view_maxmin=True, trend=False,
+               **kwds):
     """
     It uses plotly.express.line.
     Each data point is represented as a marker point, whose location is given by the x and y columns
@@ -32,6 +35,10 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
             Values from this column or array_like are used to group rows of data_frame into lines.
         resample: str
             Get the plot with resample data. If resample, color = 'DEPTH'
+        view_maxmin: bool
+            Show the max and min values if data is resampled.
+        trend: bool
+            Show a linear regression of the trace.
         **kwds: keywords
             plotly express scatter keywords.
 
@@ -39,6 +46,7 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
     -------
         fig: plotly.graph_objects.Figure
     """
+
     df = pd.DataFrame()
     _df = self.data.reset_index()
 
@@ -87,7 +95,9 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
 
     if resample:
 
-        df_agg = df.groupby(['DEPTH'] + [pd.Grouper(freq=resample, key='TIME')]).agg({y: ['mean', 'max', 'min']})
+        df_agg = df.groupby(
+            ['DEPTH'] + [pd.Grouper(freq=resample, key='TIME')]).agg(
+                {y: ['mean', 'max', 'min']})
         df_agg.reset_index(inplace=True)
         df_agg['mean'] = df_agg[y]['mean']
         df_agg['max'] = df_agg[y]['max']
@@ -123,32 +133,50 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
             'rgba(0,255,0,0.2)',
             'rgba(0,0,255,0.2)',
             'rgba(0,100,100,0.2)']
+
         for color_comt, (depth, df_depth) in enumerate(df_agg.groupby('DEPTH')):
 
+            df_depth.set_index('TIME', inplace=True)
+            df_depth['values_from_start'] = (df_depth.index - df_depth.index[0]).days
+            df_depth.reset_index(inplace=True)
+
             x = df_depth['TIME']
+            x_days = df_depth['values_from_start']
             x_rev = x[::-1]
             y_mean = df_depth['mean']
             y_max = df_depth['max']
             y_min = df_depth['min']
             y_min = y_min[::-1]
 
-            fig.add_trace(go.Scatter(
-                x=pd.concat([x, x_rev]),
-                y=pd.concat([y_max, y_min]),
-                fill='toself',
-                fillcolor=fillcolor_list[color_comt],
-                line_color='rgba(255,255,255,0)',
-                showlegend=False,
-                name=depth,
-                line_shape=line_shape
-            ))
+            if trend:
+                reg = LinearRegression().fit(np.vstack(x_days), y_mean)
+                bestfit = reg.predict(np.vstack(x_days))
+
+                fig.add_trace(go.Scatter(
+                    x=x,
+                    y=bestfit,
+                    name=f'trend-{depth}',
+                    # line_shape=line_shape,
+                    mode='lines'
+                ))
+
+            if view_maxmin:
+                fig.add_trace(go.Scatter(
+                    x=pd.concat([x, x_rev]),
+                    y=pd.concat([y_max, y_min]),
+                    fill='toself',
+                    fillcolor=fillcolor_list[color_comt],
+                    line_color='rgba(255,255,255,0)',
+                    showlegend=False,
+                    name=depth,
+                    line_shape=line_shape
+                ))
 
             fig.add_trace(go.Scatter(
                 x=x, y=y_mean,
                 line_color=line_color_list[color_comt],
                 name=depth,
-                line_shape=line_shape
-            ))
+                line_shape=line_shape))
 
             fig.update_traces(mode='lines')
 
@@ -159,16 +187,38 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
                         title=f"{self.vocabulary[y]['long_name']} ({self.vocabulary[y]['units']})"))
             except:
                 pass
-    
+
         # Add 'Depth' to legend
         fig.update_layout(legend_title={'text': 'Depth (m)'})
     else:
         fig = px.line(df, x=x, y=y, color=color, range_y=range_y,
-                    line_shape=line_shape,
-                    labels={
-                        y: self.vocabulary[y].get('units', y)},
-                    line_group=line_group,
-                    **kwds)
+                      line_group=line_group,
+                      labels={y: self.vocabulary[y].get('units', y)}, **kwds)
+        try:
+            fig.update_traces(line_shape=line_shape)
+        except ValueError:
+            # No spline
+            pass
+
+        for color_comt, (depth, df_depth) in enumerate(df.groupby('DEPTH')):
+            
+            if trend:
+                df_depth.set_index('TIME', inplace=True)
+                df_depth.loc[:, 'values_from_start'] = (df_depth.index - df_depth.index[0]).days
+                df_depth.reset_index(inplace=True)
+
+                x = df_depth['TIME']
+                x_days = df_depth['values_from_start']
+                reg = LinearRegression().fit(np.vstack(x_days), df_depth[y])
+                bestfit = reg.predict(np.vstack(x_days))
+
+            fig.add_trace(go.Scatter(
+                x=x,
+                y=bestfit,
+                name=f'trend-{depth}',
+                # line_shape=line_shape,
+                mode='lines'
+            ))
 
     fig.update_xaxes(rangeslider_visible=rangeslider_visible)
     fig.update_layout(margin=dict(l=30, r=0, t=30, b=0))
@@ -186,8 +236,9 @@ def iplot_line(self, y, x='TIME', marginal_x=None, marginal_y='histogram', color
                 marker_color='blue',
                 line_color='blue') if trace.name == 'Good data' else (),
         )
-    elif 'DEPTH' in color:
-        fig.for_each_trace(
-            lambda trace: trace.update(mode='lines+markers'))
+    # elif 'DEPTH' in color:
+    #     if not resample:
+    #         fig.for_each_trace(
+    #             lambda trace: trace.update(mode='lines+markers'))
 
     return fig
