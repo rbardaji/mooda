@@ -216,11 +216,6 @@ def iplot_line(self, y, x='TIME', color='auto', range_y='auto',
 
                 fig.update_traces(mode='lines+markers')
 
-                fig.update_layout(
-                    xaxis=dict(
-                        domain=[0.3, 0.7]
-                    ))
-
                 # Update yaxis
                 try:
                     if y_num == 0:

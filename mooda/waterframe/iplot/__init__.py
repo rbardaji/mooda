@@ -6,4 +6,3 @@ from .iplot_line import iplot_line
 from .iplot_data_intervals import iplot_data_intervals
 from .iplot_scatter_mapbox import iplot_scatter_mapbox
 from .iplot_bar_polar import iplot_bar_polar
-from .iplot_line2 import iplot_line2

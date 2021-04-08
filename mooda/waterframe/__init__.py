@@ -14,7 +14,7 @@ class WaterFrame:
     from .qc import qc_flat_test, qc_range_test, qc_spike_test, qc_replace, qc_syntax_test
     from .iplot import (
         iplot_location, iplot_timeseries, iplot, iplot_scatter, iplot_line,
-        iplot_data_intervals, iplot_scatter_mapbox, iplot_bar_polar, iplot_line2)
+        iplot_data_intervals, iplot_scatter_mapbox, iplot_bar_polar)
 
     def __init__(self, df=None, metadata=None, vocabulary=None):
         """ Constructor """
