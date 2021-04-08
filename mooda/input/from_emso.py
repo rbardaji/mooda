@@ -33,7 +33,7 @@ def from_emso(platform_code: str, parameters: List[str]=[], start_time: str='',
             Maximum depth of the measurement
         size: int
             Number of values
-    
+
     Returns
     -------
         wf: WaterFrame object
