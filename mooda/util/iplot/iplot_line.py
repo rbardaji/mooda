@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.validators.scatter.marker import SymbolValidator
 from sklearn.linear_model import LinearRegression
-
+import random
 
 def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
                line_shape='spline', rangeslider_visible=False,
@@ -65,34 +65,110 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
         list_y = y
     
     # Color configuration
+    # fillcolor_list = [
+    #     'rgba(0,100,80,0.2)',
+    #     'rgba(0,176,246,0.2)',
+    #     'rgba(231,107,243,0.2)',
+    #     'rgba(240,184,48,0.2)',
+    #     'rgba(245,71,26,0.2)',
+    #     'rgba(227,245,65,0.2)',
+    #     'rgba(0,0,0,0.2)',
+    #     'rgba(94,86,245,0.2)',
+    #     'rgba(157,49,245,0.2)',
+    #     'rgba(255,0,0,0.2)',
+    #     'rgba(0,255,0,0.2)',
+    #     'rgba(0,0,255,0.2)',
+    #     'rgba(0,100,100,0.2)']
+    # line_color_list = [
+    #     'rgb(0,100,80)',
+    #     'rgb(0,176,246)',
+    #     'rgb(231,107,243)',
+    #     'rgb(240,184,48)',
+    #     'rgb(245,71,26)',
+    #     'rgb(227,245,65)',
+    #     'rgb(0,0,0)',
+    #     'rgb(94,86,245)',
+    #     'rgb(157,49,245)',
+    #     'rgb(255,0,0)',
+    #     'rgba(0,255,0,0.2)',
+    #     'rgba(0,0,255,0.2)',
+    #     'rgba(0,100,100,0.2)']
+
     fillcolor_list = [
-        'rgba(0,100,80,0.2)',
-        'rgba(0,176,246,0.2)',
-        'rgba(231,107,243,0.2)',
-        'rgba(240,184,48,0.2)',
-        'rgba(245,71,26,0.2)',
-        'rgba(227,245,65,0.2)',
-        'rgba(0,0,0,0.2)',
-        'rgba(94,86,245,0.2)',
-        'rgba(157,49,245,0.2)',
+        'rgba(51,0,0,0.2)',
+        'rgba(102,51,0,0.2)',
+        'rgba(153,153,0,0.2)',
+        'rgba(102,204,0,0.2)',
+        'rgba(0,255,0,0.2)',
+        'rgba(51,255,153,0.2)',
+        'rgba(102,255,255,0.2)',
+        'rgba(153,204,255,0.2)',
+        'rgba(204,204,255,0.2)',
+        'rgba(204,153,255,0.2)',
+        'rgba(255,102,255,0.2)',
+        'rgba(255,51,153,0.2)',
+        'rgba(128,128,128,0.2)',
+        'rgba(204,0,102,0.2)',
+        'rgba(153,0,153,0.2)',
+        'rgba(51,0,102,0.2)',
+        'rgba(0,0,51,0.2)',
+        'rgba(0,51,102,0.2)',
+        'rgba(0,153,153,0.2)',
+        'rgba(0,204,102,0.2)',
+        'rgba(153,255,51,0.2)',
+        'rgba(255,255,102,0.2)',
+        'rgba(255,204,153,0.2)',
+        'rgba(255,204,204,0.2)',
         'rgba(255,0,0,0.2)',
-        'rgba(0,255,0,0.2)',
+        'rgba(255,153,51,0.2)',
+        'rgba(255,255,102,0.2)',
+        'rgba(204,255,153,0.2)',
+        'rgba(204,255,204,0.2)',
+        'rgba(153,255,204,0.2)',
+        'rgba(102,255,255,0.2)',
+        'rgba(51,153,255,0.2)',
         'rgba(0,0,255,0.2)',
-        'rgba(0,100,100,0.2)']
+        'rgba(153,0,153,0.2)',
+        'rgba(102,0,51,0.2)',
+        'rgba(0,0,0,0.2)',]
+
     line_color_list = [
-        'rgb(0,100,80)',
-        'rgb(0,176,246)',
-        'rgb(231,107,243)',
-        'rgb(240,184,48)',
-        'rgb(245,71,26)',
-        'rgb(227,245,65)',
-        'rgb(0,0,0)',
-        'rgb(94,86,245)',
-        'rgb(157,49,245)',
+        'rgb(51,0,0)',
+        'rgb(102,51,0)',
+        'rgb(153,153,0)',
+        'rgb(102,204,0)',
+        'rgb(0,255,0)',
+        'rgb(51,255,153)',
+        'rgb(102,255,255)',
+        'rgb(153,204,255)',
+        'rgb(204,204,255)',
+        'rgb(204,153,255)',
+        'rgb(255,102,255)',
+        'rgb(255,51,153)',
+        'rgb(128,128,128)',
+        'rgb(204,0,102)',
+        'rgb(153,0,153)',
+        'rgb(51,0,102)',
+        'rgb(0,0,51)',
+        'rgb(0,51,102)',
+        'rgb(0,153,153)',
+        'rgb(0,204,102)',
+        'rgb(153,255,51)',
+        'rgb(255,255,102)',
+        'rgb(255,204,153)',
+        'rgb(255,204,204)',
         'rgb(255,0,0)',
-        'rgba(0,255,0,0.2)',
-        'rgba(0,0,255,0.2)',
-        'rgba(0,100,100,0.2)']
+        'rgb(255,153,51)',
+        'rgb(255,255,102)',
+        'rgb(204,255,153)',
+        'rgb(204,255,204)',
+        'rgb(153,255,204)',
+        'rgb(102,255,255)',
+        'rgb(51,153,255)',
+        'rgb(0,0,255)',
+        'rgb(153,0,153)',
+        'rgb(102,0,51)',
+        'rgb(0,0,0)',]
 
     fig = go.Figure()
 
@@ -170,6 +246,11 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
                 df_agg['min'] = df_agg[one_y]['min']           
 
                 for color_comt, (depth, df_depth) in enumerate(df_agg.groupby('DEPTH')):
+                    
+                    # Create color
+                    r_color = random.randint(0, 255)
+                    g_color = random.randint(0, 255)
+                    b_color = random.randint(0, 255)
 
                     df_depth.set_index('TIME', inplace=True)
                     df_depth['values_from_start'] = (df_depth.index - df_depth.index[0]).days
@@ -203,7 +284,8 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
                             x=pd.concat([x_time, x_rev]),
                             y=pd.concat([y_max, y_min]),
                             fill='toself',
-                            fillcolor=fillcolor_list[color_comt],
+                            # fillcolor=fillcolor_list[selected_color],
+                            fillcolor=f'rgba({r_color},{g_color},{b_color},0.2)',
                             line_color='rgba(255,255,255,0)',
                             showlegend=True,
                             name=f'{wf.metadata["platform_code"]}-{one_y}-{depth}-MaxMin',
@@ -214,7 +296,8 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
 
                     fig.add_trace(go.Scatter(
                         x=x_time, y=y_mean,
-                        line_color=line_color_list[color_comt],
+                        # line_color=line_color_list[selected_color],
+                        line_color=f'rgb({r_color},{g_color},{b_color})',
                         name=f'{wf.metadata["platform_code"]}-{one_y}-{depth}',
                         line_shape=line_shape,
                         yaxis=yaxis,
@@ -268,6 +351,11 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
             else:
 
                 for color_comt, (depth, df_depth) in enumerate(df.groupby('DEPTH')):
+                    
+                    # Create color
+                    r_color = random.randint(0, 255)
+                    g_color = random.randint(0, 255)
+                    b_color = random.randint(0, 255)
 
                     df_depth.set_index('TIME', inplace=True)
                     df_depth['values_from_start'] = (df_depth.index - df_depth.index[0]).days
@@ -294,7 +382,7 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
 
                     fig.add_trace(go.Scatter(
                         x=x_time, y=y_plot,
-                        line_color=line_color_list[color_comt],
+                        line_color=f'rgb({r_color},{g_color},{b_color})',
                         name=f'{wf.metadata["platform_code"]}-{one_y}-{depth}',
                         line_shape=line_shape,
                         yaxis=yaxis,
@@ -346,21 +434,21 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
                 # Add 'Depth' to legend
                 fig.update_layout(legend_title={'text': 'Platform Code - Parameter - Depth (m)'})
 
-            fig.update_xaxes(rangeslider_visible=rangeslider_visible)
-            fig.update_layout(margin=dict(l=30, r=0, t=30, b=0))
+        fig.update_xaxes(rangeslider_visible=rangeslider_visible)
+        fig.update_layout(margin=dict(l=30, r=0, t=30, b=0))
 
-            if 'QC' in color:
-                fig.for_each_trace(
-                    lambda trace: trace.update(
-                        visible='legendonly',
-                        mode='markers',
-                        marker_color='red') if trace.name == 'Bad data' else (),
-                )
-                fig.for_each_trace(
-                    lambda trace: trace.update(
-                        mode='lines+markers',
-                        marker_color='blue',
-                        line_color='blue') if trace.name == 'Good data' else (),
-                )
+        if 'QC' in color:
+            fig.for_each_trace(
+                lambda trace: trace.update(
+                    visible='legendonly',
+                    mode='markers',
+                    marker_color='red') if trace.name == 'Bad data' else (),
+            )
+            fig.for_each_trace(
+                lambda trace: trace.update(
+                    mode='lines+markers',
+                    marker_color='blue',
+                    line_color='blue') if trace.name == 'Good data' else (),
+            )
 
     return fig
