@@ -1,6 +1,6 @@
-# Applying QUARTOD QC tests to Water Temperature dataset
+# Applying QARTOD QC tests to Water Temperature dataset
 
-Following the [QUARTOD manual for T&S data](https://ioos.noaa.gov/ioos-in-action/temperature-salinity/), five QC tests are listed as “required”, three as “strongly recommended”, and five as “suggested”. Here below the details for all these tests. 
+Following the [QARTOD manual for T&S data](https://ioos.noaa.gov/ioos-in-action/temperature-salinity/), five QC tests are listed as “required”, three as “strongly recommended”, and five as “suggested”. Here below the details for all these tests. 
 
 **Required tests**
 
