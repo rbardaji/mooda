@@ -24,14 +24,14 @@ Following the [QARTOD manual for T&S data](https://ioos.noaa.gov/ioos-in-action/
 12. TS Curve/Space Test: Comparison to expected TS relationship
 13. Density Inversion Test: Checks that density increases with pressure (depth)
 
-MOODA contains functionalities to perform some of the tests proposed by QUARTOD. The QC tests implemented in MOODA are as follows:
+MOODA contains functionalities to perform some of the tests proposed by QARTOD. The QC tests implemented in MOODA are as follows:
 
-* [Syntax test](../api_reference/waterframe/qc/qc_syntax_test.md): We can complete the *1st* of the QUARTOD tests. It checks whether the object data contains all the QC columns required to pass the rest of the tests. *Note: This function is not yet implemented in the current "release" version. To use it, you need to use MOODA with the source code.*
-* [Range test](../api_reference/waterframe/qc/qc_range_test.md): Flag out-of-range values. With the range test, we can perform the *1st*, *4th* and *5th* of the QUARTOD tests. The QUARTOD test *3* is also a range test on the position data. The sample dataset does not contain position columns so this test is not applicable.
-* [Spike test](../api_reference/waterframe/qc/qc_spike_test.md): We can complete the *6th* of the QUARTOD tests. The QUARTOD test *7* could be understood as a spike test with a lower threshold.
-* [Flat test](../api_reference/waterframe/qc/qc_flat_test.md): We can perform the *8th* of the QUARTOD tests.
+* [Syntax test](../api_reference/waterframe/qc/qc_syntax_test.md): We can complete the *1st* of the QARTOD tests. It checks whether the object data contains all the QC columns required to pass the rest of the tests. *Note: This function is not yet implemented in the current "release" version. To use it, you need to use MOODA with the source code.*
+* [Range test](../api_reference/waterframe/qc/qc_range_test.md): Flag out-of-range values. With the range test, we can perform the *1st*, *4th* and *5th* of the QARTOD tests. The QARTOD test *3* is also a range test on the position data. The sample dataset does not contain position columns so this test is not applicable.
+* [Spike test](../api_reference/waterframe/qc/qc_spike_test.md): We can complete the *6th* of the QARTOD tests. The QARTOD test *7* could be understood as a spike test with a lower threshold.
+* [Flat test](../api_reference/waterframe/qc/qc_flat_test.md): We can perform the *8th* of the QARTOD tests.
 
-QUARTOD test number *9*, *10*, *11*, *12* and *13* need to be developed with MOODA.
+QARTOD test number *9*, *10*, *11*, *12* and *13* need to be developed with MOODA.
 
 The following script uses the [test_qc.pkl](./data/test_qc.pkl) dataset, generated with the example [Create a waterframe with fake data to evaluate the Quality Control Tests](fake_waterframe.md). The dataset contains water temperature values (TEMP parameter) and has not yet passed any quality control tests, so all indicators are at 0 (all TEMP_QC values are 0).
 
