@@ -1,4 +1,4 @@
-![mooda header](./docs/img_docs/mooda-header.png)
+![mooda header](./docs/img_docs/mooda-header.jpg)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2677621.svg)](10.5281/zenodo.2643207)
 
