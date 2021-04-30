@@ -15,7 +15,7 @@ class WaterFrame:
     from .iplot import (
         iplot_location, iplot_timeseries, iplot, iplot_scatter, iplot_line,
         iplot_data_intervals, iplot_scatter_mapbox, iplot_bar_polar,
-        iplot_histogram)
+        iplot_histogram, iplot_candlestick)
 
     def __init__(self, df=None, metadata=None, vocabulary=None):
         """ Constructor """

@@ -288,8 +288,7 @@ def iplot_line(self, y, x='TIME', color='auto', range_y='auto',
                     x=x,
                     y=bestfit,
                     name=f'trend-{depth}',
-                    mode='lines+markers'
-                ))
+                    mode='lines+markers'))
 
         fig.update_xaxes(rangeslider_visible=rangeslider_visible)
         fig.update_layout(margin=dict(l=30, r=0, t=30, b=0))
@@ -312,4 +311,8 @@ def iplot_line(self, y, x='TIME', color='auto', range_y='auto',
         #         fig.for_each_trace(
         #             lambda trace: trace.update(mode='lines+markers'))
 
+        fig.for_each_trace(
+                lambda trace: trace.update(
+                    mode='lines') if 'trend' in intrace.name else (),
+            )
     return fig
