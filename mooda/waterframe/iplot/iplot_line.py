@@ -313,6 +313,6 @@ def iplot_line(self, y, x='TIME', color='auto', range_y='auto',
 
         fig.for_each_trace(
                 lambda trace: trace.update(
-                    mode='lines') if 'trend' in intrace.name else (),
+                    mode='lines') if 'trend' in trace.name else (),
             )
     return fig
