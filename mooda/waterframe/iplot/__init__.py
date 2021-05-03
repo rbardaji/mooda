@@ -8,3 +8,5 @@ from .iplot_scatter_mapbox import iplot_scatter_mapbox
 from .iplot_bar_polar import iplot_bar_polar
 from .iplot_histogram import iplot_histogram
 from .iplot_candlestick import iplot_candlestick
+from .iplot_box import iplot_box
+from .iplot_correlation_headmap import iplot_correlation_headmap
