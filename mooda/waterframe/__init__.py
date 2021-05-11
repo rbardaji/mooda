@@ -19,7 +19,7 @@ class WaterFrame:
 
     def __init__(self, df=None, metadata=None, vocabulary=None):
         """ Constructor """
-        if df:
+        if isinstance(df,DataFrame):
             self.data = df
         else:
             self.data = DataFrame()
