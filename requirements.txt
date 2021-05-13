@@ -14,5 +14,5 @@ ipywidgets>=7.6.3
 gsw
 statsmodels
 sklearn
-erddap-python
 stockstats
+erddap-python
