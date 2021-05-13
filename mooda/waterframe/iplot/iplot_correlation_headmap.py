@@ -29,6 +29,6 @@ def iplot_correlation_headmap(self, parameters=[], **kwds):
         fig = px.imshow(corr, **kwds)
     
     else:
-        ig = px.imshow(**kwds)
+        fig = px.imshow(**kwds)
     
     return fig
