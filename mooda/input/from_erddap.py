@@ -31,7 +31,7 @@ def from_erddap(server, dataset_id, variables=None, constraints=None, rcsvkwargs
     if 'time' in variables:
         _rcsvkwargs['parse_dates'] = ['time']
 
-    # actual erddap data request
+    # actual erddap data request, returning a DataFrame
     _df = remote.getDataFrame(**_rcsvkwargs)
     # vocabulary subset from erddap
     _vocabulary = OrderedDict([ (key,val) for key, val in remote.variables.items() if key in variables ])
