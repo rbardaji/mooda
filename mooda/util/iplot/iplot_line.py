@@ -366,7 +366,7 @@ def iplot_line(wf_list, y, x='TIME', color='auto', range_y='auto',
                     y_plot = df_depth[one_y]
 
                     if trend:
-                        reg = LinearRegression().fit(np.vstack(x_days), y_mean)
+                        reg = LinearRegression().fit(np.vstack(x_days), y_plot)
                         bestfit = reg.predict(np.vstack(x_days))
 
                         fig.add_trace(go.Scatter(
