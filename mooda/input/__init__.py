@@ -9,3 +9,4 @@ from .read_nc_moist import read_nc_moist
 from .from_emso import from_emso
 from .from_erddap import from_erddap
 from .read_df import read_df
+from .read_dat_td_pati import read_dat_td_pati
