@@ -27,7 +27,7 @@ def max(self, parameter_max):
 
     try:
         max_dict = df.loc[
-            df[parameter_max] == df[parameter_max].max(skipna=True)].to_dict('record')[0]
+            df[parameter_max] == df[parameter_max].max(skipna=True)].to_dict('records')[0]
     except IndexError:
         max_dict = None
 

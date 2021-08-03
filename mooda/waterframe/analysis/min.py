@@ -26,7 +26,7 @@ def min(self, parameter_min):
     df = df.reset_index()
 
     try:
-        min_dict = df.loc[df[parameter_min] == df[parameter_min].min(skipna=True)].to_dict('record')[0]
+        min_dict = df.loc[df[parameter_min] == df[parameter_min].min(skipna=True)].to_dict('records')[0]
     except IndexError:
         min_dict = None
 
