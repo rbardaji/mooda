@@ -15,4 +15,4 @@ gsw
 statsmodels
 sklearn
 stockstats
-erddapy
+erddap-python
