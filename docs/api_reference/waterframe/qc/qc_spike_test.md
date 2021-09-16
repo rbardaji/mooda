@@ -1,4 +1,4 @@
-# WaterFrame.qc_spike_test(*parameters*=*None*, *window*=*0*, *threshold*=*3*, *flag*=*4*, *inplace*=*True*)
+# WaterFrame.qc_spike_test(*parameters*=*None*, *window*=*0*, *threshold*=*3*, *influence*=*0.5*, *flag*=*4*, *inplace*=*True*)
 
 ## Reference
 

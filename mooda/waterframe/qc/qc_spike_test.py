@@ -95,7 +95,7 @@ def qc_spike_test(self, parameters=None, window=0, threshold=3.5, influence=0.5,
                 # Run algo with settings from above
                 result = thresholding_algo(y, lag=window, threshold=threshold,
                                         influence=influence, signals=signals,
-                                        flag=4)
+                                        flag=flag)
                 
                 data.loc[(depth,), f'{parameter}_QC'] = result
         except KeyError:
@@ -106,7 +106,7 @@ def qc_spike_test(self, parameters=None, window=0, threshold=3.5, influence=0.5,
             # Run algo with settings from above
             result = thresholding_algo(y, lag=window, threshold=threshold,
                                     influence=influence, signals=signals,
-                                    flag=4)
+                                    flag=flag)
             
             data[f'{parameter}_QC'] = result
     
