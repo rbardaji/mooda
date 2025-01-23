@@ -17,7 +17,6 @@ __pycache__
 # Test code
 /my-codes
 limit_memory.py
-*.nc
 desktop.ini
 # pylint
 .pylintrc

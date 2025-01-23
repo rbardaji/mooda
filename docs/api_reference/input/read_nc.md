@@ -14,7 +14,7 @@ Read data form NetCDF file and create a WaterFrame.
 
 ## Example
 
-To reproduce the example, download the NetCDF file [here](http://data.emso.eu/files/ooi/GP03FLMA-RIM01-02-CTDMOG042/deployment0001_GP03FLMA-RIM01-02-CTDMOG042-recovered_inst-ctdmo_ghqr_instrument_recovered_20130801T140001-20140614T234501_mooda.nc) and save it as `example.nc` in the same pyhon script folder.
+To reproduce the example, download the NetCDF file [here](docs/api_reference/input/read_nc.md) and save it as `example.nc` in the same pyhon script folder.
 
 ```python
 import mooda as md
