@@ -1,3 +1,4 @@
+# setup.py
 """Setup config to install mooda"""
 
 from setuptools import setup, find_packages
