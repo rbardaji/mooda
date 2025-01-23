@@ -21,3 +21,5 @@ limit_memory.py
 desktop.ini
 # pylint
 .pylintrc
+
+.venv
