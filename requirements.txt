@@ -15,3 +15,4 @@ gsw
 statsmodels
 stockstats
 erddap-python
+h5netcdf>=0.8.0
