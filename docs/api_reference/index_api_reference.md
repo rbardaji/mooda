@@ -10,7 +10,6 @@ import mooda as md
 
 * [md.read_nc(*path*)](input/read_nc.md): Get a WaterFrame from a generic NetCDF.
 * [md.read_pkl(*path_pkl*)](input/read_pkl.md): Get a WaterFrame from a Pickle file.
-* [md.from_emso(*platform_code*, *parameters*=*[]*, *start_time*=*''*, *end_time*=*''*, *depth_min*=None, *depth_max*=None, *user*=*''*, *password*=*''*, *size*=*10*)](input/from_emso.md): Get a WaterFrame with the data of the [EMSO API](http://api.emso.eu).
 
 ## WaterFrame
 
