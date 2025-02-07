@@ -1,11 +1,8 @@
 # Make a WaterFrame following the OceanSites specification
 
-
 In this example, we are going to create a WaterFrame that contains all the Metadata and Vocabularies fields defined in the [OceanSites v1.3 standard](http://www.oceansites.org/docs/oceansites_data_format_reference_manual.pdf).
 
-The WaterFrame will contain random values ​​of the parameter "Diffuse attenuation coefficient" with an hourly frequency during the month of January 2020. The values ​​of the metadata fields are just examples.
-
-
+The WaterFrame will contain random values of the parameter "Diffuse attenuation coefficient" with an hourly frequency during the month of January 2020. The values of the metadata fields are just examples.
 
 ```python
 import pandas as pd
@@ -153,7 +150,7 @@ vocabulary = {
 
 # Make data
 # Make the TIME index
-date_rng = pd.date_range(start='1/1/2020', end='31/01/2020', freq='H')
+date_rng = pd.date_range(start='1/1/2020', end='31/01/2020', freq='h')
 # Make a pandas.DataFrame with the values of TIME
 data = pd.DataFrame(date_rng, columns=['TIME'])
 # Add the other parameters
