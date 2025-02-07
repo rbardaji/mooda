@@ -17,7 +17,7 @@ import mooda as md
 
 path_netcdf = "example.nc"  # Path of the NetCDF file
 
-wf = md.read_nc_emodnet(path_netcdf)
+wf = md.read_nc(path_netcdf)
 
 wf2 = wf.copy()
 print(wf2)

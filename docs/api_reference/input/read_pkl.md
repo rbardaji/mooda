@@ -14,17 +14,12 @@ wf_pkl: WaterFrame
 
 ## Example
 
-To reproduce the example, download the NetCDF file [here](http://data.emso.eu/files/emso/obsea/mo/ts/2014/MO_TS_MO_OBSEA_201401.nc) and save it as `example.nc` in the same pyhon script folder.
+To reproduce the example, download the pickle file [here](https://github.com/rbardaji/mooda/blob/14f4fd776d30a6a2e3f7bc0920996dee2b8a0cb3/docs/examples/data/TEMP.pkl) and save it as `example.pkl` in the same pyhon script folder.
 
 ```python
 import mooda as md
 
-path_netcdf = "example.nc"  # Path of the NetCDF file
-
-wf = md.read_nc_emodnet(path_netcdf)
-
-# Save wf into a pickle file
-wf.to_pkl('example.pkl')
+path_netcdf = "example.pkl"  # Path of the NetCDF file
 
 # Get a WaterFrame from a fickle file
 wf_from_pickle = md.read_pkl('example.pkl')

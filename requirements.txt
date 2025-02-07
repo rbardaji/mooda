@@ -13,6 +13,6 @@ requests>=2.24.0
 ipywidgets>=7.6.3
 gsw
 statsmodels
-sklearn
 stockstats
 erddap-python
+h5netcdf>=0.8.0

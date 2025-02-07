@@ -1,3 +1,4 @@
+# mooda/waterframe/__init__.py
 """ Main implementation of the class WaterFrame """
 import sys
 from pandas import DataFrame
