@@ -57,10 +57,10 @@ wf = md.WaterFrame()
 
 * [wf.iplot_location(self)](waterframe/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the WaterFrame.
 * [wf.iplot_timeseries(*parameters_to_plot*=*None*)](waterframe/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameters.
-* [wf.iplot_scatter(*y*, *x*=*'TIME'*, *trendline*=*None*, *marginal_x*=*None*, *marginal_y*=*'histogram'*, *color*=*'auto'*, *symbol*=*'DEPTH'*, *range_y*=*'auto'*, ***kwds*)](waterframe/iplot/iplot_scatter.md): It makes an interactive scatter plot.
+* [wf.iplot_scatter(*y*, *x*=*'TIME'*, *trendline*=*None*, *marginal_x*=*None*, *marginal_y*=*&#39;histogram&#39;*, *color*=*&#39;auto&#39;*, *symbol*=*&#39;DEPTH&#39;*, *range_y*=*&#39;auto&#39;*, ***kwds*)](waterframe/iplot/iplot_scatter.md): It makes an interactive scatter plot.
 * [wf.iplot_data_intervals(*resample_rule*=*'D'*, ***kwds*)](waterframe/iplot/iplot_data_intervals.md): It creates a plot to view the time intervals of the parameters.
-* [wf.iplot_line(*y*, *x*=*'TIME'*, *marginal_x*=*None*, *marginal_y*=*'histogram'*, *color*=*'auto'*, *range_y*=*'auto'*, *line_shape*=*'lineard'*, *rangeslider_visible*=*True*, *line_group*=*'DEPTH'*, ***kwds*)](waterframe/iplot/iplot_line.md): Each data point is represented as a marker point, whose location is given by the x and y columns of wf.data.
-* [wf.iplot_bar_polar(*theta*, *color*, *r*=*'auto'*, *template*=*'xgridoff'*, *color_continuous_scale*=*'auto'*, ***kwds)*](waterframe//iplot/iplot_bar_polar.md): In a polar bar plot, each row of 'color' is represented as a wedge mark in polar coordinates.
+* [wf.iplot_line(*y*, *x*=*'TIME'*, *marginal_x*=*None*, *marginal_y*=*&#39;histogram&#39;*, *color*=*&#39;auto&#39;*, *range_y*=*&#39;auto&#39;*, *line_shape*=*&#39;lineard&#39;*, *rangeslider_visible*=*True*, *line_group*=*&#39;DEPTH&#39;*, ***kwds*)](waterframe/iplot/iplot_line.md): Each data point is represented as a marker point, whose location is given by the x and y columns of wf.data.
+* [wf.iplot_bar_polar(*theta*, *color*, *r*=*'auto'*, *template*=*&#39;xgridoff&#39;*, *color_continuous_scale*=*&#39;auto&#39;*, ***kwds)*](waterframe//iplot/iplot_bar_polar.md): In a polar bar plot, each row of 'color' is represented as a wedge mark in polar coordinates.
 
 ### Data Quality Control
 
@@ -80,33 +80,11 @@ wf = md.WaterFrame()
 * [md.iplot_location(*list_wf*)](util/iplot/iplot_location.md): It creates a Plotly Figure with a map and a spot of the measurement location of the input WaterFrames.
 * [md.iplot_timeseries(*list_wf*, *parameter_to_plot*)](util/iplot/iplot_timeseries.md): It creates a Plotly figure with the time-series of the input parameter.
 
-### EMSO
-
-Management of the [EMSO API](http://api.emso.eu)
-
-* [md.EMSO(*user*=*''*, *password*=*''*, *token*=*''*)](util/emso/emso.md): Manage the [EMSO API](http://api.emso.eu).
-* [md.EMSO.get_data(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *size*=*10*, *sort*=*'desc'*, *parameters*=*[]*, platform_codes:List[str]=[], start_time:str='', *time_qcs*=*[]*, *value_qcs*=*[]*)](util/emso/get_data.md): Get data from the EMSO ERIC API.
-* [md.EMSO.get_fig_data_interval(*interval*=*'D'*, *depth_max*=*None*, *depth_min*=*None*, *depth_qcs*:=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *rangeslider*=*False*, *start_time*=*''*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*)](util/emso/get_fig_data_interval.md): Get the plotly figure 'Data Interval' from the EMSO ERIC API.
-* [md.EMSO.get_fig_line(*depth_max*=*None*, *depth_min*=*None*, *depth_qcs*=*[]*, *end_time*=*''*, *metadata_ids*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *size*=*10*, *start_time*=*''*, *sort*=*'desc'*, *time_qcs*=*[]*, *title*=*''*, *value_qcs*=*[]*, *x*=*'time'*, *y*=*'value'*)](util/emso/get_fig_line.md): Get the plotly figure 'line' from the EMSO ERIC API.
-* [md.EMSO.get_fig_map(*parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_fig_map.md): Get the plotly figure 'line' from the EMSO ERIC API.
-* [md.EMSO.get_info_fig_plot_argument(*plot*, *argument*)](util/emso/get_info_fig_plot_argument.md): Get argument information and available options.
-* [md.EMSO.get_info_fig_plot(*plot*)](util/emso/get_info_fig_plot.md): Get the available arguments for the input plot.
-* [md.EMSO.get_info_fig()](util/emso/get_info_fig.md): Get the available figures.
-* [md.EMSO.get_info_metadata_id(*platform_codes*=[], *sites*=[])](util/emso/get_info_metadata_id.md): Get the ID of the metadata archivements of the EMSO ERIC API.
-* [md.EMSO.get_info_parameter(*platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_parameter.md): Get available parameters of the EMSO ERIC API.
-* [md.EMSO.get_info_platform_code(*parameters*=[], *sites*=[])](util/emso/get_info_parameter.md): Get available platfom codes ('platform_code') of the EMSO ERIC API.
-* [md.EMSO.get_info_site()](util/emso/get_info_site.md): Get available sites ('site') of the EMSO ERIC API.
-* [md.EMSO.get_info_summary(*fields*=*[]*, *parameters*=*[]*, *platform_codes*=*[]*, *sites*=*[]*)](util/emso/get_info_summary.md): Get the most used fields of the metadatada archivements.
-* [md.EMSO.get_metadata(*fields*=[], *metadata_ids*=[], *platform_codes*=[], *sites*=[])](util/emso/get_metadata.md): Get all fields of the metadatada archivements.
-* [md.EMSO.get_user_query(*size*=10, *sort*='desc')](util/emso/get_user_query.md): Get the queries of the user.
-* [md.EMSO.post_user_email(*message*)](util/emso/post_user_email.md): Send an email to help@emso-eu.org.
-
 ### Jupyter Notebook Widgets
 
 * [md.widget_qc(*wf*, *parameter*, *range_test*=*[-1000, 1000]*, *spike_window*=*100*, *spike_threshold*=*3.5*, *spike_influence*=*0.5*)](util/md_widgets/widget_qc.md): It makes a Data QC Widget for Jupyter Notebook.
-* [md.widget_emso(*wf*, *depth_range*=*[-10, 10000]*, *user*=*''*, *password*=*''*, *token*=*''*)](util/md_widgets/widget_emso.md): It makes a Jupyter notebook widget to download data from the EMSO API.
-* [md.widget_emso_qc(*wf*, *depth_range*=*[-10, 10000]*, *range_test*=*[-1000, 1000]*, *spike_window*=*100*, *spike_threshold*=*3.5*, *spike_influence*=*0.5*, *user*=*''*, *password*=*''*, *token*=*''*)](util/md_widgets/widget_emso_qc.md): It makes a Jupyter Notebook Widget used to download EMSO data and make data quality control tests.
+* [md.widget_emso(*wf*, *depth_range*=*[-10, 10000]*, *user*=*&#39;&#39;*, *password*=*&#39;&#39;*, *token*=*&#39;&#39;*)](util/md_widgets/widget_emso.md): It makes a Jupyter notebook widget to download data from the EMSO API.
+* [md.widget_emso_qc(*wf*, *depth_range*=*[-10, 10000]*, *range_test*=*[-1000, 1000]*, *spike_window*=*100*, *spike_threshold*=*3.5*, *spike_influence*=*0.5*, *user*=*&#39;&#39;*, *password*=*&#39;&#39;*, *token*=*&#39;&#39;*)](util/md_widgets/widget_emso_qc.md): It makes a Jupyter Notebook Widget used to download EMSO data and make data quality control tests.
 * [md.widget_save(*wf*)](util/md_widgets/widget_save.md): Make a Jupyter notebook widget that allows to save the WaterFrame to a file.
-
 
 Return to the [Docs Index](../index_docs.md).
