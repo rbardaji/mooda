@@ -16,3 +16,4 @@ statsmodels
 stockstats
 erddap-python
 scikit-learn>=0.23.1
+h5netcdf>=0.8.0

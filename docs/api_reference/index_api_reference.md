@@ -9,10 +9,7 @@ import mooda as md
 ## Read data
 
 * [md.read_nc(*path*)](input/read_nc.md): Get a WaterFrame from a generic NetCDF.
-* [md.read_nc_moist(*path*, *resample_rule*=*False*)](input/read_nc_moist.md): Open a NetCDF file from [MOIST](http://www.moist.it/sites/western_ionian_sea/2).
-* [md.read_nc_emodnet(*path*, *clean_data*=*True*)](input/read_nc_emodnet.md): Get a WaterFrame from a NetCDF from [EMODnet-physics](https://www.emodnet-physics.eu/).
 * [md.read_pkl(*path_pkl*)](input/read_pkl.md): Get a WaterFrame from a Pickle file.
-* [md.from_emso(*platform_code*, *parameters*=*[]*, *start_time*=*''*, *end_time*=*''*, *depth_min*=None, *depth_max*=None, *user*=*''*, *password*=*''*, *size*=*10*)](input/from_emso.md): Get a WaterFrame with the data of the [EMSO API](http://api.emso.eu).
 
 ## WaterFrame
 

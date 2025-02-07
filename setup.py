@@ -1,64 +1,64 @@
-""" Setup config to install mooda """
+# setup.py
+"""Setup config to install mooda"""
 
-import os
-from distutils.core import setup
-from setuptools import find_packages
-
+from setuptools import setup, find_packages
 
 NAME = 'mooda'
-VERSION = '1.14.0'
+VERSION = '2.0.0'
 DESCRIPTION = 'Module for Ocean Observatory Data Analysis'
-LONG_DESCRIPTION = ("""
+LONG_DESCRIPTION = """
 MOODA - Module for Ocean Observatory Data Analysis
 
-Mooda is a python package designed mainly for oceanographers and marine science students. It is"""
-                    """based on a power scripting system for:
+Mooda is a Python package designed mainly for oceanographers and marine science students.
+It provides tools to:
 
-* open and analyze data files from scientific instrumentation and platforms
-* generate data quality control
-* make plots that are commonly used in the oceanographic community
-* make data files in netCDF and CSV format
+- Open and analyze data files from scientific instrumentation and platforms
+- Perform data quality control
+- Create plots commonly used in the oceanographic community
+- Export data files in netCDF and CSV formats
 
-Check the documentation on https://github.com/rbardaji/mooda.
-""")
-CLASSIFIERS = ['Development Status :: 3 - Alpha',
-               'Environment :: Console',
-               'Natural Language :: English',
-               'License :: OSI Approved :: MIT License',
-               'Programming Language :: Python :: 3.7',
-               'Topic :: Software Development :: Libraries :: Python Modules',
-               'Topic :: Scientific/Engineering :: Physics',
-               'Intended Audience :: Education',
-               'Intended Audience :: Science/Research',
-               'Intended Audience :: Developers']
-KEYWORDS = ['ocean',
-            'sea',
-            'EMODnet',
-            'EMSO']
+Documentation: https://github.com/rbardaji/mooda
+"""
+CLASSIFIERS = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
+    'Natural Language :: English',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Scientific/Engineering :: Physics',
+    'Intended Audience :: Education',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Developers',
+]
+KEYWORDS = ['ocean', 'sea', 'EMODnet', 'EMSO']
 URL = 'https://github.com/rbardaji/mooda'
 AUTHOR = 'Raul Bardaji Benach'
 AUTHOR_EMAIL = 'rbardaji@gmail.com'
 LICENSE = 'MIT'
-PACKAGES = find_packages()
-REQUIREMENTS = ['requirements.txt']
-INSTALL_REQUIRES = sorted(
-    set(
-        line.partition('#')[0].strip()
-        for file in (os.path.join(os.path.dirname(__file__), file)
-                     for file in REQUIREMENTS)
-        for line in open(file)) - {''})
 
-setup(name=NAME,
-      version=VERSION,
-      description=DESCRIPTION,
-      long_description=LONG_DESCRIPTION,
-      classifiers=CLASSIFIERS,
-      keywords=KEYWORDS,
-      url=URL,
-      author=AUTHOR,
-      author_email=AUTHOR_EMAIL,
-      license=LICENSE,
-      packages=PACKAGES,
-      install_requires=INSTALL_REQUIRES,
-      include_package_data=True,
-      zip_safe=False)
+# Load requirements from the requirements.txt file
+with open('requirements.txt') as f:
+    INSTALL_REQUIRES = f.read().splitlines()
+
+setup(
+    name=NAME,
+    version=VERSION,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
+    classifiers=CLASSIFIERS,
+    keywords=KEYWORDS,
+    url=URL,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    license=LICENSE,
+    packages=find_packages(),
+    python_requires='>=3.8',
+    install_requires=INSTALL_REQUIRES,
+    include_package_data=True,
+    zip_safe=False,
+)
